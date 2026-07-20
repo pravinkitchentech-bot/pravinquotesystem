@@ -705,8 +705,6 @@
                     style="height: 55px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin Kitchens &amp; Interiors</h2>
-                    <p style="font-weight: 600; font-size: 0.82rem; margin: 3px 0 0 0; color: #555;">Premium Modular
-                        Kitchens & Interiors</p>
                 </div>
             </div>
             <p style="font-size: 0.82rem; line-height: 1.4; color: #555; margin-top: 5px;">
@@ -714,10 +712,6 @@
                 Tvm Main Road, Azhagiamandapam,<br>
                 Mulagumoodu Post - 629167, T.N.<br>
                 Mobile: +91 9787769970
-            </p>
-            <p
-                style="font-size: 0.72rem; margin-top: 15px; color: #777; border-top: 1px dashed #ccc; padding-top: 5px;">
-                Note: 45 Days Storage Validity & Guarantee
             </p>
         </div>
         <div class="invoice-right">
@@ -874,13 +868,6 @@
                         <td colspan="9">No items added yet — start with any card above.</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="7" style="text-align:right;">Total</td>
-                        <td class="num" id="grandTotal">₹0</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
             </table>
 
             <!-- Materials Specs Display (Screen Only) -->
@@ -1348,10 +1335,10 @@
                 { id: 75, name: "Prayer Unit Bottom Cabinet", options: ENG_WOOD_BOX_DOOR }
             ],
             bedroom: [
-                { id: 25, name: "Wardrobe", options: ENG_WOOD_BOX_DOOR },
+                { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
                 { id: 27, name: "Bed back wall paneling with headrest", options: ENG_WOOD_WALL_PANEL },
                 { id: 28, name: "Bed", options: ENG_WOOD_BED },
-                { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
+                { id: 29, name: "Bay Window", options: ENG_WOOD_ONLY },
                 { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
                 { id: 32, name: "Tv unit-wall paneling", options: ENG_WOOD_WALL_PANEL },
@@ -1360,8 +1347,8 @@
                 { id: 65, name: "Side Cabinet", options: ENG_WOOD_ONLY },
                 { id: 66, name: "Cupboard 1", options: ENG_WOOD_ONLY },
                 { id: 67, name: "Cupboard 2", options: ENG_WOOD_ONLY },
-                { id: 68, name: "Loft 1", options: ENG_WOOD_BOX_DOOR },
-                { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
+                { id: 68, name: "Loft 1", options: ENG_WOOD_ONLY },
+                { id: 69, name: "Loft 2", options: ENG_WOOD_ONLY },
                 { id: 70, name: "Wall Panneling", options: ENG_WOOD_WALL_PANEL },
                 { id: 71, name: "Wall Panneling With Hidden Door", options: ENG_WOOD_WALL_PANEL }
             ],
@@ -1971,15 +1958,15 @@
                 `;
             }
 
-            body.innerHTML = html;
-
-            // Render tfoot colspan based on role
-            const totalRow = document.querySelector('tfoot tr');
-            totalRow.innerHTML = `
-                <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
-                <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                <td></td>
+            html += `
+                <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
+                    <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
+                    <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
             `;
+
+            body.innerHTML = html;
 
             // Display dynamic specs
             const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -2238,20 +2225,18 @@
                         </thead>
                         <tbody>
                             ${rowsHTML}
-                        </tbody>
-                        <tfoot>
                             <tr style="background: #fdfaf6; font-weight: 700; border-top: 2px solid #b07d2e;">
                                 <td colspan="${showRate ? 7 : 6}" style="padding: 10px; font-size: 0.82rem; text-align: right; color: #1c2820; border: none;">Grand Total (Rooms + Accessories)</td>
                                 <td style="padding: 10px; font-size: 0.85rem; text-align: right; color: #b07d2e; font-weight: 700; border: none;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
-                        </tfoot>
+                        </tbody>
                     </table>
                 </div>
             `;
 
             // Signature area and footer
             let footerHTML = `
-                <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; page-break-inside: avoid; break-inside: avoid;">
                     <div style="width: 45%; font-size: 0.72rem; color: #7a6e61; line-height: 1.4;">
                         <h4 style="color: #1c2820; margin: 0 0 5px 0; font-weight: 600;">Terms & Conditions:</h4>
                         <ol style="margin: 0; padding-left: 12px;">
@@ -2266,7 +2251,7 @@
                         <p style="font-size: 0.62rem; color: #7a6e61; margin: 2px 0 0 0;">Pravin Kitchens &amp; Interiors</p>
                     </div>
                 </div>
-                <div style="margin-top: 40px; border-top: 1px solid #e0d6c8; padding-top: 12px; text-align: center;">
+                <div style="margin-top: 40px; border-top: 1px solid #e0d6c8; padding-top: 12px; text-align: center; page-break-inside: avoid; break-inside: avoid;">
                     <p style="font-size: 0.68rem; color: #7a6e61; margin: 0;">Thank you for your business! Design is not just what it looks like and feels like. Design is how it works.</p>
                 </div>
             `;
@@ -2279,11 +2264,11 @@
             const payFinal = document.getElementById('payFinal').value || '';
 
             let specsAndTermsHTML = `
-                <div style="margin-top: 15px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
+                <div style="margin-top: 15px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4; page-break-inside: avoid; break-inside: avoid;">
                     <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Material Specifications:</strong>
                     <div>${specsText}</div>
                 </div>
-                <div style="margin-top: 12px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
+                <div style="margin-top: 12px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4; page-break-inside: avoid; break-inside: avoid;">
                     <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Payment Terms:</strong>
                     <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #1a1714;">
                         <li><strong>Advance Payment:</strong> ${payAdvance || '—'}</li>
