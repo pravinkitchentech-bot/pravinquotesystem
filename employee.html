@@ -701,7 +701,7 @@
     <div class="print-invoice-header">
         <div class="invoice-left">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <img src="logo.jpg" alt="Pravin Kitchens & Interiors Logo"
+                <img src="logo.png" alt="Pravin Kitchens & Interiors Logo"
                     style="height: 55px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin Kitchens &amp; Interiors</h2>
@@ -760,7 +760,7 @@
     <header>
         <div class="header-inner">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="logo.jpg" alt="Pravin Kitchens &amp; Interiors Logo"
+                <img src="logo.png" alt="Pravin Kitchens &amp; Interiors Logo"
                     style="height: 50px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h1>Pravin Kitchens &amp; Interiors
@@ -1018,7 +1018,7 @@
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
-        const ROOMS = allRooms.filter(r => !(isEconomyMode && r.id === 'study_room'));
+        const ROOMS = allRooms;
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
@@ -1057,7 +1057,7 @@
         ];
         const PARTITION = [
             { label: "WPC", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Plane", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
 
@@ -1139,7 +1139,6 @@
             "Marine Plane": 350,
             "Engineering Wood": 280,
             "Engineering Wood (Box Type)": 280,
-            "Engineering Wood (Door Type)": 280,
             "Engineering Wood (Door Only)": 280,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
@@ -1242,10 +1241,11 @@
                 { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 60, name: "QUATUYAD", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 60, name: "COURTYARD", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION }
             ],
             prayer_unit: [
+                { id: 74, name: "PRAYER UNIT WALL PANEL", options: WALL_PANEL },
                 { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             bedroom: [
@@ -1274,7 +1274,7 @@
             ],
             musical_room: [
                 { id: 80, name: "WALL PANEL", options: WALL_PANEL },
-                { id: 81, name: "WALL PANNELLING TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR }
+                { id: 81, name: "MUSICAL TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             study_room: [
                 { id: 85, name: "BOOK SHELF", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -1299,49 +1299,94 @@
 
         const ENG_WOOD_BOX_DOOR = [
             { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Engineering Wood (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
 
         const ENG_WOOD_ONLY = [
             { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
 
+        const ENG_WOOD_PARTITION = [
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+
+        const ENG_WOOD_WALL_PANEL = [
+            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const ENG_WOOD_BED = [
+            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
-                { id: 101, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR }
+                { id: 1, name: "Kitchen Bottom", options: ENG_WOOD_BOX_DOOR },
+                { id: 2, name: "Kitchen Top Box", options: ENG_WOOD_BOX_DOOR },
+                { id: 3, name: "Kitchen Loft", options: ENG_WOOD_BOX_DOOR },
+                { id: 4, name: "Kitchen – Island Cabin", options: ENG_WOOD_BOX_DOOR },
+                { id: 5, name: "Kitchen – Breakfast Table", options: ENG_WOOD_BOX_DOOR },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: ENG_WOOD_ONLY },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: ENG_WOOD_ONLY },
+                { id: 8, name: "Breakfast Table – Open Box", options: ENG_WOOD_ONLY },
+                { id: 9, name: "Spice Rack", options: ENG_WOOD_ONLY },
+                { id: 10, name: "Ledge", options: ENG_WOOD_ONLY },
+                { id: 11, name: "Kitchen Side Storage Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 12, name: "Kitchen & Dining Partition", options: ENG_WOOD_PARTITION }
             ],
             living_room: [
-                { id: 102, name: "Living", options: ENG_WOOD_ONLY },
-                { id: 103, name: "Kitchen Partition", options: ENG_WOOD_ONLY }
+                { id: 16, name: "Tv Unit – Wall Panelling", options: ENG_WOOD_ONLY },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
+                { id: 20, name: "Living Room Wall Panelling", options: ENG_WOOD_ONLY },
+                { id: 21, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR },
+                { id: 60, name: "COURTYARD", options: ENG_WOOD_BOX_DOOR },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION }
             ],
             prayer_unit: [
-                { id: 104, name: "Prayer Unit Cabinet", options: ENG_WOOD_BOX_DOOR }
+                { id: 74, name: "Prayer Unit Wall Panel", options: ENG_WOOD_ONLY },
+                { id: 75, name: "Prayer Unit Bottom Cabinet", options: ENG_WOOD_BOX_DOOR }
             ],
             bedroom: [
-                { id: 105, name: "Wardrobe", options: ENG_WOOD_BOX_DOOR },
-                { id: 106, name: "Bed", options: ENG_WOOD_ONLY },
-                { id: 107, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
-                { id: 108, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 109, name: "Cupboard", options: ENG_WOOD_BOX_DOOR },
-                { id: 110, name: "Loft", options: ENG_WOOD_BOX_DOOR }
+                { id: 25, name: "Wardrobe", options: ENG_WOOD_BOX_DOOR },
+                { id: 27, name: "Bed back wall paneling with headrest", options: ENG_WOOD_WALL_PANEL },
+                { id: 28, name: "Bed", options: ENG_WOOD_BED },
+                { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
+                { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 32, name: "Tv unit-wall paneling", options: ENG_WOOD_WALL_PANEL },
+                { id: 33, name: "Tv unit-bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: ENG_WOOD_BOX_DOOR },
+                { id: 65, name: "Side Cabinet", options: ENG_WOOD_ONLY },
+                { id: 66, name: "Cupboard 1", options: ENG_WOOD_ONLY },
+                { id: 67, name: "Cupboard 2", options: ENG_WOOD_ONLY },
+                { id: 68, name: "Loft 1", options: ENG_WOOD_BOX_DOOR },
+                { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
+                { id: 70, name: "Wall Panneling", options: ENG_WOOD_WALL_PANEL },
+                { id: 71, name: "Wall Panneling With Hidden Door", options: ENG_WOOD_WALL_PANEL }
             ],
             dining_room: [
-                { id: 117, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 118, name: "Wash basin unit wall paneling", options: ENG_WOOD_ONLY },
-                { id: 119, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
-                { id: 120, name: "Accessories", options: ACCESSORY_OPTS }
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: ENG_WOOD_ONLY },
+                { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
+                { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
-                { id: 111, name: "Table", options: ENG_WOOD_ONLY }
+                { id: 80, name: "Wall Panel", options: ENG_WOOD_ONLY },
+                { id: 81, name: "Musical Table", options: ENG_WOOD_BOX_DOOR }
             ],
-            study_room: [],
+            study_room: [
+                { id: 85, name: "Book Shelf", options: ENG_WOOD_BOX_DOOR },
+                { id: 86, name: "Study Table", options: ENG_WOOD_BOX_DOOR },
+                { id: 87, name: "Study Table Top Box", options: ENG_WOOD_BOX_DOOR },
+                { id: 88, name: "Computer Table", options: ENG_WOOD_BOX_DOOR }
+            ],
             sitout: [
-                { id: 112, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
-                { id: 113, name: "Table", options: ENG_WOOD_ONLY }
+                { id: 46, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
+                { id: 47, name: "Sit out area ceiling", options: ENG_WOOD_ONLY }
             ],
             store_room: [
-                { id: 114, name: "Store Room and Cupboard", options: ENG_WOOD_BOX_DOOR },
-                { id: 115, name: "Table", options: ENG_WOOD_ONLY }
+                { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
             ],
             toilet_area: [
                 { id: 41, name: "Toilet Area Washbasin Cabinet", options: ENG_WOOD_BOX_DOOR }
@@ -2085,7 +2130,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #b07d2e; padding-bottom: 15px; margin-bottom: 25px;">
                     <div style="width: 50%;">
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <img src="logo.jpg" alt="Pravin Kitchens &amp; Interiors Logo" style="height: 48px; border-radius: 6px; object-fit: contain;" onerror="this.style.display='none'">
+                            <img src="logo.png" alt="Pravin Kitchens &amp; Interiors Logo" style="height: 48px; border-radius: 6px; object-fit: contain;" onerror="this.style.display='none'">
                             <div>
                                 <h2 style="color: #b07d2e; margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; font-family: sans-serif;">Pravin Kitchens &amp; Interiors</h2>
                                 <p style="font-weight: 600; font-size: 0.75rem; margin: 2px 0 0 0; color: #7a6e61; text-transform: uppercase; letter-spacing: 0.5px;"></p>
