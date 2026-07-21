@@ -478,6 +478,15 @@
         }
 
         /* Room Selector Tabs */
+        .room-tabs-container-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto 0;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+        }
+
         .room-tabs-container {
             background: rgba(18, 36, 23, 0.45);
             border: 1px solid var(--border);
@@ -487,6 +496,10 @@
             -webkit-backdrop-filter: var(--blur);
             box-shadow: var(--shadow);
             margin-bottom: 0px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .room-tabs-title {
@@ -496,14 +509,20 @@
             color: var(--muted);
             font-weight: 700;
             margin-bottom: 12px;
+            text-align: center;
+            width: 100%;
         }
 
         .room-tabs {
             display: flex;
             gap: 12px;
             overflow-x: auto;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
             padding-bottom: 6px;
             scrollbar-width: thin;
+            width: 100%;
         }
 
         .room-tab {
@@ -517,6 +536,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             white-space: nowrap;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -576,6 +596,46 @@
             margin-left: 4px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        /* Responsive design for tablets / mobile devices */
+        @media (max-width: 992px) {
+            .layout {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .tab-btn {
+                text-align: center;
+                justify-content: center;
+                flex: 1 1 auto;
+                min-width: 140px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            header > div {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .nav-actions {
+                justify-content: center;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -606,7 +666,7 @@
         style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
         <div class="room-tabs-container">
             <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
+                style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; width: 100%;">
                 <div style="display: flex; gap: 14px; align-items: center;">
                     <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 3px;">
