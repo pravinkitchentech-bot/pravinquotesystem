@@ -43,6 +43,12 @@
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
+            animation: fadeInPage 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         body::before {
