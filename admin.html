@@ -47,6 +47,12 @@
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
+            animation: fadeInPage 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* Ambient blurred background accents */
@@ -1326,7 +1332,7 @@
                 { id: 20, name: "Living Room Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 60, name: "QUATUYAD", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Engineering Wood"] }
             ],
             prayer_unit: [
                 { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
