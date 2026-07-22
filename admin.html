@@ -638,6 +638,118 @@
                 width: 100%;
             }
         }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .modal-body input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 6px;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .modal-body input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .modal-btn.cancel:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .modal-btn.confirm {
+            background: var(--accent);
+            color: var(--bg);
+            transition: all 0.3s;
+        }
+
+        .modal-btn.confirm:hover {
+            background: var(--accent-dark);
+        }
     </style>
 </head>
 
@@ -659,6 +771,7 @@
             </div>
         </div>
         <div class="nav-actions">
+            <button class="nav-btn" onclick="openPasscodeModal()">Change Password</button>
             <button class="nav-btn" onclick="location.href='employee.html'">Go to Employee Panel</button>
             <button class="nav-btn" onclick="logout()">Logout</button>
         </div>
@@ -841,8 +954,51 @@
                         <textarea id="materialSpecsInput" rows="6"
                             style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
                     </div>
-                    <div class="action-row">
+                    <div class="action-row" style="margin-bottom: 30px;">
                         <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 30px;">System Security (Passcodes)</h2>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
+                    Change the entry passcodes for the Administrator and Employee portals.
+                </p>
+                <div class="sub-form"
+                    style="background: none; border: none; padding: 0; display: flex; gap: 24px; flex-wrap: wrap;">
+                    <div
+                        style="flex: 1; min-width: 250px; background: rgba(18, 36, 23, 0.3); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+                        <h3
+                            style="font-size: 1rem; color: var(--accent); margin-bottom: 15px; border-bottom: none; padding-bottom: 0;">
+                            Admin Passcode</h3>
+                        <div class="form-group">
+                            <label for="adminNewPass">New Admin Passcode</label>
+                            <input type="password" id="adminNewPass" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminConfirmPass">Confirm Admin Passcode</label>
+                            <input type="password" id="adminConfirmPass" placeholder="••••••••">
+                        </div>
+                        <div class="action-row" style="margin-top: 10px;">
+                            <button class="btn-primary" onclick="changeAdminPasscode()">Update Admin Passcode</button>
+                        </div>
+                    </div>
+                    <div
+                        style="flex: 1; min-width: 250px; background: rgba(18, 36, 23, 0.3); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+                        <h3
+                            style="font-size: 1rem; color: var(--accent); margin-bottom: 15px; border-bottom: none; padding-bottom: 0;">
+                            Employee Passcode</h3>
+                        <div class="form-group">
+                            <label for="employeeNewPass">New Employee Passcode</label>
+                            <input type="password" id="employeeNewPass" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeConfirmPass">Confirm Employee Passcode</label>
+                            <input type="password" id="employeeConfirmPass" placeholder="••••••••">
+                        </div>
+                        <div class="action-row" style="margin-top: 10px;">
+                            <button class="btn-primary" onclick="changeEmployeePasscode()">Update Employee
+                                Passcode</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -943,7 +1099,8 @@
             { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true }
+            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+            { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -1104,6 +1261,9 @@
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 47, name: "Sit out area ceiling", options: ["PVC", "Lamination", "Charcoal", "Wood finishing", "Veneer finishing", "PU Paint"] }
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_LIST }
             ]
         };
 
@@ -1179,6 +1339,9 @@
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 47, name: "Sit out area ceiling", options: ["Engineering Wood"] }
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_LIST }
             ]
         };
 
@@ -1204,7 +1367,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (parsed && typeof parsed === 'object') return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             return {};
         }
@@ -2053,6 +2216,99 @@
             showToast("Settings saved successfully!");
         }
 
+        function changeAdminPasscode() {
+            const newPass = document.getElementById('adminNewPass').value.trim();
+            const confirmPass = document.getElementById('adminConfirmPass').value.trim();
+
+            if (!newPass) {
+                alert("Passcode cannot be empty.");
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert("Passcodes do not match!");
+                return;
+            }
+
+            localStorage.setItem('pks_admin_pass', newPass);
+            document.getElementById('adminNewPass').value = '';
+            document.getElementById('adminConfirmPass').value = '';
+            showToast("Admin passcode updated successfully!");
+        }
+
+        function changeEmployeePasscode() {
+            const newPass = document.getElementById('employeeNewPass').value.trim();
+            const confirmPass = document.getElementById('employeeConfirmPass').value.trim();
+
+            if (!newPass) {
+                alert("Passcode cannot be empty.");
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert("Passcodes do not match!");
+                return;
+            }
+
+            localStorage.setItem('pks_employee_pass', newPass);
+            document.getElementById('employeeNewPass').value = '';
+            document.getElementById('employeeConfirmPass').value = '';
+            showToast("Employee passcode updated successfully!");
+        }
+
+        /* ---------- Passcode Modal Handlers ---------- */
+        function openPasscodeModal() {
+            document.getElementById('passcodeModal').classList.add('active');
+            document.getElementById('modalAdminNewPass').value = '';
+            document.getElementById('modalAdminConfirmPass').value = '';
+            document.getElementById('modalEmployeeNewPass').value = '';
+            document.getElementById('modalEmployeeConfirmPass').value = '';
+        }
+
+        function closePasscodeModal() {
+            document.getElementById('passcodeModal').classList.remove('active');
+        }
+
+        function updateModalAdminPasscode() {
+            const newPass = document.getElementById('modalAdminNewPass').value.trim();
+            const confirmPass = document.getElementById('modalAdminConfirmPass').value.trim();
+
+            if (!newPass) {
+                alert("Passcode cannot be empty.");
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert("Passcodes do not match!");
+                return;
+            }
+
+            localStorage.setItem('pks_admin_pass', newPass);
+            document.getElementById('modalAdminNewPass').value = '';
+            document.getElementById('modalAdminConfirmPass').value = '';
+            showToast("Admin passcode updated successfully!");
+        }
+
+        function updateModalEmployeePasscode() {
+            const newPass = document.getElementById('modalEmployeeNewPass').value.trim();
+            const confirmPass = document.getElementById('modalEmployeeConfirmPass').value.trim();
+
+            if (!newPass) {
+                alert("Passcode cannot be empty.");
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert("Passcodes do not match!");
+                return;
+            }
+
+            localStorage.setItem('pks_employee_pass', newPass);
+            document.getElementById('modalEmployeeNewPass').value = '';
+            document.getElementById('modalEmployeeConfirmPass').value = '';
+            showToast("Employee passcode updated successfully!");
+        }
+
         /* ---------- Initialize View ---------- */
         function renderTabContent(tabId) {
             if (tabId === 'rates') renderRatesTable();
@@ -2074,6 +2330,49 @@
         // Setup dynamic tabs and panels
         updateRoomState(selectedRoom, selectedRoomName);
     </script>
+
+    <!-- Change Passcode Modal -->
+    <div class="modal-overlay" id="passcodeModal">
+        <div class="modal" style="max-width: 450px;">
+            <h3 class="modal-title"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span>System Security (Passcodes)</span>
+                <span onclick="closePasscodeModal()"
+                    style="cursor: pointer; font-size: 1.5rem; color: var(--muted); line-height: 1;">&times;</span>
+            </h3>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px;">
+                <!-- Admin Section -->
+                <div
+                    style="background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);">
+                    <h4 style="margin: 0 0 12px; color: var(--accent); font-size: 0.95rem; font-weight: 600;">Admin
+                        Passcode</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="password" id="modalAdminNewPass" placeholder="New Admin Passcode">
+                        <input type="password" id="modalAdminConfirmPass" placeholder="Confirm Admin Passcode">
+                        <button class="btn-primary" onclick="updateModalAdminPasscode()"
+                            style="padding: 10px; font-size: 0.85rem; width: 100%; border-radius: 6px; margin-top: 4px;">Update
+                            Admin Passcode</button>
+                    </div>
+                </div>
+                <!-- Employee Section -->
+                <div
+                    style="background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);">
+                    <h4 style="margin: 0 0 12px; color: var(--accent); font-size: 0.95rem; font-weight: 600;">Employee
+                        Passcode</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="password" id="modalEmployeeNewPass" placeholder="New Employee Passcode">
+                        <input type="password" id="modalEmployeeConfirmPass" placeholder="Confirm Employee Passcode">
+                        <button class="btn-primary" onclick="updateModalEmployeePasscode()"
+                            style="padding: 10px; font-size: 0.85rem; width: 100%; border-radius: 6px; margin-top: 4px;">Update
+                            Employee Passcode</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closePasscodeModal()">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
