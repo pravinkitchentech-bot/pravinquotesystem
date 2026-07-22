@@ -1011,6 +1011,14 @@
         }
         const showRate = (role === 'admin');
 
+        // Local caching of storage values to optimize dynamic calculations
+        let cachedRoomRates = null;
+        let cachedRates = null;
+        let cachedCustomMaterials = null;
+        let cachedCustomItems = null;
+        let cachedDeletedStandardItems = null;
+        let cachedDeletedStandardMaterials = null;
+
         const allRooms = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
@@ -1193,14 +1201,19 @@
         ];
 
         function getStoredRoomRates() {
+            if (cachedRoomRates !== null) return cachedRoomRates;
             const stored = localStorage.getItem('pks_room_rates');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (parsed && typeof parsed === 'object') return parsed;
+                    if (parsed && typeof parsed === 'object') {
+                        cachedRoomRates = parsed;
+                        return cachedRoomRates;
+                    }
                 } catch (e) { }
             }
-            return {};
+            cachedRoomRates = {};
+            return cachedRoomRates;
         }
 
         function getCleanMaterialName(rawName) {
@@ -1238,35 +1251,44 @@
 
         // Load rates from localStorage or use defaults
         function getRates() {
+            if (cachedRates !== null) return cachedRates;
             const stored = localStorage.getItem('pks_rates');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    cachedRates = JSON.parse(stored);
+                    return cachedRates;
                 } catch (e) { }
             }
-            return DEFAULT_RATES;
+            cachedRates = DEFAULT_RATES;
+            return cachedRates;
         }
 
         // Load custom materials added to standard groups
         function getCustomMaterials() {
+            if (cachedCustomMaterials !== null) return cachedCustomMaterials;
             const stored = localStorage.getItem('pks_custom_materials');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    cachedCustomMaterials = JSON.parse(stored);
+                    return cachedCustomMaterials;
                 } catch (e) { }
             }
-            return {};
+            cachedCustomMaterials = {};
+            return cachedCustomMaterials;
         }
 
         // Load custom item cards
         function getCustomItems() {
+            if (cachedCustomItems !== null) return cachedCustomItems;
             const stored = localStorage.getItem('pks_custom_items');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    cachedCustomItems = JSON.parse(stored);
+                    return cachedCustomItems;
                 } catch (e) { }
             }
-            return [];
+            cachedCustomItems = [];
+            return cachedCustomItems;
         }
 
         // Setup base items list per room
@@ -1460,14 +1482,19 @@
         }
 
         function getDeletedStandardItems() {
+            if (cachedDeletedStandardItems !== null) return cachedDeletedStandardItems;
             const stored = localStorage.getItem('pks_deleted_standard_items');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) return parsed;
+                    if (Array.isArray(parsed)) {
+                        cachedDeletedStandardItems = parsed;
+                        return cachedDeletedStandardItems;
+                    }
                 } catch (e) { }
             }
-            return [];
+            cachedDeletedStandardItems = [];
+            return cachedDeletedStandardItems;
         }
         const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
         const initialRawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
@@ -1475,14 +1502,19 @@
         let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
         function getDeletedStandardMaterials() {
+            if (cachedDeletedStandardMaterials !== null) return cachedDeletedStandardMaterials;
             const stored = localStorage.getItem('pks_deleted_standard_materials');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) return parsed;
+                    if (Array.isArray(parsed)) {
+                        cachedDeletedStandardMaterials = parsed;
+                        return cachedDeletedStandardMaterials;
+                    }
                 } catch (e) { }
             }
-            return [];
+            cachedDeletedStandardMaterials = [];
+            return cachedDeletedStandardMaterials;
         }
 
 
@@ -1651,7 +1683,14 @@
 
         // Listen for admin changes in other tabs/windows
         window.addEventListener('storage', (e) => {
-            if (e.key === 'pks_rates' || e.key === 'pks_custom_materials' || e.key === 'pks_custom_items') {
+            if (e.key === 'pks_room_rates') cachedRoomRates = null;
+            if (e.key === 'pks_rates') cachedRates = null;
+            if (e.key === 'pks_custom_materials') cachedCustomMaterials = null;
+            if (e.key === 'pks_custom_items') cachedCustomItems = null;
+            if (e.key === 'pks_deleted_standard_items') cachedDeletedStandardItems = null;
+            if (e.key === 'pks_deleted_standard_materials') cachedDeletedStandardMaterials = null;
+
+            if (e.key === 'pks_rates' || e.key === 'pks_custom_materials' || e.key === 'pks_custom_items' || e.key === 'pks_deleted_standard_items' || e.key === 'pks_deleted_standard_materials' || e.key === 'pks_room_rates') {
                 ITEMS = getFullItemsList();
                 renderItemsGrid();
             }
