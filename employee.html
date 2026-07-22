@@ -1242,9 +1242,10 @@
                 return roomRatesObj[cleanLabel];
             }
 
-            // 3. Fallback to default rates ONLY (room-isolated)
-            if (DEFAULT_RATES[materialLabel] !== undefined) return DEFAULT_RATES[materialLabel];
-            if (DEFAULT_RATES[cleanLabel] !== undefined) return DEFAULT_RATES[cleanLabel];
+            // 3. Fallback to default rates (customizable)
+            const ratesObj = getRates();
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
