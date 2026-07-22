@@ -890,37 +890,6 @@
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
 
-        // Caching variables for local storage reads to prevent lag
-        let cachedRoomRates = null;
-        let cachedRates = null;
-        let cachedCustomMaterials = null;
-        let cachedCustomItems = null;
-        let cachedDeletedStandardItems = null;
-        let cachedDeletedStandardMaterials = null;
-
-        // Auto-invalidate caches on local storage changes
-        const originalSetItem = localStorage.setItem.bind(localStorage);
-        localStorage.setItem = function(key, value) {
-            if (key === 'pks_room_rates') cachedRoomRates = null;
-            else if (key === 'pks_rates') cachedRates = null;
-            else if (key === 'pks_custom_materials') cachedCustomMaterials = null;
-            else if (key === 'pks_custom_items') cachedCustomItems = null;
-            else if (key === 'pks_deleted_standard_items') cachedDeletedStandardItems = null;
-            else if (key === 'pks_deleted_standard_materials') cachedDeletedStandardMaterials = null;
-            originalSetItem(key, value);
-        };
-
-        const originalRemoveItem = localStorage.removeItem.bind(localStorage);
-        localStorage.removeItem = function(key) {
-            if (key === 'pks_room_rates') cachedRoomRates = null;
-            else if (key === 'pks_rates') cachedRates = null;
-            else if (key === 'pks_custom_materials') cachedCustomMaterials = null;
-            else if (key === 'pks_custom_items') cachedCustomItems = null;
-            else if (key === 'pks_deleted_standard_items') cachedDeletedStandardItems = null;
-            else if (key === 'pks_deleted_standard_materials') cachedDeletedStandardMaterials = null;
-            originalRemoveItem(key);
-        };
-
         const DEFAULT_DIVISIONS = [
             { id: 'marketing', name: 'Marketing', icon: '📈', sub: 'Marketing division quotes', active: true },
             { id: 'showroom', name: 'Showroom', icon: '🏢', sub: 'Showroom display & walk-in quotes', active: true }
@@ -941,36 +910,26 @@
         let divisionsList = getDivisions();
 
         function getDeletedStandardItems() {
-            if (cachedDeletedStandardItems !== null) return cachedDeletedStandardItems;
             const stored = localStorage.getItem('pks_deleted_standard_items');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) {
-                        cachedDeletedStandardItems = parsed;
-                        return cachedDeletedStandardItems;
-                    }
+                    if (Array.isArray(parsed)) return parsed;
                 } catch (e) { }
             }
-            cachedDeletedStandardItems = [];
-            return cachedDeletedStandardItems;
+            return [];
         }
         let deletedStandardItems = getDeletedStandardItems();
 
         function getDeletedStandardMaterials() {
-            if (cachedDeletedStandardMaterials !== null) return cachedDeletedStandardMaterials;
             const stored = localStorage.getItem('pks_deleted_standard_materials');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) {
-                        cachedDeletedStandardMaterials = parsed;
-                        return cachedDeletedStandardMaterials;
-                    }
+                    if (Array.isArray(parsed)) return parsed;
                 } catch (e) { }
             }
-            cachedDeletedStandardMaterials = [];
-            return cachedDeletedStandardMaterials;
+            return [];
         }
         let deletedStandardMaterials = getDeletedStandardMaterials();
 
@@ -1240,19 +1199,14 @@
 
         /* ---------- Data Loaders ---------- */
         function getStoredRoomRates() {
-            if (cachedRoomRates !== null) return cachedRoomRates;
             const stored = localStorage.getItem('pks_room_rates');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (parsed && typeof parsed === 'object') {
-                        cachedRoomRates = parsed;
-                        return cachedRoomRates;
-                    }
+                    if (parsed && typeof parsed === 'object') return parsed;
                 } catch(e) {}
             }
-            cachedRoomRates = {};
-            return cachedRoomRates;
+            return {};
         }
 
         function getCleanMaterialName(rawName) {
@@ -1285,9 +1239,10 @@
                 return roomRatesObj[cleanLabel];
             }
 
-            // 3. Fallback to default rates ONLY (room-isolated, no cross-room bleeding)
-            if (DEFAULT_RATES[materialLabel] !== undefined) return DEFAULT_RATES[materialLabel];
-            if (DEFAULT_RATES[cleanLabel] !== undefined) return DEFAULT_RATES[cleanLabel];
+            // 3. Fallback to default rates (customizable)
+            const ratesObj = getRates();
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
@@ -1341,29 +1296,23 @@
         }
 
         function getRates() {
-            if (cachedRates !== null) return cachedRates;
             const stored = localStorage.getItem('pks_rates');
             if (stored) {
                 try {
-                    cachedRates = JSON.parse(stored);
-                    return cachedRates;
+                    return JSON.parse(stored);
                 } catch (e) { }
             }
-            cachedRates = { ...DEFAULT_RATES };
-            return cachedRates;
+            return { ...DEFAULT_RATES };
         }
 
         function getCustomMaterials() {
-            if (cachedCustomMaterials !== null) return cachedCustomMaterials;
             const stored = localStorage.getItem('pks_custom_materials');
             if (stored) {
                 try {
-                    cachedCustomMaterials = JSON.parse(stored);
-                    return cachedCustomMaterials;
+                    return JSON.parse(stored);
                 } catch (e) { }
             }
-            cachedCustomMaterials = {};
-            return cachedCustomMaterials;
+            return {};
         }
 
         function getCustomItems() {
@@ -1452,7 +1401,6 @@
             });
 
             localStorage.setItem('pks_room_rates', JSON.stringify(allRoomRates));
-            cachedRoomRates = allRoomRates;
 
             showToast(`Rates for ${selectedRoomName} saved successfully!`);
         }
@@ -1467,6 +1415,7 @@
                 localStorage.removeItem('pks_deleted_standard_materials');
                 deletedStandardMaterials = [];
                 localStorage.removeItem('pks_saved_quotes');
+                localStorage.removeItem('pks_room_rates');
 
                 // Set all rates in currentRates to 0
                 currentRates = {};
@@ -1475,13 +1424,7 @@
                 });
                 localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
-                // Reset caches
-                cachedCustomMaterials = {};
-                cachedCustomItems = [];
-                cachedDeletedStandardItems = [];
-                cachedDeletedStandardMaterials = [];
-                cachedRates = currentRates;
-                cachedRoomRates = null;
+
 
                 BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 customMaterials = {};
