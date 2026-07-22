@@ -455,6 +455,9 @@
         if (!localStorage.getItem('pks_admin_pass') || localStorage.getItem('pks_admin_pass') === 'admin123') {
             localStorage.setItem('pks_admin_pass', 'pravin');
         }
+        if (!localStorage.getItem('pks_employee_pass')) {
+            localStorage.setItem('pks_employee_pass', 'a123');
+        }
 
         function openAdminModal() {
             document.getElementById('adminModal').classList.add('active');
@@ -526,7 +529,7 @@
 
         function verifyEmployee() {
             const entered = document.getElementById('employeePass').value;
-            const correct = 'a123';
+            const correct = localStorage.getItem('pks_employee_pass') || 'a123';
 
             if (entered === correct) {
                 sessionStorage.setItem('pks_role', 'employee');
