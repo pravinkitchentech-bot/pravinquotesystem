@@ -499,6 +499,7 @@
                 document.getElementById('modeSelectionModal').style.display = 'flex';
             } else {
                 sessionStorage.setItem('pks_economy_mode', 'false');
+                localStorage.setItem('pks_economy_mode', 'false');
                 proceedSelectDivision(divId, divName);
             }
         }
@@ -506,8 +507,10 @@
         function selectMode(mode) {
             if (mode === 'economy') {
                 sessionStorage.setItem('pks_economy_mode', 'true');
+                localStorage.setItem('pks_economy_mode', 'true');
             } else {
                 sessionStorage.setItem('pks_economy_mode', 'false');
+                localStorage.setItem('pks_economy_mode', 'false');
             }
             closeModeSelectionModal();
             proceedSelectDivision(tempDivId, tempDivName);
@@ -524,6 +527,11 @@
             // Set default room and room name so subsequent pages load correctly
             sessionStorage.setItem('pks_selected_room', 'kitchen');
             sessionStorage.setItem('pks_selected_room_name', 'Kitchen');
+
+            localStorage.setItem('pks_selected_division', divId);
+            localStorage.setItem('pks_selected_division_name', divName);
+            localStorage.setItem('pks_selected_room', 'kitchen');
+            localStorage.setItem('pks_selected_room_name', 'Kitchen');
 
             if (role === 'admin') {
                 location.href = 'admin.html';
