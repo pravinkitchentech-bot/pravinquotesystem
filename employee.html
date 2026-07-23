@@ -1400,18 +1400,18 @@
 
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: ENG_WOOD_BOX_DOOR },
-                { id: 2, name: "Kitchen Top Box", options: ENG_WOOD_BOX_DOOR },
-                { id: 3, name: "Kitchen Loft", options: ENG_WOOD_BOX_DOOR },
-                { id: 4, name: "Kitchen – Island Cabin", options: ENG_WOOD_BOX_DOOR },
-                { id: 5, name: "Kitchen – Breakfast Table", options: ENG_WOOD_BOX_DOOR },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: ENG_WOOD_ONLY },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: ENG_WOOD_ONLY },
-                { id: 8, name: "Breakfast Table – Open Box", options: ENG_WOOD_ONLY },
-                { id: 9, name: "Spice Rack", options: ENG_WOOD_ONLY },
-                { id: 10, name: "Ledge", options: ENG_WOOD_ONLY },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 12, name: "Kitchen & Dining Partition", options: ENG_WOOD_PARTITION }
+                { id: 1, name: "Kitchen Bottom", options: [...KITCHEN_BOTTOM_OPTS, ...ENG_WOOD_BOX_DOOR] },
+                { id: 2, name: "Kitchen Top Box", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 3, name: "Kitchen Loft", options: [...KITCHEN_LOFT_OPTS, ...ENG_WOOD_BOX_DOOR] },
+                { id: 4, name: "Kitchen – Island Cabin", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 5, name: "Kitchen – Breakfast Table", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: [...WALL_PANEL, ...ENG_WOOD_ONLY] },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: [...BEAM, ...ENG_WOOD_ONLY] },
+                { id: 8, name: "Breakfast Table – Open Box", options: [...STD_CABINET, ...ENG_WOOD_ONLY] },
+                { id: 9, name: "Spice Rack", options: [...SPICE, ...ENG_WOOD_ONLY] },
+                { id: 10, name: "Ledge", options: [...LEDGE, ...ENG_WOOD_ONLY] },
+                { id: 11, name: "Kitchen Side Storage Cabinet", options: [...MP_LAM_ACR_WPC_BOX_DOOR, ...ENG_WOOD_BOX_DOOR] },
+                { id: 12, name: "Kitchen & Dining Partition", options: [...PARTITION, ...ENG_WOOD_PARTITION] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ENG_WOOD_ONLY },
