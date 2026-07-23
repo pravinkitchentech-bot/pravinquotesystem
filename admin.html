@@ -51,8 +51,13 @@
         }
 
         @keyframes fadeInPage {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Ambient blurred background accents */
@@ -838,9 +843,12 @@
         }
 
         @keyframes scale {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: none;
             }
+
             50% {
                 transform: scale3d(1.1, 1.1, 1);
             }
@@ -867,8 +875,8 @@
     <div class="security-verified-overlay" id="securityOverlay">
         <div class="verified-card">
             <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
             </svg>
             <div class="verified-text">Security Verified</div>
         </div>
@@ -1161,8 +1169,8 @@
             location.href = 'index.html';
         }
 
-        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
-        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
+        const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
+        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
 
         const DEFAULT_DIVISIONS = [
@@ -1222,8 +1230,8 @@
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
-        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
-        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || localStorage.getItem('pks_selected_room_name') || 'Kitchen';
 
         function logout() {
             sessionStorage.removeItem('pks_admin_auth');
@@ -1476,7 +1484,7 @@
             });
         }
 
-        const isEconomyMode = sessionStorage.getItem('pks_economy_mode') === 'true';
+        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
         let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
 
         /* ---------- Data Loaders ---------- */
@@ -1498,11 +1506,12 @@
 
         function getRoomRatesKey(divId, isEco, roomId) {
             const mode = isEco ? 'economy' : 'premium';
-            return `${divId}_${mode}_${roomId}`;
+            const cleanDivId = (divId || 'marketing').toLowerCase();
+            return `${cleanDivId}_${mode}_${roomId}`;
         }
 
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
-            const divId = divisionId || selectedDivision || 'marketing';
+            const divId = (divisionId || selectedDivision || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
             const room = roomId || selectedRoom || 'kitchen';
 
@@ -1683,6 +1692,17 @@
             });
 
             localStorage.setItem('pks_room_rates', JSON.stringify(allRoomRates));
+
+            // Sync with global fallback rates
+            currentRates = getRates();
+            inputs.forEach(input => {
+                const mat = input.dataset.material;
+                const val = parseFloat(input.value) || 0;
+                currentRates[mat] = val;
+                const clean = getCleanMaterialName(mat);
+                if (clean) currentRates[clean] = val;
+            });
+            localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
             showToast(`Rates for ${selectedRoomName} saved successfully!`);
         }
@@ -2138,6 +2158,8 @@
             selectedRoomName = roomName;
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
+            localStorage.setItem('pks_selected_room', roomId);
+            localStorage.setItem('pks_selected_room_name', roomName);
 
             const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
             BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
