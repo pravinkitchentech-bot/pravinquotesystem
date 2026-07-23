@@ -1149,6 +1149,27 @@
             { label: "PU Paint", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
+        const ENG_WOOD_BOX_DOOR = [
+            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const ENG_WOOD_ONLY = [
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+
+        const ENG_WOOD_PARTITION = [
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+
+        const ENG_WOOD_WALL_PANEL = [
+            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const ENG_WOOD_BED = [
+            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
         // Default Rates lookup (fallback if not in localStorage)
         const DEFAULT_RATES = {
             "Marine Ply – Lamination": 450,
@@ -1321,7 +1342,6 @@
                 { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 60, name: "COURTYARD", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION }
             ],
             prayer_unit: [
@@ -1377,27 +1397,6 @@
             ]
         };
 
-        const ENG_WOOD_BOX_DOOR = [
-            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
-        ];
-
-        const ENG_WOOD_ONLY = [
-            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
-        ];
-
-        const ENG_WOOD_PARTITION = [
-            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
-        ];
-
-        const ENG_WOOD_WALL_PANEL = [
-            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
-        ];
-
-        const ENG_WOOD_BED = [
-            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
-        ];
-
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
                 { id: 1, name: "Kitchen Bottom", options: [...KITCHEN_BOTTOM_OPTS, ...ENG_WOOD_BOX_DOOR] },
@@ -1414,18 +1413,17 @@
                 { id: 12, name: "Kitchen & Dining Partition", options: [...PARTITION, ...ENG_WOOD_PARTITION] }
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: ENG_WOOD_ONLY },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
-                { id: 20, name: "Living Room Wall Panelling", options: ENG_WOOD_ONLY },
+                { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR },
-                { id: 60, name: "COURTYARD", options: ENG_WOOD_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION }
             ],
             prayer_unit: [
-                { id: 74, name: "Prayer Unit Wall Panel", options: ENG_WOOD_ONLY },
-                { id: 75, name: "Prayer Unit Bottom Cabinet", options: ENG_WOOD_BOX_DOOR }
+                { id: 74, name: "Prayer Unit Wall Panel", options: WALL_PANEL },
+                { id: 75, name: "Prayer Unit Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
