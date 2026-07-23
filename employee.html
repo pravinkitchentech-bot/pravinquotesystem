@@ -1004,9 +1004,9 @@
     </div>
 
     <script>
-        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
-        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
-        const isEconomyMode = sessionStorage.getItem('pks_economy_mode') === 'true';
+        const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
+        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
+        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
         // Render division badge in header
         document.getElementById('divisionBadge').textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
@@ -1041,8 +1041,8 @@
 
         const ROOMS = allRooms;
 
-        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
-        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || localStorage.getItem('pks_selected_room_name') || 'Kitchen';
 
         let FIELD_LABELS = {
             L: "Length (in)",
@@ -1228,7 +1228,7 @@
         }
 
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
-            const divId = divisionId || sessionStorage.getItem('pks_selected_division') || 'marketing';
+            const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
             const room = roomId || selectedRoom || 'kitchen';
 
@@ -1616,6 +1616,8 @@
             selectedRoomName = roomName;
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
+            localStorage.setItem('pks_selected_room', roomId);
+            localStorage.setItem('pks_selected_room_name', roomName);
 
             const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
             const rawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
@@ -1786,7 +1788,7 @@
             const opt = item.options[optIdx];
             const sizeArea = document.getElementById(`${buildId}-sizeArea`);
 
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
 
             const fieldsHtml = opt.fields.map(f => `
                 <div class="field">
@@ -1841,7 +1843,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
             }
 
             let sqft = 0;
@@ -1901,7 +1903,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
             }
 
             let sqft = 0;
