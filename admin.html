@@ -2769,7 +2769,7 @@
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
-                { text: "outer Finish: Customer Choice Laminates", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
@@ -2798,8 +2798,8 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM'))) {
+                        // Reset if it contains any of the third image details or old spelling Choice
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice'))) {
                             needsReset = true;
                         }
                     } else {
