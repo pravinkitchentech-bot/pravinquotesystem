@@ -2099,7 +2099,17 @@
             if (isAcrylicBox || isWpcLamBox) {
                 filtered = filtered.map(text => {
                     if (text.toLowerCase().startsWith('outer finish:')) {
-                 if (itemName) {
+                        return text.replace(/outer\s+finish:/i, 'Finish:');
+                    }
+                    return text;
+                });
+            }
+
+            if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('lamination')) {
+                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
+            }
+
+            if (itemName) {
                 const lowerItem = itemName.toLowerCase();
                 
                 // Specific override for TV Unit Side Show Wall Cabinet: remove inner finish, rename outer finish to Finish
