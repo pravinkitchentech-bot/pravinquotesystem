@@ -2776,6 +2776,7 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
                 { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
@@ -2804,12 +2805,16 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination
+                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination or misses Acrylic Inner Finish
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam) {
+                        const hasAcrylicInner = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat.includes('acrylic') && (item.text || '').includes('Inner Finish');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasAcrylicInner) {
                             needsReset = true;
                         }
                     } else {
