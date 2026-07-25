@@ -1175,6 +1175,15 @@
             { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
+        const MP_LAM_ACR_WPC_BOX_ONLY = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+        ];
+        const ENG_WOOD_BOX_ONLY = [
+            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
         const KITCHEN_SIDE_STORAGE_OPTS = [
             {
                 label: "Marine Ply – Lamination (Box Type)",
@@ -1608,7 +1617,7 @@
             ],
             musical_room: [
                 { id: 80, name: "WALL PANEL", options: WALL_PANEL },
-                { id: 81, name: "MUSICAL TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR }
+                { id: 81, name: "MUSICAL TABLE", options: MP_LAM_ACR_WPC_BOX_ONLY }
             ],
             study_room: [
                 { id: 85, name: "BOOK SHELF", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -1686,7 +1695,7 @@
             ],
             musical_room: [
                 { id: 80, name: "Wall Panel", options: ENG_WOOD_ONLY },
-                { id: 81, name: "Musical Table", options: ENG_WOOD_BOX_DOOR }
+                { id: 81, name: "Musical Table", options: ENG_WOOD_BOX_ONLY }
             ],
             study_room: [
                 { id: 85, name: "Book Shelf", options: ENG_WOOD_BOX_DOOR },
@@ -3352,16 +3361,14 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
-                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
+                { text: "Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
-                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
                 // WPC specifications
@@ -3373,8 +3380,7 @@
                 // WPC Lamination specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
-                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
+                { text: "Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
                 // PVC, Charcoal, Wood
@@ -3389,16 +3395,13 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination or misses Acrylic Inner Finish
+                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or has old 'outer Finish' format
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
-                        const hasAcrylicInner = parsed.some(item => {
-                            const mat = (item.material || '').toLowerCase();
-                            return mat.includes('acrylic') && (item.text || '').includes('Inner Finish');
-                        });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasAcrylicInner) {
+                        const hasOuterFinish = parsed.some(item => (item.text || '').toLowerCase().includes('outer finish'));
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || hasOuterFinish) {
                             needsReset = true;
                         }
                     } else {
