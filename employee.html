@@ -2007,7 +2007,7 @@
             }
         }
 
-        function getMatchingSpecifications(roomId, materialLabel) {
+        function getMatchingSpecifications(roomId, materialLabel, itemName) {
             const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
             const specsTextRaw = localStorage.getItem('pks_material_specs') || defaultSpecs;
             let specsList = [];
@@ -2031,11 +2031,47 @@
             }
 
             const cleanMaterial = (materialLabel || '').toLowerCase();
-            return specsList.filter(spec => {
+            let filtered = specsList.filter(spec => {
                 const roomMatch = (spec.room === 'all' || spec.room === roomId);
                 const materialMatch = (spec.material === 'all' || cleanMaterial.includes(spec.material.toLowerCase()));
                 return roomMatch && materialMatch;
             }).map(spec => spec.text);
+
+            if (itemName) {
+                const lowerItem = itemName.toLowerCase();
+                
+                // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings: remove backpanel
+                if (
+                    lowerItem.includes('partition') || 
+                    lowerItem.includes('overhead') || 
+                    lowerItem.includes('loft') || 
+                    lowerItem.includes('island') || 
+                    lowerItem.includes('breakfast') || 
+                    lowerItem.includes('panel') || 
+                    lowerItem.includes('covering') || 
+                    lowerItem.includes('ledge') ||
+                    lowerItem.includes('spice')
+                ) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
+                }
+
+                // 2. Wall panelling, beam coverings, ledges, open boxes: remove Inner Finish and Hinges
+                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge') || lowerItem.includes('open box') || lowerItem.includes('openbox')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish') && !text.toLowerCase().includes('hinges'));
+                }
+
+                // 3. Rename "outer Finish" to "Finish" for panels, coverings, ledges, open boxes
+                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge') || lowerItem.includes('open box') || lowerItem.includes('openbox')) {
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().startsWith('outer finish:')) {
+                            return text.replace(/outer\s+finish:/i, 'Finish:');
+                        }
+                        return text;
+                    });
+                }
+            }
+
+            return filtered;
         }
 
         function openSizePanel(buildId, itemId, optIdx) {
@@ -2045,7 +2081,7 @@
 
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label);
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -2221,7 +2257,7 @@
                 }
             }
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label);
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -2259,7 +2295,7 @@
                 rate = sqft > 0 ? amount / sqft : 0;
             }
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, desc);
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, desc, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -3174,7 +3210,7 @@
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
-                { text: "outer Finish: Customer Choice Laminates", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
@@ -3203,8 +3239,8 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM'))) {
+                        // Reset if it contains any of the third image details or old spelling Choice
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice'))) {
                             needsReset = true;
                         }
                     } else {
