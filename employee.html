@@ -2037,10 +2037,25 @@
                 }));
             }
 
-            const cleanMaterial = (materialLabel || '').toLowerCase();
+            const cleanMaterial = (materialLabel || '').toLowerCase().replace(/–/g, '-');
             let filtered = specsList.filter(spec => {
                 const roomMatch = (spec.room === 'all' || spec.room === roomId);
-                const materialMatch = (spec.material === 'all' || cleanMaterial.includes(spec.material.toLowerCase()));
+                const specMat = spec.material.toLowerCase().replace(/–/g, '-');
+                
+                let materialMatch = false;
+                if (specMat === 'all') {
+                    materialMatch = true;
+                } else if (cleanMaterial === specMat) {
+                    materialMatch = true;
+                } else if (cleanMaterial.includes(specMat)) {
+                    if (specMat === 'lamination' && cleanMaterial.includes('wpc')) {
+                        materialMatch = false;
+                    } else if (specMat === 'wpc' && cleanMaterial.includes('lamination')) {
+                        materialMatch = false;
+                    } else {
+                        materialMatch = true;
+                    }
+                }
                 return roomMatch && materialMatch;
             }).map(spec => spec.text);
 
@@ -2088,8 +2103,15 @@
                     filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish') && !text.toLowerCase().includes('hinges'));
                 }
 
-                // 3. Rename "outer Finish" to "Finish" for panels, coverings, ledges, open boxes
-                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge') || lowerItem.includes('open box') || lowerItem.includes('openbox')) {
+                // 3. Rename "outer Finish" to "Finish" for panels, coverings, ledges, open boxes, partitions
+                if (
+                    lowerItem.includes('panel') || 
+                    lowerItem.includes('covering') || 
+                    lowerItem.includes('ledge') || 
+                    lowerItem.includes('open box') || 
+                    lowerItem.includes('openbox') ||
+                    lowerItem.includes('partition')
+                ) {
                     filtered = filtered.map(text => {
                         if (text.toLowerCase().startsWith('outer finish:')) {
                             return text.replace(/outer\s+finish:/i, 'Finish:');
@@ -2098,15 +2120,9 @@
                     });
                 }
 
-                // 4. Partitions: remove Inner Finish, rename outer Finish to Inner/Outer Finish
+                // 4. Partitions: remove Inner Finish
                 if (lowerItem.includes('partition')) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
-                    filtered = filtered.map(text => {
-                        if (text.toLowerCase().startsWith('outer finish:')) {
-                            return text.replace(/outer\s+finish:/i, 'Inner/Outer Finish:');
-                        }
-                        return text;
-                    });
                 }
 
                 // 5. Staircase Bottom: replace soft closing hinges with non-soft closing hinges at the end
