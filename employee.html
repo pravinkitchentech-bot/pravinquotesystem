@@ -2070,8 +2070,11 @@
             const isBayWindow = itemName && itemName.toLowerCase().includes('bay window');
             const isDressing = itemName && itemName.toLowerCase().includes('dressing');
             const isTvBottom = itemName && itemName.toLowerCase().includes('tv unit') && itemName.toLowerCase().includes('bottom');
+            const isMusical = itemName && itemName.toLowerCase().includes('musical');
+            const isWashBasin = itemName && itemName.toLowerCase().includes('basin');
+            const isCrockery = itemName && itemName.toLowerCase().includes('crockery');
             const isWpcLamDoor = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
-            const isBypassInnerOuterFilter = (roomId === 'prayer_unit' || isWardrobeLike || isBayWindow || isDressing || isTvBottom || isWpcLamDoor);
+            const isBypassInnerOuterFilter = (roomId === 'prayer_unit' || isWardrobeLike || isBayWindow || isDressing || isTvBottom || isMusical || isWashBasin || isCrockery || isWpcLamDoor);
 
             // Material-specific filters
             // Remove inner finish for Acrylic (except in prayer unit, wardrobe/loft, etc.)
@@ -2118,6 +2121,27 @@
                     filtered = filtered.map(text => {
                         if (text.toLowerCase().startsWith('outer finish:')) {
                             return text.replace(/outer\s+finish:/i, 'Finish:');
+                        }
+                        return text;
+                    });
+                }
+
+                // Specific override for Wash Basin Bottom unit: remove brand
+                if (lowerItem.includes('basin')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('brand:'));
+                }
+
+                // Specific override for Crockery Unit: append / Glass to outer finish/Finish
+                if (lowerItem.includes('crockery')) {
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().includes('laminates') && !text.toLowerCase().includes('/ glass') && !text.toLowerCase().includes('/glass')) {
+                            return text.replace(/Customer Choose Laminates/i, 'Customer Choose Laminates / Glass');
+                        }
+                        if (text.toLowerCase().includes('german acrylic') && !text.toLowerCase().includes('/ glass') && !text.toLowerCase().includes('/glass')) {
+                            return text.replace(/German Acrylic/i, 'German Acrylic / Glass');
+                        }
+                        if (text.toLowerCase().includes('freelam') && !text.toLowerCase().includes('/ glass') && !text.toLowerCase().includes('/glass')) {
+                            return text.replace(/Freelam/i, 'Freelam / Glass');
                         }
                         return text;
                     });
