@@ -1149,13 +1149,18 @@
             {
                 label: "Marine Ply – Lamination",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Finish: Customer Choice Laminates"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Finish: Customer Choose Laminates"
             },
             {
                 label: "Marine Ply – Acrylic",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Finish: German Acrylic"
             },
+            {
+                label: "WPC – Lamination",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choose Laminates"
+            }
         ];
 
 
@@ -1167,6 +1172,8 @@
             { label: "Marine Ply – Acrylic (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const KITCHEN_SIDE_STORAGE_OPTS = [
             {
@@ -1565,7 +1572,7 @@
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
                 { id: 17, name: "Tv Unit – Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 19, name: "Living & Dining Room Partition", options: PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION }
@@ -2037,10 +2044,27 @@
                 return roomMatch && materialMatch;
             }).map(spec => spec.text);
 
+            // Material-specific filters
+            if (cleanMaterial.includes('acrylic')) {
+                filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
+            }
+            if (cleanMaterial.includes('door') || cleanMaterial.includes('only')) {
+                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel') && !text.toLowerCase().includes('inner finish'));
+                filtered = filtered.map(text => {
+                    if (text.toLowerCase().startsWith('outer finish:')) {
+                        return text.replace(/outer\s+finish:/i, 'Finish:');
+                    }
+                    return text;
+                });
+            }
+            if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('lamination')) {
+                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
+            }
+
             if (itemName) {
                 const lowerItem = itemName.toLowerCase();
                 
-                // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings: remove backpanel
+                // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings, tv bottom, tv side show, staircase bottom: remove backpanel
                 if (
                     lowerItem.includes('partition') || 
                     lowerItem.includes('overhead') || 
@@ -2050,7 +2074,11 @@
                     lowerItem.includes('panel') || 
                     lowerItem.includes('covering') || 
                     lowerItem.includes('ledge') ||
-                    lowerItem.includes('spice')
+                    lowerItem.includes('spice') ||
+                    lowerItem.includes('tv unit – bottom cabinet') ||
+                    lowerItem.includes('tv unit-bottom cabinet') ||
+                    lowerItem.includes('side show wall cabinet') ||
+                    lowerItem.includes('staircase bottom')
                 ) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
                 }
@@ -2068,6 +2096,23 @@
                         }
                         return text;
                     });
+                }
+
+                // 4. Partitions: remove Inner Finish, rename outer Finish to Inner/Outer Finish
+                if (lowerItem.includes('partition')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().startsWith('outer finish:')) {
+                            return text.replace(/outer\s+finish:/i, 'Inner/Outer Finish:');
+                        }
+                        return text;
+                    });
+                }
+
+                // 5. Staircase Bottom: replace soft closing hinges with non-soft closing hinges at the end
+                if (lowerItem.includes('staircase bottom')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('soft closing hinges') && !text.toLowerCase().includes('hinges:'));
+                    filtered.push("Hinges: Sleek / Hettich (Not Soft Closing)");
                 }
             }
 
@@ -3217,7 +3262,6 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
                 { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
@@ -3226,6 +3270,13 @@
                 { text: "Back Panel: WPC", room: "all", material: "wpc" },
                 { text: "Finish: Freelam", room: "all", material: "wpc" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc" },
+
+                // WPC Lamination specifications
+                { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
+                { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
+                { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
                 // PVC, Charcoal, Wood
                 { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
@@ -3239,8 +3290,12 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details or old spelling Choice
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice'))) {
+                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination
+                        const hasWpcLam = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat.includes('wpc') && mat.includes('lamination');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam) {
                             needsReset = true;
                         }
                     } else {
