@@ -1075,16 +1075,69 @@
                     Define the default list of materials / descriptions that will be printed in the quote summary after
                     the total.
                 </p>
-                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                <div class="sub-form" style="background: none; border: none; padding: 0; display: none;">
                     <div class="form-group">
-                        <label for="materialSpecsInput">Material Specifications Text</label>
-                        <textarea id="materialSpecsInput" rows="6"
+                        <label for="materialSpecsInput">Material Specifications Text (Comma-separated)</label>
+                        <textarea id="materialSpecsInput" rows="6" oninput="renderSpecsList()"
                             style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
                     </div>
-                    <div class="action-row" style="margin-bottom: 30px;">
+                    <div class="action-row" style="margin-bottom: 20px;">
                         <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
                     </div>
                 </div>
+
+                <div class="sub-form" style="background: rgba(18, 36, 23, 0.3); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius); margin-bottom: 30px;">
+                    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
+                        Add a new specification and assign it to a specific room or material (optional). You can also edit or delete current specifications.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="newSpecInput" style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Specification Text</label>
+                            <input type="text" id="newSpecInput" placeholder="e.g. BRAND HETTICH SOFT CLOSING" style="padding: 12px; border-radius: 10px; background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); font-family: var(--sans); width: 100%;">
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 180px; margin-bottom: 0;">
+                                <label for="newSpecRoom" style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Specific Room</label>
+                                <select id="newSpecRoom" onchange="updateSpecMaterialsDropdown()" style="padding: 12px; border-radius: 10px; background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); font-family: var(--sans); width: 100%;">
+                                    <option value="all">Global (All Rooms)</option>
+                                    <option value="kitchen">Kitchen</option>
+                                    <option value="living_room">Living Room</option>
+                                    <option value="prayer_unit">Prayer Unit</option>
+                                    <option value="bedroom">Bedroom</option>
+                                    <option value="dining_room">Dining Room</option>
+                                    <option value="musical_room">Musical Room</option>
+                                    <option value="study_room">Study Room</option>
+                                    <option value="toilet_area">Toilet Area</option>
+                                    <option value="store_room">Store Room</option>
+                                    <option value="sitout">Sitout</option>
+                                    <option value="accessories">Accessories</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 180px; margin-bottom: 0;">
+                                <label for="newSpecMaterial" style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Specific Material</label>
+                                <select id="newSpecMaterial" style="padding: 12px; border-radius: 10px; background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); font-family: var(--sans); width: 100%;">
+                                    <option value="all">Global (All Materials)</option>
+                                    <option value="lamination">Lamination</option>
+                                    <option value="acrylic">Acrylic</option>
+                                    <option value="wpc">WPC</option>
+                                    <option value="engineering wood">Engineering Wood</option>
+                                    <option value="pvc">PVC</option>
+                                    <option value="charcoal">Charcoal</option>
+                                    <option value="veneer">Veneer</option>
+                                    <option value="pu paint">PU Paint</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="action-row" style="margin-top: 5px; display: flex; justify-content: flex-end;">
+                            <button class="btn-primary" onclick="addSpecificationOption()" style="padding: 10px 24px; border-radius: 30px; white-space: nowrap;">Add Option</button>
+                        </div>
+                    </div>
+                    <div id="specsListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px; margin-top: 20px;">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+
 
                 <h2 style="margin-top: 30px;">System Security (Passcodes)</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
@@ -1319,18 +1372,18 @@
 
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
-                { id: 4, name: "Kitchen – Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 5, name: "Kitchen – Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
+                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination"] },
                 { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -1396,18 +1449,18 @@
 
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 4, name: "Kitchen – Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 5, name: "Kitchen – Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: ["PVC", "Lamination", "Charcoal", "Engineering Wood"] },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination", "Engineering Wood"] },
                 { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "Engineering Wood"] },
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "Engineering Wood"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "Engineering Wood"] },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -2351,10 +2404,250 @@
         }
 
         function saveSettings() {
-            const specs = document.getElementById('materialSpecsInput').value.trim().toUpperCase();
+            const specs = document.getElementById('materialSpecsInput').value.trim();
             localStorage.setItem('pks_material_specs', specs);
+            renderSpecsList();
             showToast("Settings saved successfully!");
         }
+
+        function getRoomLabel(roomKey) {
+            const map = {
+                kitchen: "Kitchen",
+                living_room: "Living Room",
+                prayer_unit: "Prayer Unit",
+                bedroom: "Bedroom",
+                dining_room: "Dining Room",
+                musical_room: "Musical Room",
+                study_room: "Study Room",
+                toilet_area: "Toilet Area",
+                store_room: "Store Room",
+                sitout: "Sitout",
+                accessories: "Accessories"
+            };
+            return map[roomKey] || roomKey;
+        }
+
+        function updateSpecMaterialsDropdown() {
+            const roomVal = document.getElementById('newSpecRoom').value;
+            const matSelect = document.getElementById('newSpecMaterial');
+            if (!matSelect) return;
+
+            const prevSelected = matSelect.value;
+            matSelect.innerHTML = '';
+
+            const allOpt = document.createElement('option');
+            allOpt.value = 'all';
+            allOpt.textContent = 'Global (All Materials)';
+            matSelect.appendChild(allOpt);
+
+            if (roomVal === 'all') {
+                const generalMats = [
+                    { value: 'lamination', label: 'Lamination' },
+                    { value: 'acrylic', label: 'Acrylic' },
+                    { value: 'wpc', label: 'WPC' },
+                    { value: 'engineering wood', label: 'Engineering Wood' },
+                    { value: 'pvc', label: 'PVC' },
+                    { value: 'charcoal', label: 'Charcoal' },
+                    { value: 'veneer', label: 'Veneer' },
+                    { value: 'pu paint', label: 'PU Paint' }
+                ];
+                generalMats.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.value;
+                    opt.textContent = m.label;
+                    matSelect.appendChild(opt);
+                });
+            } else {
+                const roomMats = getRoomMaterials(roomVal);
+                roomMats.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.toLowerCase();
+                    opt.textContent = m;
+                    matSelect.appendChild(opt);
+                });
+            }
+
+            if (Array.from(matSelect.options).some(o => o.value === prevSelected)) {
+                matSelect.value = prevSelected;
+            } else {
+                matSelect.value = 'all';
+            }
+        }
+
+        function parseMaterialSpecs(rawText) {
+            if (!rawText) return [];
+            try {
+                const parsed = JSON.parse(rawText);
+                if (Array.isArray(parsed)) {
+                    return parsed.map(item => ({
+                        text: item.text || item.TEXT || '',
+                        room: item.room || item.ROOM || 'all',
+                        material: item.material || item.MATERIAL || 'all'
+                    }));
+                }
+            } catch (e) {}
+            // Backwards compatibility: comma separated string
+            return rawText.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
+                text: s,
+                room: 'all',
+                material: 'all'
+            }));
+        }
+
+        function renderSpecsList() {
+            const container = document.getElementById('specsListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const rawText = document.getElementById('materialSpecsInput').value || '';
+            const specs = parseMaterialSpecs(rawText);
+
+            if (specs.length === 0) {
+                container.innerHTML = '<div style="font-style: italic; color: var(--muted); font-size: 0.9rem; padding: 10px 0;">No specifications defined.</div>';
+                return;
+            }
+
+            specs.forEach((specObj, index) => {
+                const text = specObj.text || '';
+                const roomVal = specObj.room || 'all';
+                const matVal = specObj.material || 'all';
+
+                let badgeHtml = '';
+                if (roomVal === 'all' && matVal === 'all') {
+                    badgeHtml += `<span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.1);">Global</span>`;
+                } else {
+                    if (roomVal !== 'all') {
+                        const roomLabel = getRoomLabel(roomVal);
+                        badgeHtml += `<span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.1); color: var(--accent); border: 1px solid rgba(61, 187, 110, 0.2);">Room: ${roomLabel}</span>`;
+                    }
+                    if (matVal !== 'all') {
+                        badgeHtml += `<span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2);">Material: ${matVal.toUpperCase()}</span>`;
+                    }
+                }
+
+                const div = document.createElement('div');
+                div.className = 'item-manage-card';
+                div.style.display = 'flex';
+                div.style.justify = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.padding = '12px 18px';
+                div.style.marginBottom = '10px';
+                div.style.background = 'rgba(18, 36, 23, 0.2)';
+                div.style.border = '1px solid var(--border)';
+                div.style.borderRadius = '10px';
+
+                div.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 4px; word-break: break-all; margin-right: 15px;">
+                        <span style="font-size: 0.95rem; font-weight: 500; color: var(--text);">${index + 1}. ${text}</span>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            ${badgeHtml}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-shrink: 0;">
+                        <button class="rename-btn" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--accent); color: var(--accent); transition: all 0.2s;" onclick="renameSpecOption(${index})">Rename</button>
+                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onclick="deleteSpecOption(${index})">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addSpecificationOption() {
+            const input = document.getElementById('newSpecInput');
+            const newText = input.value.trim().toUpperCase();
+            if (!newText) {
+                alert("Please enter specification text.");
+                return;
+            }
+
+            const roomVal = document.getElementById('newSpecRoom').value;
+            const matVal = document.getElementById('newSpecMaterial').value;
+
+            const rawText = document.getElementById('materialSpecsInput').value || '';
+            const specs = parseMaterialSpecs(rawText);
+
+            const exists = specs.some(s => s.text === newText && s.room === roomVal && s.material === matVal);
+            if (exists) {
+                alert("This specification already exists under these conditions.");
+                return;
+            }
+
+            specs.push({
+                text: newText,
+                room: roomVal,
+                material: matVal
+            });
+
+            const updatedText = JSON.stringify(specs);
+            document.getElementById('materialSpecsInput').value = updatedText;
+            localStorage.setItem('pks_material_specs', updatedText);
+
+            input.value = '';
+            document.getElementById('newSpecRoom').value = 'all';
+            document.getElementById('newSpecMaterial').value = 'all';
+
+            renderSpecsList();
+            showToast("Specification added successfully!");
+        }
+
+        function renameSpecOption(index) {
+            const rawText = document.getElementById('materialSpecsInput').value || '';
+            const specs = parseMaterialSpecs(rawText);
+
+            if (index < 0 || index >= specs.length) return;
+
+            const oldSpec = specs[index];
+            const newText = prompt(`Rename specification text "${oldSpec.text}" to:`, oldSpec.text);
+            if (!newText) return;
+
+            const cleanText = newText.trim().toUpperCase();
+            if (!cleanText) {
+                alert("Specification text cannot be empty.");
+                return;
+            }
+
+            specs[index].text = cleanText;
+
+            const editRoom = confirm(`Keep specific room condition (${oldSpec.room === 'all' ? 'Global' : getRoomLabel(oldSpec.room)})?`);
+            if (!editRoom) {
+                const newRoom = prompt(`Enter new Room ID (kitchen, bedroom, living_room, prayer_unit, dining_room, study_room, toilet_area, store_room, sitout, accessories, or 'all'):`, oldSpec.room);
+                if (newRoom !== null) specs[index].room = newRoom.trim().toLowerCase() || 'all';
+            }
+
+            const editMat = confirm(`Keep specific material condition (${oldSpec.material === 'all' ? 'Global' : oldSpec.material})?`);
+            if (!editMat) {
+                const newMat = prompt(`Enter new material keyword (lamination, acrylic, wpc, engineering wood, pvc, charcoal, veneer, pu paint, or 'all'):`, oldSpec.material);
+                if (newMat !== null) specs[index].material = newMat.trim().toLowerCase() || 'all';
+            }
+
+            const updatedText = JSON.stringify(specs);
+            document.getElementById('materialSpecsInput').value = updatedText;
+            localStorage.setItem('pks_material_specs', updatedText);
+
+            renderSpecsList();
+            showToast("Specification updated successfully!");
+        }
+
+        function deleteSpecOption(index) {
+            const rawText = document.getElementById('materialSpecsInput').value || '';
+            const specs = parseMaterialSpecs(rawText);
+
+            if (index < 0 || index >= specs.length) return;
+
+            const targetSpec = specs[index];
+            if (!confirm(`Are you sure you want to delete the specification: "${targetSpec.text}"?`)) {
+                return;
+            }
+
+            specs.splice(index, 1);
+            const updatedText = JSON.stringify(specs);
+            document.getElementById('materialSpecsInput').value = updatedText;
+            localStorage.setItem('pks_material_specs', updatedText);
+
+            renderSpecsList();
+            showToast("Specification deleted successfully!");
+        }
+
 
         function changeAdminPasscode() {
             const newPass = document.getElementById('adminNewPass').value.trim();
@@ -2460,10 +2753,103 @@
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
             } else if (tabId === 'settings') {
-                const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-                document.getElementById('materialSpecsInput').value = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
+                document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || '';
+                renderSpecsList();
+                updateSpecMaterialsDropdown();
             } else if (tabId === 'quotes-folder') {
                 renderAdminQuotes();
+            }
+        }
+
+        function initializeDefaultSpecsIfNeeded() {
+            const current = localStorage.getItem('pks_material_specs');
+            const defaultSpecsList = [
+                // Lamination specifications
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
+                { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choice Laminates", room: "all", material: "lamination" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
+
+                // Acrylic specifications
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
+                { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
+                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
+
+                // WPC specifications
+                { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc" },
+                { text: "Back Panel: WPC", room: "all", material: "wpc" },
+                { text: "Finish: Freelam", room: "all", material: "wpc" },
+                { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc" },
+
+                // PVC, Charcoal, Wood
+                { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
+                { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
+                { text: "Engineering Wood – 18mm Thickness", room: "all", material: "engineering wood" },
+                { text: "Finish: Pre-laminated", room: "all", material: "engineering wood" }
+            ];
+
+            let needsReset = !current;
+            if (current) {
+                try {
+                    const parsed = JSON.parse(current);
+                    if (Array.isArray(parsed)) {
+                        // Reset if it contains any of the third image details
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM'))) {
+                            needsReset = true;
+                        }
+                    } else {
+                        needsReset = true;
+                    }
+                } catch(e) {
+                    needsReset = true;
+                }
+            }
+
+            if (needsReset) {
+                localStorage.setItem('pks_material_specs', JSON.stringify(defaultSpecsList));
+            } else {
+                try {
+                    let parsed = JSON.parse(current);
+                    if (!Array.isArray(parsed)) {
+                        parsed = [];
+                    }
+                    
+                    defaultSpecsList.forEach(item => {
+                        const exists = parsed.some(p => 
+                            (p.text || '').toUpperCase() === item.text.toUpperCase() && 
+                            (p.room || 'all').toLowerCase() === item.room.toLowerCase() && 
+                            (p.material || 'all').toLowerCase() === item.material.toLowerCase()
+                        );
+                        if (!exists) {
+                            parsed.push(item);
+                        }
+                    });
+                    
+                    localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
+                } catch(e) {
+                    let parsed = current.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
+                        text: s,
+                        room: 'all',
+                        material: 'all'
+                    }));
+                    
+                    defaultSpecsList.forEach(item => {
+                        const exists = parsed.some(p => 
+                            (p.text || '').toUpperCase() === item.text.toUpperCase() && 
+                            (p.room || 'all').toLowerCase() === item.room.toLowerCase() && 
+                            (p.material || 'all').toLowerCase() === item.material.toLowerCase()
+                        );
+                        if (!exists) {
+                            parsed.push(item);
+                        }
+                    });
+                    localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
+                }
             }
         }
 
@@ -2471,6 +2857,7 @@
         updateRoomState(selectedRoom, selectedRoomName);
 
         window.addEventListener('DOMContentLoaded', () => {
+            initializeDefaultSpecsIfNeeded();
             setTimeout(() => {
                 const overlay = document.getElementById('securityOverlay');
                 if (overlay) {
