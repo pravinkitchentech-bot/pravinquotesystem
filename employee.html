@@ -1355,8 +1355,8 @@
         ];
 
         const BED_OPTS = [
-            { label: "King Size Bed (Direct Price)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Queen Size Bed (Direct Price)", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
         const DRESSING_BOTTOM_OPTS = [
@@ -2061,12 +2061,20 @@
                 return roomMatch && materialMatch;
             }).map(spec => spec.text);
 
-            const isWardrobe = itemName && itemName.toLowerCase().includes('wardrobe');
+            const isWardrobeLike = itemName && (
+                itemName.toLowerCase().includes('wardrobe') ||
+                itemName.toLowerCase().includes('side cabinet') ||
+                itemName.toLowerCase().includes('cupboard') ||
+                itemName.toLowerCase().includes('loft')
+            );
             const isBayWindow = itemName && itemName.toLowerCase().includes('bay window');
-            const isBypassInnerOuterFilter = (roomId === 'prayer_unit' || isWardrobe || isBayWindow);
+            const isDressing = itemName && itemName.toLowerCase().includes('dressing');
+            const isTvBottom = itemName && itemName.toLowerCase().includes('tv unit') && itemName.toLowerCase().includes('bottom');
+            const isWpcLamDoor = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
+            const isBypassInnerOuterFilter = (roomId === 'prayer_unit' || isWardrobeLike || isBayWindow || isDressing || isTvBottom || isWpcLamDoor);
 
             // Material-specific filters
-            // Remove inner finish for Acrylic (except in prayer unit and wardrobe)
+            // Remove inner finish for Acrylic (except in prayer unit, wardrobe/loft, etc.)
             if (cleanMaterial.includes('acrylic') && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
             }
@@ -2074,7 +2082,7 @@
             if (cleanMaterial.includes('door') || cleanMaterial.includes('only')) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
             }
-            // For door only / door type (except in prayer unit and wardrobe): remove inner finish, rename outer finish to Finish
+            // For door only / door type (except in bypassed cases): remove inner finish, rename outer finish to Finish
             if ((cleanMaterial.includes('door') || cleanMaterial.includes('only')) && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
                 filtered = filtered.map(text => {
@@ -2084,12 +2092,30 @@
                     return text;
                 });
             }
-            if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('lamination')) {
-                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
-            }
-
-            if (itemName) {
+            
+            // Rename outer finish to Finish for Box Type Acrylic and Box Type WPC Lamination
+            const isAcrylicBox = cleanMaterial.includes('acrylic') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
+            const isWpcLamBox = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
+            if (isAcrylicBox || isWpcLamBox) {
+                filtered = filtered.map(text => {
+                    if (text.toLowerCase().startsWith('outer finish:')) {
+                 if (itemName) {
                 const lowerItem = itemName.toLowerCase();
+                
+                // Specific override for TV Unit Side Show Wall Cabinet: remove inner finish, rename outer finish to Finish
+                if (lowerItem.includes('side show')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().startsWith('outer finish:')) {
+                            return text.replace(/outer\s+finish:/i, 'Finish:');
+                        }
+                        return text;
+                    });
+                }
+
+                // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings, tv bottom, tv side show, staircase bottom: remove backpanel
+                // Also: prayer unit bottom cabinet / prayer unit lamination remove backpanel!
+                const isPrayerUnitLamination = (roomId === 'prayer_unit' && cleanMaterial.includes('lamination'));toLowerCase();
                 
                 // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings, tv bottom, tv side show, staircase bottom: remove backpanel
                 // Also: prayer unit bottom cabinet / prayer unit lamination remove backpanel!
@@ -2109,6 +2135,7 @@
                     lowerItem.includes('tv unit-bottom cabinet') ||
                     lowerItem.includes('side show wall cabinet') ||
                     lowerItem.includes('staircase bottom') ||
+                    lowerItem.includes('dressing') ||
                     isPrayerUnitLamination
                 ) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
