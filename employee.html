@@ -2060,11 +2060,17 @@
             }).map(spec => spec.text);
 
             // Material-specific filters
-            if (cleanMaterial.includes('acrylic')) {
+            // Remove inner finish for Acrylic (except in prayer unit)
+            if (cleanMaterial.includes('acrylic') && roomId !== 'prayer_unit') {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
             }
+            // For door only / door type: always remove back panel
             if (cleanMaterial.includes('door') || cleanMaterial.includes('only')) {
-                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel') && !text.toLowerCase().includes('inner finish'));
+                filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
+            }
+            // For door only / door type (except in prayer unit): remove inner finish, rename outer finish to Finish
+            if ((cleanMaterial.includes('door') || cleanMaterial.includes('only')) && roomId !== 'prayer_unit') {
+                filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
                 filtered = filtered.map(text => {
                     if (text.toLowerCase().startsWith('outer finish:')) {
                         return text.replace(/outer\s+finish:/i, 'Finish:');
@@ -2080,6 +2086,9 @@
                 const lowerItem = itemName.toLowerCase();
                 
                 // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings, tv bottom, tv side show, staircase bottom: remove backpanel
+                // Also: prayer unit bottom cabinet / prayer unit lamination remove backpanel!
+                const isPrayerUnitLamination = (roomId === 'prayer_unit' && cleanMaterial.includes('lamination'));
+
                 if (
                     lowerItem.includes('partition') || 
                     lowerItem.includes('overhead') || 
@@ -2093,7 +2102,8 @@
                     lowerItem.includes('tv unit – bottom cabinet') ||
                     lowerItem.includes('tv unit-bottom cabinet') ||
                     lowerItem.includes('side show wall cabinet') ||
-                    lowerItem.includes('staircase bottom')
+                    lowerItem.includes('staircase bottom') ||
+                    isPrayerUnitLamination
                 ) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
                 }
@@ -3278,6 +3288,7 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
                 { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
@@ -3306,12 +3317,16 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination
+                        // Reset if it contains any of the third image details or old spelling Choice or misses WPC Lamination or misses Acrylic Inner Finish
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam) {
+                        const hasAcrylicInner = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat.includes('acrylic') && (item.text || '').includes('Inner Finish');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasAcrylicInner) {
                             needsReset = true;
                         }
                     } else {
