@@ -1583,8 +1583,9 @@
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 27, name: "Bed back wall paneling with headrest", options: WALL_PANEL },
-                { id: 28, name: "Bed", options: BED_OPTS },
+                { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
+                { id: 28, name: "King Size Bed", options: BED_OPTS },
+                { id: 280, name: "Queen Size Bed", options: BED_OPTS },
                 { id: 29, name: "Bay window", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: DRESSING_BOTTOM_OPTS },
@@ -1660,8 +1661,9 @@
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
-                { id: 27, name: "Bed back wall paneling with headrest", options: WALL_PANEL },
-                { id: 28, name: "Bed", options: ENG_WOOD_BED },
+                { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
+                { id: 28, name: "King Size Bed", options: ENG_WOOD_BED },
+                { id: 280, name: "Queen Size Bed", options: ENG_WOOD_BED },
                 { id: 29, name: "Bay Window", options: ENG_WOOD_ONLY },
                 { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
@@ -2059,17 +2061,21 @@
                 return roomMatch && materialMatch;
             }).map(spec => spec.text);
 
+            const isWardrobe = itemName && itemName.toLowerCase().includes('wardrobe');
+            const isBayWindow = itemName && itemName.toLowerCase().includes('bay window');
+            const isBypassInnerOuterFilter = (roomId === 'prayer_unit' || isWardrobe || isBayWindow);
+
             // Material-specific filters
-            // Remove inner finish for Acrylic (except in prayer unit)
-            if (cleanMaterial.includes('acrylic') && roomId !== 'prayer_unit') {
+            // Remove inner finish for Acrylic (except in prayer unit and wardrobe)
+            if (cleanMaterial.includes('acrylic') && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
             }
             // For door only / door type: always remove back panel
             if (cleanMaterial.includes('door') || cleanMaterial.includes('only')) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
             }
-            // For door only / door type (except in prayer unit): remove inner finish, rename outer finish to Finish
-            if ((cleanMaterial.includes('door') || cleanMaterial.includes('only')) && roomId !== 'prayer_unit') {
+            // For door only / door type (except in prayer unit and wardrobe): remove inner finish, rename outer finish to Finish
+            if ((cleanMaterial.includes('door') || cleanMaterial.includes('only')) && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
                 filtered = filtered.map(text => {
                     if (text.toLowerCase().startsWith('outer finish:')) {
@@ -2139,6 +2145,15 @@
                 if (lowerItem.includes('staircase bottom')) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('soft closing hinges') && !text.toLowerCase().includes('hinges:'));
                     filtered.push("Hinges: Sleek / Hettich (Not Soft Closing)");
+                }
+
+                // 6. Bed: remove back panel & hinges, and append headrest-fabric/lamination
+                if (lowerItem.includes('bed')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel') && !text.toLowerCase().includes('hinges'));
+                    // Only append if it's lamination
+                    if (cleanMaterial.includes('lamination')) {
+                        filtered.push("headrest-fabric/lamination");
+                    }
                 }
             }
 
