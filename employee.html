@@ -835,15 +835,11 @@
                     <td id="printQuoteDate">—</td>
                 </tr>
                 <tr>
-                    <td style="font-weight: bold;">Customer:</td>
+                    <td style="font-weight: bold;">Customer Name:</td>
                     <td id="printCustName">—</td>
                 </tr>
                 <tr>
-                    <td style="font-weight: bold;">Phone:</td>
-                    <td id="printCustPhone">—</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold;">Address:</td>
+                    <td style="font-weight: bold;">Place:</td>
                     <td id="printCustAddress">—</td>
                 </tr>
             </table>
@@ -895,11 +891,9 @@
                     style="background:rgba(176,125,46,0.15); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
                 <input id="quoteRefNo" placeholder="Quotation Ref No." style="display: none;">
                 <input id="custName" placeholder="Customer name" list="customerNames">
-                <input id="custPhone" placeholder="Phone" list="customerPhones">
-                <input id="custAddress" placeholder="Address / Area">
+                <input id="custAddress" placeholder="Place">
                 <input id="quoteDate" type="date">
                 <datalist id="customerNames"></datalist>
-                <datalist id="customerPhones"></datalist>
             </div>
         </div>
     </header>
@@ -1023,6 +1017,13 @@
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                 </div>
+                <!-- Custom Payment Terms / Additional Notes -->
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                    <label
+                        style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Custom Payment Terms / Additional Notes</label>
+                    <input type="text" id="payCustom" placeholder="e.g. Custom schedules or remarks..."
+                        style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none; width: 100%; box-sizing: border-box;">
+                </div>
             </div>
 
             <!-- Print-Only Payment Terms (shown only during browser print) -->
@@ -1031,12 +1032,15 @@
                     style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
                     <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
                         Terms:</strong>
-                    <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
-                        <li><strong>Token Advance:</strong> <span id="printPayToken"></span></li>
-                        <li><strong>Advance Payment:</strong> <span id="printPayAdvance"></span></li>
-                        <li><strong>Part Payment:</strong> <span id="printPaySecond"></span></li>
-                        <li><strong>Final Payment:</strong> <span id="printPayFinal"></span></li>
+                    <ul id="printPayList" style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
+                        <li id="printPayTokenLi"><strong>Token Advance:</strong> <span id="printPayToken"></span></li>
+                        <li id="printPayAdvanceLi"><strong>Advance Payment:</strong> <span id="printPayAdvance"></span></li>
+                        <li id="printPaySecondLi"><strong>Part Payment:</strong> <span id="printPaySecond"></span></li>
+                        <li id="printPayFinalLi"><strong>Final Payment:</strong> <span id="printPayFinal"></span></li>
                     </ul>
+                    <div id="printPayCustomDiv" style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #eee; font-weight: 500;">
+                        <strong>Other Terms:</strong> <span id="printPayCustom"></span>
+                    </div>
                 </div>
             </div>
 
@@ -2948,7 +2952,6 @@
                 // Clear metadata inputs and set next auto number
                 incrementQuoteNo();
                 document.getElementById('custName').value = '';
-                document.getElementById('custPhone').value = '';
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
 
@@ -2956,6 +2959,7 @@
                 document.getElementById('payAdvance').value = '';
                 document.getElementById('paySecond').value = '';
                 document.getElementById('payFinal').value = '';
+                document.getElementById('payCustom').value = '';
 
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
@@ -3004,14 +3008,34 @@
             document.getElementById('printDivisionName').textContent = selectedDivisionName || '—';
             document.getElementById('printQuoteDate').textContent = document.getElementById('quoteDate').value || '—';
             document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
-            document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
             // Populate print payment terms
-            document.getElementById('printPayToken').textContent = document.getElementById('payToken').value || '—';
-            document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
-            document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
-            document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
+            const tokenVal = document.getElementById('payToken').value;
+            const advVal = document.getElementById('payAdvance').value;
+            const partVal = document.getElementById('paySecond').value;
+            const finalVal = document.getElementById('payFinal').value;
+            const customVal = document.getElementById('payCustom').value;
+
+            document.getElementById('printPayToken').textContent = tokenVal || '—';
+            document.getElementById('printPayTokenLi').style.display = tokenVal ? '' : 'none';
+
+            document.getElementById('printPayAdvance').textContent = advVal || '—';
+            document.getElementById('printPayAdvanceLi').style.display = advVal ? '' : 'none';
+
+            document.getElementById('printPaySecond').textContent = partVal || '—';
+            document.getElementById('printPaySecondLi').style.display = partVal ? '' : 'none';
+
+            document.getElementById('printPayFinal').textContent = finalVal || '—';
+            document.getElementById('printPayFinalLi').style.display = finalVal ? '' : 'none';
+
+            const printPayList = document.getElementById('printPayList');
+            if (printPayList) {
+                printPayList.style.display = (tokenVal || advVal || partVal || finalVal) ? 'block' : 'none';
+            }
+
+            document.getElementById('printPayCustom').textContent = customVal || '—';
+            document.getElementById('printPayCustomDiv').style.display = customVal ? '' : 'none';
 
             window.print();
         }
