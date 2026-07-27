@@ -1644,7 +1644,17 @@
             const stored = localStorage.getItem('pks_rates');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    let rates = JSON.parse(stored);
+                    if (rates["WPC"] === 0 || rates["Marine Ply – Lamination"] === 0) {
+                        rates = { ...DEFAULT_RATES, ...rates };
+                        Object.keys(DEFAULT_RATES).forEach(key => {
+                            if (DEFAULT_RATES[key] > 0 && (rates[key] === 0 || rates[key] === undefined)) {
+                                rates[key] = DEFAULT_RATES[key];
+                            }
+                        });
+                        localStorage.setItem('pks_rates', JSON.stringify(rates));
+                    }
+                    return rates;
                 } catch (e) { }
             }
             return { ...DEFAULT_RATES };
@@ -1773,11 +1783,8 @@
                 localStorage.removeItem('pks_saved_quotes');
                 localStorage.removeItem('pks_room_rates');
 
-                // Set all rates in currentRates to 0
-                currentRates = {};
-                Object.keys(DEFAULT_RATES).forEach(k => {
-                    currentRates[k] = 0;
-                });
+                // Reset rates to DEFAULT_RATES values
+                currentRates = { ...DEFAULT_RATES };
                 localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
 
