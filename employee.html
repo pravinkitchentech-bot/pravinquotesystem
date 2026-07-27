@@ -998,28 +998,28 @@
                         <label
                             style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Token
                             Advance</label>
-                        <input type="text" id="payToken" value="10% Token Advance" placeholder="e.g. 10% Token"
+                        <input type="text" id="payToken" placeholder="e.g. 10% Token Advance"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
                             style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
                             Payment</label>
-                        <input type="text" id="payAdvance" value="50% Advance" placeholder="e.g. 50% Advance"
+                        <input type="text" id="payAdvance" placeholder="e.g. 50% Advance"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
                             style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Part
                             Payment</label>
-                        <input type="text" id="paySecond" value="35% Part Payment" placeholder="e.g. 35% Part Payment"
+                        <input type="text" id="paySecond" placeholder="e.g. 35% Part Payment"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
                             style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Final
                             Payment</label>
-                        <input type="text" id="payFinal" value="5% Final Payment" placeholder="e.g. 5% Handover"
+                        <input type="text" id="payFinal" placeholder="e.g. 5% Final Payment"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                 </div>
@@ -2952,10 +2952,10 @@
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
 
-                document.getElementById('payToken').value = '10% Token Advance';
-                document.getElementById('payAdvance').value = '50% Advance';
-                document.getElementById('paySecond').value = '35% Part Payment';
-                document.getElementById('payFinal').value = '5% Final Payment';
+                document.getElementById('payToken').value = '';
+                document.getElementById('payAdvance').value = '';
+                document.getElementById('paySecond').value = '';
+                document.getElementById('payFinal').value = '';
 
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
