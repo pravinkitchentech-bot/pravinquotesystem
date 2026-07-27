@@ -3676,13 +3676,8 @@
                 sessionStorage.removeItem('pks_restore_quote_data');
             } catch (e) { }
         }
-
-        // Default today's date
         document.getElementById('quoteDate').valueAsDate = new Date();
-        // Set auto-generated quote number on load
         setInitialQuoteNo();
-
-        // Customer details autocomplete and auto-fill helper
         function initCustomerAutofill() {
             const stored = localStorage.getItem('pks_saved_quotes');
             if (!stored) return;
@@ -3693,32 +3688,22 @@
             } catch (e) {
                 return;
             }
-
             const nameToDetails = {};
-
-            // Sort by timestamp ascending, so latest items overwrite earlier ones (keeping the latest)
             savedQuotes.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-
             savedQuotes.forEach(q => {
                 const name = (q.custName || '').trim();
                 const addr = (q.custAddress || '').trim();
-
                 const details = { name, addr };
-
                 if (name) nameToDetails[name.toLowerCase()] = details;
             });
-
             const nameDatalist = document.getElementById('customerNames');
-
             if (nameDatalist) {
                 nameDatalist.innerHTML = Object.keys(nameToDetails)
                     .map(key => `<option value="${nameToDetails[key].name}"></option>`)
                     .join('');
             }
-
             const nameInput = document.getElementById('custName');
             const addrInput = document.getElementById('custAddress');
-
             function handleAutofill(triggerField) {
                 if (triggerField === 'name') {
                     const typedName = nameInput.value.trim().toLowerCase();
@@ -3730,7 +3715,6 @@
                     }
                 }
             }
-
             if (nameInput) {
                 nameInput.removeEventListener('input', nameInput._autofillHandler);
                 nameInput.removeEventListener('change', nameInput._autofillHandler);
@@ -3739,40 +3723,30 @@
                 nameInput.addEventListener('change', nameInput._autofillHandler);
             }
         }
-
         function initializeDefaultSpecsIfNeeded() {
             const current = localStorage.getItem('pks_material_specs');
             const defaultSpecsList = [
-                // Lamination specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
                 { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
-
-                // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
                 { text: "Outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
-
-                // WPC specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc" },
                 { text: "Finish: Freelam", room: "all", material: "wpc" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc" },
-
-                // WPC Lamination specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
                 { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
-
-                // PVC, Charcoal, Wood
                 { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
                 { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
@@ -3784,7 +3758,6 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or misses the new Inner Finish details for lamination
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
@@ -3807,7 +3780,6 @@
                     needsReset = true;
                 }
             }
-
             if (needsReset) {
                 localStorage.setItem('pks_material_specs', JSON.stringify(defaultSpecsList));
             } else {
@@ -3816,7 +3788,6 @@
                     if (!Array.isArray(parsed)) {
                         parsed = [];
                     }
-
                     defaultSpecsList.forEach(item => {
                         const exists = parsed.some(p =>
                             (p.text || '').toUpperCase() === item.text.toUpperCase() &&
@@ -3827,7 +3798,6 @@
                             parsed.push(item);
                         }
                     });
-
                     localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
                 } catch (e) {
                     let parsed = current.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
@@ -3835,7 +3805,6 @@
                         room: 'all',
                         material: 'all'
                     }));
-
                     defaultSpecsList.forEach(item => {
                         const exists = parsed.some(p =>
                             (p.text || '').toUpperCase() === item.text.toUpperCase() &&
@@ -3850,15 +3819,9 @@
                 }
             }
         }
-
-        // Initialize customer auto-fill logic
         initCustomerAutofill();
-
-        // Run default specs initialization
         initializeDefaultSpecsIfNeeded();
     </script>
-
-    <!-- Share Modal -->
     <div id="shareModal" class="no-print"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:10000; align-items:center; justify-content:center;">
         <div
