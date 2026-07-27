@@ -2921,8 +2921,7 @@
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
-                              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
-                              <strong>${itemDisplayName}</strong>
+                              <strong>${l.material}</strong>
                           </td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
@@ -3192,10 +3191,9 @@
                             <tr style="border-bottom:1px solid #e8ddd0;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${l.roomName || 'Accessories'}</div>
-                                    ${l.itemName}
+                                    ${l.material}
                                 </td>
-                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.specs || '—'}</td>
                                 <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                 ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                 ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
