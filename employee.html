@@ -603,8 +603,11 @@
                 display: none !important;
             }
 
-            .print-only-specs-terms {
+            .print-only-specs-terms,
+            .print-only-specs-terms > div {
                 display: block !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             body {
@@ -616,6 +619,17 @@
                 background: #fff;
                 box-shadow: none;
                 color: #000;
+            }
+
+            table.quote-table thead {
+                display: table-row-group !important;
+            }
+
+            table.quote-table tr,
+            .quote-table tr,
+            tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             table.quote-table th {
@@ -1047,9 +1061,9 @@
                 </div>
 
                 <!-- Print-Only Payment Terms (shown only during browser print) -->
-                <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
+                <div class="print-only-specs-terms" style="display: none; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
                     <div
-                        style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                        style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px; page-break-inside: avoid; break-inside: avoid;">
                         <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
                             Terms:</strong>
                         <ul id="printPayList"
@@ -2913,7 +2927,7 @@
                     let accMaterialCellContent = l.specs ? `
                         <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
                             ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
-                        </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+                        </div>` : ``;
 
                     accMaterialCellContent += getAccessoryImagesHTML(l.material, 'var(--border)');
 
@@ -2921,6 +2935,7 @@
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
+                              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
                               <strong>${l.material}</strong>
                           </td>
                           <td style="vertical-align:top; padding-top:10px;">
@@ -3148,7 +3163,7 @@
 
                         // Room Header Row
                         rowsHTML += `
-                            <tr style="background:#1c2820;">
+                            <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
                                     🏠 ${roomName}
                                 </td>
@@ -3156,7 +3171,7 @@
 
                         lines.forEach(l => {
                             rowsHTML += `
-                                <tr style="border-bottom:1px solid #e8ddd0;">
+                                <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
@@ -3171,7 +3186,7 @@
                         });
 
                         rowsHTML += `
-                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Subtotal — ${roomName}</td>
                                 <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${roomSubTotal.toFixed(2)}</td>
                             </tr>`;
@@ -3180,7 +3195,7 @@
 
                 if (accessoryLines.length > 0) {
                     rowsHTML += `
-                        <tr style="background:#1c2820;">
+                        <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
                                 ✨ Accessories
                             </td>
@@ -3188,10 +3203,11 @@
 
                     accessoryLines.forEach(l => {
                         rowsHTML += `
-                            <tr style="border-bottom:1px solid #e8ddd0;">
+                            <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                     ${l.material}
+                                    <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.specs || '—'}</td>
                                 <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
@@ -3202,7 +3218,7 @@
                     });
 
                     rowsHTML += `
-                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Accessories Subtotal</td>
                             <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${accessoryTotal.toFixed(2)}</td>
                         </tr>`;
@@ -3271,7 +3287,7 @@
                     </div>
                     <div style="font-size:13px;font-weight:600;color:#b07d2e;border-bottom:1px solid #e8ddd0;padding-bottom:4px;margin-bottom:6px;">Quote Summary</div>
                     <table style="width:100%;border-collapse:collapse;">
-                        <thead>
+                        <tbody>
                             <tr style="background:#1c2820;border-bottom:2px solid #b07d2e;color:#b07d2e;">
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:center;width:6%;color:#b07d2e;">S.NO</th>
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:24%;color:#b07d2e;">ITEM</th>
@@ -3281,21 +3297,21 @@
                                 ${showRate ? '<th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;color:#b07d2e;">RATE</th>' : ''}
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:14%;color:#b07d2e;">AMOUNT</th>
                             </tr>
-                        </thead>
+                        </tbody>
                         <tbody>
                             ${rowsHTML}
-                            <tr style="background:#fdfaf6;border-top:2px solid #b07d2e;">
+                            <tr style="background:#fdfaf6;border-top:2px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
                         </tbody>
                     </table>
                     ${specsText || payItems ? `
-                    <div style="margin-top:16px;display:flex;gap:12px;">
+                    <div style="margin-top:16px;display:flex;gap:12px;page-break-inside:avoid;break-inside:avoid;">
                         ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
                         ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
                     </div>` : ''}
-                    <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;">
+                    <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;page-break-inside:avoid;break-inside:avoid;">
                         <div style="width:55%;font-size:9.5px;color:#666;">
                             <strong style="color:#1c2820;display:block;margin-bottom:3px;">Terms &amp; Conditions:</strong>
                             <ol style="margin:0;padding-left:13px;line-height:1.55;">
@@ -3310,7 +3326,7 @@
                             <div style="font-size:9px;color:#777;margin-top:2px;">Pravin Kitchens &amp; Interiors</div>
                         </div>
                     </div>
-                    <div style="margin-top:24px;border-top:1px solid #e8ddd0;padding-top:8px;text-align:center;font-size:9.5px;color:#777;">
+                    <div style="margin-top:24px;border-top:1px solid #e8ddd0;padding-top:8px;text-align:center;font-size:9.5px;color:#777;page-break-inside:avoid;break-inside:avoid;">
                         Thank you for your business! Design is not just what it looks like — it's how it works.
                     </div>`;
                 container.appendChild(contentDiv);
@@ -3348,7 +3364,7 @@
                     image: { type: 'jpeg', quality: 0.97 },
                     html2canvas: { scale: 2, useCORS: true, allowTaint: true, letterRendering: true, backgroundColor: '#ffffff', logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'], avoid: ['tr'] }
                 };
 
                 waitForImages(container).then(() => {
@@ -3676,8 +3692,13 @@
                 sessionStorage.removeItem('pks_restore_quote_data');
             } catch (e) { }
         }
+
+        // Default today's date
         document.getElementById('quoteDate').valueAsDate = new Date();
+        // Set auto-generated quote number on load
         setInitialQuoteNo();
+
+        // Customer details autocomplete and auto-fill helper
         function initCustomerAutofill() {
             const stored = localStorage.getItem('pks_saved_quotes');
             if (!stored) return;
@@ -3688,22 +3709,32 @@
             } catch (e) {
                 return;
             }
+
             const nameToDetails = {};
+
+            // Sort by timestamp ascending, so latest items overwrite earlier ones (keeping the latest)
             savedQuotes.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
             savedQuotes.forEach(q => {
                 const name = (q.custName || '').trim();
                 const addr = (q.custAddress || '').trim();
+
                 const details = { name, addr };
+
                 if (name) nameToDetails[name.toLowerCase()] = details;
             });
+
             const nameDatalist = document.getElementById('customerNames');
+
             if (nameDatalist) {
                 nameDatalist.innerHTML = Object.keys(nameToDetails)
                     .map(key => `<option value="${nameToDetails[key].name}"></option>`)
                     .join('');
             }
+
             const nameInput = document.getElementById('custName');
             const addrInput = document.getElementById('custAddress');
+
             function handleAutofill(triggerField) {
                 if (triggerField === 'name') {
                     const typedName = nameInput.value.trim().toLowerCase();
@@ -3715,6 +3746,7 @@
                     }
                 }
             }
+
             if (nameInput) {
                 nameInput.removeEventListener('input', nameInput._autofillHandler);
                 nameInput.removeEventListener('change', nameInput._autofillHandler);
@@ -3723,30 +3755,40 @@
                 nameInput.addEventListener('change', nameInput._autofillHandler);
             }
         }
+
         function initializeDefaultSpecsIfNeeded() {
             const current = localStorage.getItem('pks_material_specs');
             const defaultSpecsList = [
+                // Lamination specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
                 { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
+
+                // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
                 { text: "Outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
+
+                // WPC specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc" },
                 { text: "Finish: Freelam", room: "all", material: "wpc" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc" },
+
+                // WPC Lamination specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
                 { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
+
+                // PVC, Charcoal, Wood
                 { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
                 { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
@@ -3758,6 +3800,7 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
+                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or misses the new Inner Finish details for lamination
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
@@ -3780,6 +3823,7 @@
                     needsReset = true;
                 }
             }
+
             if (needsReset) {
                 localStorage.setItem('pks_material_specs', JSON.stringify(defaultSpecsList));
             } else {
@@ -3788,6 +3832,7 @@
                     if (!Array.isArray(parsed)) {
                         parsed = [];
                     }
+
                     defaultSpecsList.forEach(item => {
                         const exists = parsed.some(p =>
                             (p.text || '').toUpperCase() === item.text.toUpperCase() &&
@@ -3798,6 +3843,7 @@
                             parsed.push(item);
                         }
                     });
+
                     localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
                 } catch (e) {
                     let parsed = current.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
@@ -3805,6 +3851,7 @@
                         room: 'all',
                         material: 'all'
                     }));
+
                     defaultSpecsList.forEach(item => {
                         const exists = parsed.some(p =>
                             (p.text || '').toUpperCase() === item.text.toUpperCase() &&
@@ -3819,9 +3866,15 @@
                 }
             }
         }
+
+        // Initialize customer auto-fill logic
         initCustomerAutofill();
+
+        // Run default specs initialization
         initializeDefaultSpecsIfNeeded();
     </script>
+
+    <!-- Share Modal -->
     <div id="shareModal" class="no-print"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:10000; align-items:center; justify-content:center;">
         <div
