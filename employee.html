@@ -2358,7 +2358,7 @@
                 } else if (cleanMaterial === specMat) {
                     materialMatch = true;
                 } else if (cleanMaterial.includes(specMat)) {
-                    if (specmat === 'wall panel lamination' && cleanMaterial.includes('wpc')) {
+                    if (specMat === 'wall panel lamination' && cleanMaterial.includes('wpc')) {
                         materialMatch = false;
                     } else if (specMat === 'wpc' && cleanMaterial.includes('wall panel lamination')) {
                         materialMatch = false;
