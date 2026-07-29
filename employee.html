@@ -1182,21 +1182,33 @@
         let cachedDeletedStandardItems = null;
         let cachedDeletedStandardMaterials = null;
 
-        const allRooms = [
-            { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
-            { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
-            { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
-            { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
-            { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
-            { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
-            { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
-            { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
-            { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
-            { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
-        ];
+        function getRooms() {
+            const defaultRooms = [
+                { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+                { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+                { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
+                { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
+                { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+                { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
+                { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
+                { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+                { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
+                { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+                { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
+            ];
+            const stored = localStorage.getItem('pks_rooms');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch (e) {
+                    console.error("Error parsing rooms, using defaults", e);
+                }
+            }
+            return defaultRooms;
+        }
 
-        const ROOMS = allRooms;
+        const ROOMS = getRooms();
 
         let rawSelectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoom = ROOMS.some(r => r.id === rawSelectedRoom) ? rawSelectedRoom : 'kitchen';
@@ -1234,30 +1246,30 @@
             },
         ];
         const WALL_PANEL = [
-            { label: "PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const BREAKFAST_WALL_PANEL = [
             {
-                label: "PVC",
+                label: "Wall Panel PVC",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Super Premium PVC Panel"
             },
             {
-                label: "Lamination",
+                label: "Wall Panel Lamination",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Customer Choosing Laminates | Marine Ply: Saburi – 16mm Thickness | 710 Grade"
             },
             {
-                label: "Charcoal",
+                label: "Wall Panel Charcoal",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Super Premium Charcoal Panel – Korea"
             },
         ];
         const BEAM = [
             {
-                label: "Lamination",
+                label: "Wall Panel Lamination",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Finish: Customer Choice Laminates"
             },
@@ -1323,13 +1335,13 @@
         /* ---------- Shared Materials Groups ---------- */
         const MP_LAM_ACR_WPC_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const MP_LAM_ACR_WPC_BOX_ONLY = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1347,7 +1359,7 @@
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
             },
             {
-                label: "Marine Ply – Lamination (Door Type)",
+                label: "Marine Ply – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
             },
@@ -1357,7 +1369,7 @@
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
             },
             {
-                label: "Marine Ply – Acrylic (Door Type)",
+                label: "Marine Ply – Acrylic (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
             },
@@ -1367,7 +1379,7 @@
                 specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
             {
-                label: "WPC (Door Type)",
+                label: "WPC (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
@@ -1377,7 +1389,7 @@
                 specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
             },
             {
-                label: "WPC – Lamination (Door Type)",
+                label: "WPC – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
             },
@@ -1569,9 +1581,9 @@
         ];
 
         const SITOUT_CEILING_OPTS = [
-            { label: "PVC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Wall Panel PVC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Wall Panel Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Wall Panel Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
         const ENG_WOOD_BOX_DOOR = [
@@ -1603,17 +1615,17 @@
         const DEFAULT_RATES = {
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
-            "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Lamination (Door Only)": 450,
             "Marine Ply – Lamination (Door Only)": 450,
             "Marine Ply – Lamination (Partition Type)": 450,
             "Marine Ply – Lamination (Framed)": 450,
             "Marine Ply – Lamination (Box)": 450,
             "Marine Ply (Box Type)": 450,
-            "Marine Ply (Door Type)": 450,
+            "Marine Ply (Door Only)": 450,
 
             "Marine Ply – Acrylic": 650,
             "Marine Ply – Acrylic (Box Type)": 650,
-            "Marine Ply – Acrylic (Door Type)": 650,
+            "Marine Ply – Acrylic (Door Only)": 650,
             "Marine Ply – Acrylic (Door Only)": 650,
             "Marine Ply – Acrylic (Partition Type)": 650,
             "Marine Ply – Acrylic (Framed)": 650,
@@ -1621,7 +1633,7 @@
 
             "WPC": 550,
             "WPC (Box Type)": 550,
-            "WPC (Door Type)": 550,
+            "WPC (Door Only)": 550,
             "WPC (Door Only)": 550,
             "WPC (Partition Type)": 550,
             "WPC (Framed)": 550,
@@ -1629,15 +1641,15 @@
 
             "WPC – Lamination": 550,
             "WPC – Lamination (Box Type)": 550,
-            "WPC – Lamination (Door Type)": 550,
+            "WPC – Lamination (Door Only)": 550,
             "WPC – Lamination (Door Only)": 550,
             "WPC – Lamination (Partition Type)": 550,
             "WPC – Lamination (Framed)": 550,
             "WPC – Lamination (Box)": 550,
 
-            "PVC": 300,
-            "Lamination": 250,
-            "Charcoal": 400,
+            "Wall Panel PVC": 300,
+            "Wall Panel Lamination": 250,
+            "Wall Panel Charcoal": 400,
             "Marine Plane": 350,
             "Engineering Wood": 280,
             "Engineering Wood (Box Type)": 280,
@@ -1705,10 +1717,10 @@
 
         function getCleanMaterialName(rawName) {
             if (!rawName || typeof rawName !== 'string') return rawName;
-            return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Type|Framed|Box)\)/gi, '').trim();
+            return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Only|Framed|Box)\)/gi, '').trim();
         }
 
-        function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
+        function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
             const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
             const room = roomId || selectedRoom || 'kitchen';
@@ -1718,24 +1730,34 @@
             const specificKey = `${divId}_${modeStr}_${room}`;
             const roomRatesObj = allRoomRates[specificKey] || {};
 
-            // 1. Direct match in room rates
+            // 1. Item-specific match (itemId::materialLabel) — highest priority
+            if (itemId !== undefined && itemId !== null) {
+                const itemKey = `${itemId}::${materialLabel}`;
+                if (roomRatesObj[itemKey] !== undefined) return roomRatesObj[itemKey];
+                const cleanLbl = getCleanMaterialName(materialLabel);
+                const itemCleanKey = `${itemId}::${cleanLbl}`;
+                if (roomRatesObj[itemCleanKey] !== undefined) return roomRatesObj[itemCleanKey];
+            }
+
+            // 2. Room-level flat match (backward compat with old saved data)
             if (roomRatesObj[materialLabel] !== undefined) {
                 return roomRatesObj[materialLabel];
             }
 
-            // 2. Clean base material match in room rates
+            // 3. Clean base material room-level match
             const cleanLabel = getCleanMaterialName(materialLabel);
             if (roomRatesObj[cleanLabel] !== undefined) {
                 return roomRatesObj[cleanLabel];
             }
 
-            // 3. Fallback to default rates (customizable)
+            // 4. Fallback to default rates
             const ratesObj = getRates();
             if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
             if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
+
 
         function getRates() {
             if (cachedRates !== null) return cachedRates;
@@ -2075,13 +2097,9 @@
         let lineIdCounter = 1;
 
         function getFullRoomLabel() {
-            if (selectedRoom === 'bedroom') {
-                const floor = document.getElementById('floorSelector').value;
-                const roomNo = document.getElementById('roomNoSelector').value;
-                return `${floor} - ${selectedRoomName} ${roomNo}`;
-            } else {
-                return selectedRoomName;
-            }
+            const floor = document.getElementById('floorSelector').value;
+            const roomNo = document.getElementById('roomNoSelector').value;
+            return `${floor} - ${selectedRoomName} ${roomNo}`;
         }
 
         function updateRoomState(roomId, roomName) {
@@ -2111,10 +2129,10 @@
                     roomBadge.textContent = selectedRoomName;
                 }
 
-                // Toggle Floor and Room selectors ONLY for bedroom
+                // Toggle Floor and Room selectors for all rooms
                 const selectorsWrap = document.getElementById('floorSelectorsWrap');
                 if (selectorsWrap) {
-                    selectorsWrap.style.display = (selectedRoom === 'bedroom') ? 'flex' : 'none';
+                    selectorsWrap.style.display = 'flex';
                 }
             } catch (err) {
                 console.error("Error updating room state:", err);
@@ -2322,9 +2340,9 @@
                 } else if (cleanMaterial === specMat) {
                     materialMatch = true;
                 } else if (cleanMaterial.includes(specMat)) {
-                    if (specMat === 'lamination' && cleanMaterial.includes('wpc')) {
+                    if (specmat === 'wall panel lamination' && cleanMaterial.includes('wpc')) {
                         materialMatch = false;
-                    } else if (specMat === 'wpc' && cleanMaterial.includes('lamination')) {
+                    } else if (specMat === 'wpc' && cleanMaterial.includes('wall panel lamination')) {
                         materialMatch = false;
                     } else {
                         materialMatch = true;
@@ -2349,7 +2367,7 @@
             const isTopBoxDoor = itemName && itemName.toLowerCase().includes('top box') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isStudyOrComputerTable = itemName && (itemName.toLowerCase().includes('study table') || itemName.toLowerCase().includes('computer table'));
             const isChappalStandDoor = itemName && itemName.toLowerCase().includes('chappal stand') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
-            const isWpcLamDoor = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
+            const isWpcLamDoor = cleanMaterial.includes('wpc') && cleanMaterial.includes('wall panel lamination') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isBypassInnerOuterFilter = (
                 roomId === 'prayer_unit' ||
                 isWardrobeLike ||
@@ -2370,11 +2388,11 @@
             if (cleanMaterial.includes('acrylic') && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
             }
-            // For door only / door type: always remove back panel
+            // For door only / Door Only: always remove back panel
             if (cleanMaterial.includes('door') || cleanMaterial.includes('only')) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
             }
-            // For door only / door type (except in bypassed cases): remove inner finish, rename outer finish to Finish
+            // For door only / Door Only (except in bypassed cases): remove inner finish, rename outer finish to Finish
             if ((cleanMaterial.includes('door') || cleanMaterial.includes('only')) && !isBypassInnerOuterFilter) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
                 filtered = filtered.map(text => {
@@ -2387,7 +2405,7 @@
 
             // Rename outer finish to Finish for Box Type Acrylic and Box Type WPC Lamination only if inner finish is not present
             const isAcrylicBox = cleanMaterial.includes('acrylic') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
-            const isWpcLamBox = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
+            const isWpcLamBox = cleanMaterial.includes('wpc') && cleanMaterial.includes('wall panel lamination') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
             if (isAcrylicBox || isWpcLamBox) {
                 const hasInnerFinish = filtered.some(text => text.toLowerCase().includes('inner finish'));
                 if (!hasInnerFinish) {
@@ -2400,7 +2418,7 @@
                 }
             }
 
-            if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('lamination')) {
+            if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('wall panel lamination')) {
                 filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
             }
 
@@ -2457,7 +2475,7 @@
 
                 // 1. Partitions, overheads, lofts, island cabins, breakfast tables, ledges, panels, coverings, tv bottom, tv side show, staircase bottom: remove backpanel
                 // Also: prayer unit bottom cabinet / prayer unit lamination remove backpanel!
-                const isPrayerUnitLamination = (roomId === 'prayer_unit' && cleanMaterial.includes('lamination'));
+                const isPrayerUnitLamination = (roomId === 'prayer_unit' && cleanMaterial.includes('wall panel lamination'));
 
                 if (
                     lowerItem.includes('partition') ||
@@ -2522,8 +2540,8 @@
                 if (lowerItem.includes('bed')) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel') && !text.toLowerCase().includes('hinges'));
                     // Only append if it's lamination
-                    if (cleanMaterial.includes('lamination')) {
-                        filtered.push("Headrest Fabric / Lamination");
+                    if (cleanMaterial.includes('wall panel lamination')) {
+                        filtered.push("Headrest Fabric / Wall Panel Lamination");
                     }
                 }
             }
@@ -2552,7 +2570,7 @@
             const opt = item.options[optIdx];
             const sizeArea = document.getElementById(`${buildId}-sizeArea`);
 
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
 
             const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
             const isBypassEconomySpecs = (selectedRoom === 'kitchen' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
@@ -2640,7 +2658,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
             }
 
             let sqft = 0;
@@ -2655,7 +2673,7 @@
                 sqft = opt.formula(v);
             }
 
-            if (!opt.fields.includes('QTY') && !opt.fields.includes('SQFT')) {
+            if (!opt.fields.includes('QTY')) {
                 sqft = Math.round(sqft);
             }
 
@@ -2675,7 +2693,7 @@
 
         function updateCustomCalc(buildId) {
             const rawSqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
-            const sqft = rawSqft;
+            const sqft = Math.round(rawSqft);
             let rate = 0;
             let amount = 0;
             if (showRate) {
@@ -2700,7 +2718,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
             }
 
             let sqft = 0;
@@ -2715,7 +2733,7 @@
                 sqft = opt.formula(v);
             }
 
-            if (!opt.fields.includes('QTY') && !opt.fields.includes('SQFT')) {
+            if (!opt.fields.includes('QTY')) {
                 sqft = Math.round(sqft);
             }
 
@@ -2760,7 +2778,7 @@
         function confirmCustom(buildId, itemId) {
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
-            const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const sqft = Math.round(parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0);
 
             let rate = 0;
             let amount = 0;
@@ -2848,7 +2866,7 @@
             const list = [];
 
             if (lower.includes('tall unit')) {
-                list.push({ src: 'IMG_4831.jpg', ratio: '9:16' });
+                list.push({ src: 'assets/tall_unit.jpg', ratio: '9:16' });
             } else if (lower.includes('pvc cutlery')) {
                 list.push({ src: 'assets/pvc_cutlery.jpeg', ratio: '16:9' });
             } else if (lower.includes('cutlery tray')) {
@@ -2865,19 +2883,17 @@
                 list.push({ src: 'IMG_4817.jpg', ratio: '16:9' });
                 list.push({ src: 'IMG_4816.jpg', ratio: '16:9' });
             } else if (lower.includes('carousel')) {
-                list.push({ src: 'carousel.png', ratio: '16:9' });
+                list.push({ src: 'assets/carousel.png', ratio: '16:9' });
             } else if (lower.includes('gtbt')) {
-                list.push({ src: 'gtbt.png', ratio: '16:9' });
+                list.push({ src: 'assets/gtbt.png', ratio: '16:9' });
             } else if (lower.includes('dustbin')) {
-                list.push({ src: 'dustbin.png', ratio: '16:9' });
+                list.push({ src: 'assets/dustbin.png', ratio: '16:9' });
             } else if (lower.includes('detergent')) {
-                list.push({ src: 'detergent.png', ratio: '16:9' });
+                list.push({ src: 'assets/detergent.png', ratio: '16:9' });
             } else if (lower.includes('shutter')) {
                 list.push({ src: 'assets/shutter.png', ratio: '9:16' });
             } else if (lower.includes('magic corner')) {
                 list.push({ src: 'assets/magic_corner.png', ratio: '16:9' });
-            } else if (lower.includes('d-tray')) {
-                list.push({ src: 'IMG_4823.jpg', ratio: '16:9' });
             }
 
             if (list.length === 0) return '';
@@ -3869,13 +3885,13 @@
         function initializeDefaultSpecsIfNeeded() {
             const current = localStorage.getItem('pks_material_specs');
             const defaultSpecsList = [
-                // Lamination specifications
-                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
-                { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
-                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
-                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
-                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
+                // Wall Panel Lamination specifications
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "Wall Panel Lamination" },
+                { text: "Brand: fineply/saburi", room: "all", material: "Wall Panel Lamination" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "Wall Panel Lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "Wall Panel Lamination" },
+                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "Wall Panel Lamination" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "Wall Panel Lamination" },
 
                 // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
@@ -3898,9 +3914,9 @@
                 { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
-                // PVC, Charcoal, Wood
-                { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
-                { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
+                // Wall Panel PVC, Wall Panel Charcoal, Wood
+                { text: "Super Premium PVC Panel", room: "all", material: "Wall Panel PVC" },
+                { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "Wall Panel Charcoal" },
                 { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
                 { text: "Finish Freelamp", room: "all", material: "engineering wood" }
             ];
@@ -3917,7 +3933,7 @@
                         });
                         const hasInnerFinishForLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
-                            return mat === 'lamination' && (item.text || '').toLowerCase().includes('inner finish');
+                            return mat === 'wall panel lamination' && (item.text || '').toLowerCase().includes('inner finish');
                         });
                         const hasEngWoodWarranty = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
