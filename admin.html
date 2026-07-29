@@ -3127,12 +3127,12 @@
             const current = localStorage.getItem('pks_material_specs');
             const defaultSpecsList = [
                 // Lamination specifications
-                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "Wall Panel Lamination" },
-                { text: "Brand: fineply/saburi", room: "all", material: "Wall Panel Lamination" },
-                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "Wall Panel Lamination" },
-                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "Wall Panel Lamination" },
-                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "Wall Panel Lamination" },
-                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "Wall Panel Lamination" },
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
+                { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
+                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
@@ -3167,20 +3167,23 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or misses the new Inner Finish details for lamination
+                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, misses the new Inner Finish details, or still uses 'wall panel lamination' as a filter key
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
                         const hasInnerFinishForLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
-                            return mat === 'wall panel lamination' && (item.text || '').toLowerCase().includes('inner finish');
+                            return mat === 'lamination' && (item.text || '').toLowerCase().includes('inner finish');
                         });
                         const hasEngWoodWarranty = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat === 'engineering wood' && (item.text || '').toLowerCase().includes('warrenty');
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty) {
+                        const hasWallPanelLam = parsed.some(item => {
+                            return (item.material || '').toLowerCase() === 'wall panel lamination';
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || hasWallPanelLam) {
                             needsReset = true;
                         }
                     } else {
