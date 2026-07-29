@@ -1010,7 +1010,8 @@
                             <th>Size</th>
                             <th class="num" id="sqftHeader" style="display:none;">Sq.Ft</th>
                             <th class="num" id="rateHeader" style="display:none;">Rate</th>
-                            <th class="num">Amount</th>
+                            <th class="num">Price</th>
+                            <th class="num" style="color:#b07d2e;">Offer Price</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -1564,7 +1565,14 @@
             },
         ];
 
-        const BED_OPTS = [
+        const KING_BED_OPTS = [
+            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
+        const QUEEN_BED_OPTS = [
+            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
             { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
             { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
@@ -1607,7 +1615,13 @@
             { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
 
-        const ENG_WOOD_BED = [
+        const ENG_WOOD_KING_BED = [
+            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
+        const ENG_WOOD_QUEEN_BED = [
+            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
             { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
@@ -1843,8 +1857,8 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
-                { id: 28, name: "King Size Bed", options: BED_OPTS },
-                { id: 280, name: "Queen Size Bed", options: BED_OPTS },
+                { id: 28, name: "King Size Bed", options: KING_BED_OPTS },
+                { id: 280, name: "Queen Size Bed", options: QUEEN_BED_OPTS },
                 { id: 29, name: "Bay window", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: DRESSING_BOTTOM_OPTS },
@@ -1883,7 +1897,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: SITOUT_CEILING_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL },
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -1921,30 +1935,30 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
                 { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
-                { id: 28, name: "King Size Bed", options: ENG_WOOD_BED },
-                { id: 280, name: "Queen Size Bed", options: ENG_WOOD_BED },
-                { id: 29, name: "Bay Window", options: ENG_WOOD_ONLY },
+                { id: 28, name: "King Size Bed", options: ENG_WOOD_KING_BED },
+                { id: 280, name: "Queen Size Bed", options: ENG_WOOD_QUEEN_BED },
+                { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
-                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_ONLY },
                 { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
                 { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 65, name: "Side Cabinet", options: ENG_WOOD_ONLY },
-                { id: 66, name: "Cupboard 1", options: ENG_WOOD_ONLY },
-                { id: 67, name: "Cupboard 2", options: ENG_WOOD_ONLY },
-                { id: 68, name: "Loft 1", options: ENG_WOOD_ONLY },
-                { id: 69, name: "Loft 2", options: ENG_WOOD_ONLY },
+                { id: 65, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 66, name: "Cupboard 1", options: ENG_WOOD_BOX_DOOR },
+                { id: 67, name: "Cupboard 2", options: ENG_WOOD_BOX_DOOR },
+                { id: 68, name: "Loft 1", options: ENG_WOOD_BOX_DOOR },
+                { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
                 { id: 70, name: "Wall Panneling", options: WALL_PANEL },
                 { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: ENG_WOOD_ONLY },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
-                { id: 80, name: "Wall Panel", options: ENG_WOOD_ONLY },
+                { id: 80, name: "Wall Panel", options: WALL_PANEL },
                 { id: 81, name: "Musical Table", options: ENG_WOOD_BOX_ONLY }
             ],
             study_room: [
@@ -1955,7 +1969,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: ENG_WOOD_ONLY }
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL }
             ],
             store_room: [
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
@@ -1996,7 +2010,7 @@
             return cachedDeletedStandardItems;
         }
         const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
         const initialDeleted = getDeletedStandardItems() || [];
         let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
 
@@ -2118,7 +2132,7 @@
                 localStorage.setItem('pks_selected_room_name', selectedRoomName);
 
                 const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
                 const deleted = getDeletedStandardItems() || [];
                 BASE_ITEMS = (rawItems || []).filter(item => item && !deleted.includes(item.id));
                 ITEMS = getFullItemsList() || [];
@@ -2299,7 +2313,7 @@
 
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle") {
+            if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle" || opt.label.includes("(Direct Price)")) {
                 confirmMaterial(buildId, itemId, optIdx);
             } else {
                 openSizePanel(buildId, itemId, optIdx);
@@ -2743,6 +2757,8 @@
             let sizeDesc = '';
             if (opt.fields.includes('QTY')) {
                 sizeDesc = `QT:${v.QTY || sqft || 1}`;
+            } else if (opt.label.includes("(Direct Price)")) {
+                sizeDesc = '—';
             } else {
                 sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
                 if (!sizeDesc || sizeDesc.includes('undefined')) {
@@ -2769,7 +2785,8 @@
                 material: opt.label,
                 specs: allSpecsArray.join(' | '),
                 size: sizeDesc,
-                sqft, rate, amount
+                sqft, rate, amount,
+                offerPrice: null
             });
             renderQuote();
             closeBuilder(buildId);
@@ -2809,7 +2826,8 @@
                 material: desc,
                 specs: allSpecsArray.join(' | '),
                 size: '—',
-                sqft, rate, amount
+                sqft, rate, amount,
+                offerPrice: null
             });
             renderQuote();
             closeBuilder(buildId);
@@ -2915,11 +2933,10 @@
             const showRate = (role === 'admin');
             const showSqFt = showSqftRate;
 
-            // Calculate colspan dynamically
-            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | Delete
-            const baseColCount = 4; // S.NO + Item + Material + Size
+            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | Offer Price | Delete
+            const baseColCount = 4;
             const extraCols = (showSqFt ? 1 : 0) + (showSqFt && showRate ? 1 : 0);
-            const totalCols = baseColCount + extraCols + 2; // +Amount +Delete
+            const totalCols = baseColCount + extraCols + 3; // +Amount +OfferPrice +Delete
 
             // Header column visibility
             const sqftHeader = document.getElementById('sqftHeader');
@@ -2943,12 +2960,32 @@
             const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
             const grandTotal = roomTotal + accessoryTotal;
 
+            // Offer price totals (use amount as fallback if no offer price entered)
+            const grandOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
+
             let html = '';
             let lineIndex = 1;
 
+            // Helper: offer price cell for a line
+            function offerCell(l) {
+                const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
+                return `<td class="num" style="vertical-align:top; padding-top:8px;">
+                    <div style="display:flex; align-items:center; gap:2px;">
+                        <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
+                        <input type="number" min="0"
+                            placeholder="${l.amount.toFixed(0)}"
+                            value="${val}"
+                            oninput="updateOfferPrice(${l.id}, this.value)"
+                            style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
+                            onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
+                            onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
+                    </div>
+                </td>`;
+            }
+
             // ── Group room lines by roomName ──
             if (roomLines.length > 0) {
-                // Build ordered unique room list preserving insertion order
                 const roomOrder = [];
                 const roomMap = {};
                 roomLines.forEach(l => {
@@ -2962,6 +2999,7 @@
                 roomOrder.forEach(roomName => {
                     const lines = roomMap[roomName];
                     const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
 
                     // Room group header row
                     html += `
@@ -3001,32 +3039,14 @@
                               ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">${l.sqft}</td>` : ''}
                               ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">₹${l.rate.toFixed(2)}</td>` : ''}
                               <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
+                              ${offerCell(l)}
                               <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                             </tr>
                         `;
                     });
-
-                    // Room subtotal row
-                    html += `
-                        <tr style="background: rgba(176,125,46,0.06); border-bottom: 1px solid var(--border);">
-                            <td colspan="${totalCols - 2}" style="text-align:right; font-size:0.8rem; color:var(--muted); font-weight:600; padding:6px 14px;">Subtotal — ${roomName}</td>
-                            <td class="num" style="color:var(--text); font-weight:700;">₹${roomSubTotal.toFixed(2)}</td>
-                            <td></td>
-                        </tr>
-                    `;
                 });
-
-                // Rooms grand subtotal
-                if (roomOrder.length > 1) {
-                    html += `
-                        <tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
-                          <td colspan="${totalCols - 2}" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Rooms Total</td>
-                          <td class="num" style="color: var(--text);">₹${roomTotal.toFixed(2)}</td>
-                          <td></td>
-                        </tr>
-                    `;
-                }
             }
+
 
             // ── Accessories group ──
             if (accessoryLines.length > 0) {
@@ -3069,25 +3089,19 @@
                           ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">${l.sqft}</td>` : ''}
                           ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">₹${l.rate.toFixed(2)}</td>` : ''}
                           <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
+                          ${offerCell(l)}
                           <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                         </tr>
                     `;
                 });
-
-                html += `
-                    <tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
-                      <td colspan="${totalCols - 2}" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Accessories Subtotal</td>
-                      <td class="num" style="color: var(--text);">₹${accessoryTotal.toFixed(2)}</td>
-                      <td></td>
-                    </tr>
-                `;
             }
 
             // ── Grand Total ──
             html += `
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
-                    <td colspan="${totalCols - 2}" style="text-align:right;">Grand Total</td>
+                    <td colspan="${totalCols - 3}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
+                    <td class="num" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—'}</td>
                     <td></td>
                 </tr>
             `;
@@ -3098,6 +3112,21 @@
         function deleteLine(id) {
             quoteLines = quoteLines.filter(l => l.id !== id);
             renderQuote();
+        }
+
+        function updateOfferPrice(lineId, val) {
+            const line = quoteLines.find(l => l.id === lineId);
+            if (!line) return;
+            line.offerPrice = val === '' ? null : parseFloat(val);
+            // Update grand total display without re-rendering whole table (keeps focus)
+            const grandOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const grandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
+            const gtEl = document.getElementById('grandTotal');
+            if (gtEl && gtEl.parentElement) {
+                const offerCell = gtEl.nextElementSibling;
+                if (offerCell) offerCell.textContent = hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—';
+            }
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
@@ -3307,12 +3336,6 @@
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
                                 </tr>`;
                         });
-
-                        rowsHTML += `
-                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
-                                <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Subtotal — ${roomName}</td>
-                                <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${roomSubTotal.toFixed(2)}</td>
-                            </tr>`;
                     });
                 }
 
