@@ -3048,7 +3048,10 @@
             const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
             // Offer price totals (use amount as fallback if no offer price entered)
-            const grandOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
             const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
 
             let html = '';
@@ -3247,6 +3250,42 @@
                 });
             }
 
+            // ── Rooms Subtotal ──
+            if (roomLines.length > 0) {
+                html += `
+                    <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
+                        <td colspan="${totalCols - 3}" style="text-align:right;">Rooms Total</td>
+                        <td class="num" id="roomsSubtotal">₹${roomTotal.toFixed(2)}</td>
+                        <td class="num" id="roomsOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + roomOfferTotal.toFixed(2) : '—'}</td>
+                        <td></td>
+                    </tr>
+                `;
+            }
+
+            // ── Accessories Subtotal ──
+            if (accessoryLines.length > 0) {
+                html += `
+                    <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
+                        <td colspan="${totalCols - 3}" style="text-align:right;">Accessories Total</td>
+                        <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
+                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—'}</td>
+                        <td></td>
+                    </tr>
+                `;
+            }
+
+            // ── False Ceiling Subtotal ──
+            if (falseCellingLines.length > 0) {
+                html += `
+                    <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
+                        <td colspan="${totalCols - 3}" style="text-align:right;">False Ceiling Total</td>
+                        <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
+                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—'}</td>
+                        <td></td>
+                    </tr>
+                `;
+            }
+
             // ── Grand Total ──
             html += `
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
@@ -3269,10 +3308,27 @@
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
             line.offerPrice = val === '' ? null : parseFloat(val);
-            // Update grand total display without re-rendering whole table (keeps focus)
-            const grandOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const grandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+
+            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
+
             const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
+
+            const roomsOfferSubEl = document.getElementById('roomsOfferSubtotal');
+            if (roomsOfferSubEl) roomsOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + roomOfferTotal.toFixed(2) : '—';
+
+            const accOfferSubEl = document.getElementById('accessoriesOfferSubtotal');
+            if (accOfferSubEl) accOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—';
+
+            const fcOfferSubEl = document.getElementById('falseCellingOfferSubtotal');
+            if (fcOfferSubEl) fcOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—';
+
             const gtEl = document.getElementById('grandTotal');
             if (gtEl && gtEl.parentElement) {
                 const offerCell = gtEl.nextElementSibling;
@@ -3519,11 +3575,6 @@
                             </tr>`;
                     });
 
-                    rowsHTML += `
-                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
-                            <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Accessories Subtotal</td>
-                            <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${accessoryTotal.toFixed(2)}</td>
-                        </tr>`;
                 }
 
                 if (falseCellingLines.length > 0) {
@@ -3646,6 +3697,24 @@
                         </tbody>
                         <tbody>
                             ${rowsHTML}
+                            ${roomLines.length > 0 ? `
+                            <tr style="background:#fdfaf6;border-top:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#555;">Rooms Total</td>
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#1c2820;">₹${roomTotal.toFixed(2)}</td>
+                            </tr>
+                            ` : ''}
+                            ${accessoryLines.length > 0 ? `
+                            <tr style="background:#fdfaf6;border-top:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#555;">Accessories Total</td>
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#1c2820;">₹${accessoryTotal.toFixed(2)}</td>
+                            </tr>
+                            ` : ''}
+                            ${falseCellingLines.length > 0 ? `
+                            <tr style="background:#fdfaf6;border-top:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#555;">False Ceiling Total</td>
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#1c2820;">₹${falseCellingTotal.toFixed(2)}</td>
+                            </tr>
+                            ` : ''}
                             <tr style="background:#fdfaf6;border-top:2px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
