@@ -1302,6 +1302,14 @@
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
 
+        // Force reload default rates if rate version is older (Phase 2 update)
+        const CURRENT_RATE_VERSION = 2;
+        if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
+            localStorage.removeItem('pks_rates');
+            localStorage.removeItem('pks_room_rates');
+            localStorage.setItem('pks_rate_version', String(CURRENT_RATE_VERSION));
+        }
+
         const DEFAULT_DIVISIONS = [
             { id: 'marketing', name: 'Marketing', icon: '📈', sub: 'Marketing division quotes', active: true },
             { id: 'showroom', name: 'Showroom', icon: '🏢', sub: 'Showroom display & walk-in quotes', active: true }
