@@ -830,7 +830,7 @@
 
     <!-- Cover Page for Printing/PDF (Visible only during print) -->
     <div class="print-cover-page">
-        <img src="pravin_front.png" alt="Cover Page">
+        <img src="https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/pravin_front.png" alt="Cover Page">
     </div>
 
     <div class="print-content-wrapper">
@@ -2945,40 +2945,58 @@
             return name || fullName;
         }
 
+        function isImageURL(text) {
+            const clean = text.trim();
+            return /^(https?:\/\/|assets\/|[a-zA-Z0-9_\-\s\/]+\.(png|jpg|jpeg|gif|webp))/i.test(clean)
+                && /\.(png|jpg|jpeg|gif|webp)$/i.test(clean);
+        }
+
+        function renderSpecText(text, borderStyle = 'var(--border)') {
+            const clean = text.trim();
+            if (isImageURL(clean)) {
+                const isTall = clean.toLowerCase().includes('tall') || clean.toLowerCase().includes('shutter');
+                const style = isTall
+                    ? `width: 80px; height: 142px;`
+                    : `width: 120px; height: 68px;`;
+                return `<a href="${clean}" target="_blank" style="display: inline-block; margin-top: 4px;"><img src="${clean}" style="${style} object-fit: cover; border-radius: 4px; border: 1px solid ${borderStyle}; cursor: pointer;"></a>`;
+            }
+            return text;
+        }
+
         function getAccessoryImagesHTML(materialLabel, borderStyle = 'var(--border)') {
             if (!materialLabel) return '';
             const lower = materialLabel.toLowerCase();
             const list = [];
 
             if (lower.includes('tall unit')) {
-                list.push({ src: 'assets/tall_unit.jpg', ratio: '9:16' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/tall_unit.jpg', ratio: '9:16' });
             } else if (lower.includes('pvc cutlery')) {
-                list.push({ src: 'assets/pvc_cutlery.jpeg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/pvc_cutlery.jpeg', ratio: '16:9' });
             } else if (lower.includes('cutlery tray')) {
-                list.push({ src: 'IMG_4825.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4825.jpg', ratio: '16:9' });
             } else if (lower.includes('swing corner')) {
-                list.push({ src: 'IMG_4823.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4823.jpg', ratio: '16:9' });
             } else if (lower.includes('oil pull out')) {
-                list.push({ src: 'IMG_4822.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4822.jpg', ratio: '16:9' });
             } else if (lower.includes('tandom box') || lower.includes('tandem')) {
-                list.push({ src: 'IMG_4821.jpg', ratio: '16:9' });
-                list.push({ src: 'IMG_4819.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4821.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4819.jpg', ratio: '16:9' });
             } else if (lower.includes('basket')) {
-                list.push({ src: 'IMG_4818.jpg', ratio: '16:9' });
-                list.push({ src: 'IMG_4817.jpg', ratio: '16:9' });
-                list.push({ src: 'IMG_4816.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4818.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4817.jpg', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/IMG_4816.jpg', ratio: '16:9' });
             } else if (lower.includes('carousel')) {
-                list.push({ src: 'assets/carousel.png', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/carousel.png', ratio: '16:9' });
             } else if (lower.includes('gtbt')) {
-                list.push({ src: 'assets/gtbt.png', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/gtbt.png', ratio: '16:9' });
             } else if (lower.includes('dustbin')) {
-                list.push({ src: 'assets/dustbin.png', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/dustbin.png', ratio: '16:9' });
             } else if (lower.includes('detergent')) {
-                list.push({ src: 'assets/detergent.png', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/detergent.png', ratio: '16:9' });
             } else if (lower.includes('shutter')) {
-                list.push({ src: 'assets/shutter.png', ratio: '9:16' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/shutter.png', ratio: '9:16' });
             } else if (lower.includes('magic corner')) {
-                list.push({ src: 'assets/magic_corner.png', ratio: '16:9' });
+                list.push({ src: 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/assets/magic_corner.png', ratio: '16:9' });
             }
 
             if (list.length === 0) return '';
@@ -3091,8 +3109,8 @@
 
                         const materialCellContent = l.specs ? `
                             <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
 
                         html += `
                             <tr>
@@ -3139,7 +3157,7 @@
 
                     let accMaterialCellContent = l.specs ? `
                         <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                            ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
+                            ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
                         </div>` : ``;
 
                     accMaterialCellContent += getAccessoryImagesHTML(l.material, 'var(--border)');
@@ -3204,8 +3222,8 @@
 
                         const materialCellContent = l.specs ? `
                             <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
 
                         html += `
                             <tr>
@@ -3464,7 +3482,7 @@
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
-                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                     ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                     ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
@@ -3491,7 +3509,7 @@
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">
-                                    ${l.specs || '—'}
+                                    ${l.specs ? l.specs.split('|').map(s => renderSpecText(s, '#e8ddd0')).join(' | ') : '—'}
                                     ${getAccessoryImagesHTML(l.material, '#e8ddd0')}
                                 </td>
                                 <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
@@ -3536,7 +3554,7 @@
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
-                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                     ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                     ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
@@ -3583,7 +3601,7 @@
                 const coverDiv = document.createElement('div');
                 coverDiv.style.cssText = 'width:794px;height:1123px;margin:0;padding:0;overflow:hidden;page-break-after:always;break-after:page;';
                 const coverImg = document.createElement('img');
-                coverImg.src = 'pravin_front.png';
+                coverImg.src = 'https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/pravin_front.png';
                 coverImg.style.cssText = 'width:100%;height:100%;object-fit:fill;display:block;';
                 coverDiv.appendChild(coverImg);
                 container.appendChild(coverDiv);
