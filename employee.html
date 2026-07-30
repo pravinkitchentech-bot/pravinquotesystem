@@ -1897,7 +1897,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: SITOUT_CEILING_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL },
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -1969,7 +1969,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: ENG_WOOD_ONLY }
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL }
             ],
             store_room: [
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
@@ -2010,7 +2010,7 @@
             return cachedDeletedStandardItems;
         }
         const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
         const initialDeleted = getDeletedStandardItems() || [];
         let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
 
@@ -2132,7 +2132,7 @@
                 localStorage.setItem('pks_selected_room_name', selectedRoomName);
 
                 const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
                 const deleted = getDeletedStandardItems() || [];
                 BASE_ITEMS = (rawItems || []).filter(item => item && !deleted.includes(item.id));
                 ITEMS = getFullItemsList() || [];
