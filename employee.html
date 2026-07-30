@@ -1165,6 +1165,14 @@
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
         const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
+        // Force reload default rates if rate version is older (Phase 2 update)
+        const CURRENT_RATE_VERSION = 2;
+        if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
+            localStorage.removeItem('pks_rates');
+            localStorage.removeItem('pks_room_rates');
+            localStorage.setItem('pks_rate_version', String(CURRENT_RATE_VERSION));
+        }
+
         // Render division badge in header
         const divBadgeEl = document.getElementById('divisionBadge');
         if (divBadgeEl) {
