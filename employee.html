@@ -830,7 +830,7 @@
 
     <!-- Cover Page for Printing/PDF (Visible only during print) -->
     <div class="print-cover-page">
-        <img src="pravin front.png" alt="Cover Page">
+        <img src="pravin_front.png" alt="Cover Page">
     </div>
 
     <div class="print-content-wrapper">
@@ -1195,13 +1195,26 @@
                 { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
                 { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
                 { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+                { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
                 { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
             ];
             const stored = localStorage.getItem('pks_rooms');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        if (!parsed.some(r => r.id === 'false_celling')) {
+                            const accIdx = parsed.findIndex(r => r.id === 'accessories');
+                            const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
+                            if (accIdx !== -1) {
+                                parsed.splice(accIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            localStorage.setItem('pks_rooms', JSON.stringify(parsed));
+                        }
+                        return parsed;
+                    }
                 } catch (e) {
                     console.error("Error parsing rooms, using defaults", e);
                 }
@@ -1566,15 +1579,13 @@
         ];
 
         const KING_BED_OPTS = [
-            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
-            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Marine Ply – Lamination", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Marine Ply – Acrylic", fields: [], formula: v => 1, note: "direct price" }
         ];
 
         const QUEEN_BED_OPTS = [
-            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
-            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Marine Ply – Lamination", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Marine Ply – Acrylic", fields: [], formula: v => 1, note: "direct price" }
         ];
 
         const DRESSING_BOTTOM_OPTS = [
@@ -1592,6 +1603,12 @@
             { label: "Wall Panel PVC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
             { label: "Wall Panel Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
             { label: "Wall Panel Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
+        const FALSE_CELLING_OPTS = [
+            { label: "Sitout-plane seeling", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", specs: "section-ultrasection | board-gypsum board | board brand -gyprock" },
+            { label: "Sitout- design celling", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", specs: "section-ultrasection | board-gypsum board | board brand -gyprock" },
+            { label: "Sitout - wpc celling", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
         const ENG_WOOD_BOX_DOOR = [
@@ -1616,17 +1633,20 @@
         ];
 
         const ENG_WOOD_KING_BED = [
-            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
-            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
         ];
 
         const ENG_WOOD_QUEEN_BED = [
-            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
-            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
         ];
 
         // Default Rates lookup (fallback if not in localStorage)
         const DEFAULT_RATES = {
+            "Sitout-plane seeling": 0,
+            "Sitout- design celling": 0,
+            "Sitpoout -wpc celling": 0,
+            "Sitout -wpc celling": 0,
+            "Sitout - wpc celling": 0,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Only)": 450,
@@ -1668,6 +1688,12 @@
             "Engineering Wood": 280,
             "Engineering Wood (Box Type)": 280,
             "Engineering Wood (Door Only)": 280,
+            "28::Marine Ply – Lamination": 35000,
+            "28::Marine Ply – Acrylic": 42000,
+            "28::Engineering Wood": 28000,
+            "280::Marine Ply – Lamination": 28000,
+            "280::Marine Ply – Acrylic": 35000,
+            "280::Engineering Wood": 22000,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1897,7 +1923,19 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: SITOUT_CEILING_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL },
+            ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -1969,13 +2007,25 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
-                { id: 47, name: "Sit out area ceiling", options: ENG_WOOD_ONLY }
+                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL }
             ],
             store_room: [
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
             ],
             toilet_area: [
                 { id: 41, name: "Toilet Area Washbasin Cabinet", options: ENG_WOOD_BOX_DOOR }
+            ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -2010,7 +2060,7 @@
             return cachedDeletedStandardItems;
         }
         const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
         const initialDeleted = getDeletedStandardItems() || [];
         let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
 
@@ -2132,7 +2182,7 @@
                 localStorage.setItem('pks_selected_room_name', selectedRoomName);
 
                 const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
                 const deleted = getDeletedStandardItems() || [];
                 BASE_ITEMS = (rawItems || []).filter(item => item && !deleted.includes(item.id));
                 ITEMS = getFullItemsList() || [];
@@ -2327,11 +2377,15 @@
             try {
                 const parsed = JSON.parse(specsTextRaw);
                 if (Array.isArray(parsed)) {
-                    specsList = parsed.map(item => ({
-                        text: item.text || item.TEXT || '',
-                        room: item.room || item.ROOM || 'all',
-                        material: item.material || item.MATERIAL || 'all'
-                    }));
+                    specsList = parsed.map(item => {
+                        let mat = item.material || item.MATERIAL || 'all';
+                        if (mat.toLowerCase() === 'wall panel lamination') mat = 'lamination';
+                        return {
+                            text: item.text || item.TEXT || '',
+                            room: item.room || item.ROOM || 'all',
+                            material: mat
+                        };
+                    });
                 } else {
                     throw new Error();
                 }
@@ -2354,9 +2408,11 @@
                 } else if (cleanMaterial === specMat) {
                     materialMatch = true;
                 } else if (cleanMaterial.includes(specMat)) {
-                    if (specmat === 'wall panel lamination' && cleanMaterial.includes('wpc')) {
+                    if (specMat === 'wall panel lamination' && cleanMaterial.includes('wpc')) {
                         materialMatch = false;
                     } else if (specMat === 'wpc' && cleanMaterial.includes('wall panel lamination')) {
+                        materialMatch = false;
+                    } else if (specMat === 'wpc' && (cleanMaterial.includes('celling') || cleanMaterial.includes('ceiling') || roomId === 'false_celling')) {
                         materialMatch = false;
                     } else {
                         materialMatch = true;
@@ -2587,7 +2643,7 @@
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
 
             const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
             const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
@@ -2624,7 +2680,11 @@
                 </div>
             `).join('');
 
-            const defaultLabel = opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : 'Sq.Ft: <b>0</b>';
+            const rateLabel = opt.fields.length === 0 ? 'Price (₹) [Locked]' : 'Rate (₹/sq.ft) [Locked]';
+            const defaultLabel = opt.fields.length === 0 ? `Amount: <b>₹${defaultRate.toFixed(2)}</b>` : (opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : 'Sq.Ft: <b>0</b>');
+            const calcLineHtml = opt.fields.length === 0 
+                ? `Amount: <b>₹${defaultRate.toFixed(2)}</b>`
+                : `${defaultLabel}${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}`;
 
             sizeArea.innerHTML = `
                 <div class="size-panel">
@@ -2633,11 +2693,11 @@
                   <div class="field-row">
                     ${fieldsHtml}
                     <div class="field" ${showRate ? '' : 'style="display:none;"'}>
-                      <label>Rate (₹/sq.ft) [Locked]</label>
+                      <label>${rateLabel}</label>
                       <input type="number" step="0.01" id="${buildId}-rate" value="${defaultRate}" disabled>
                     </div>
                   </div>
-                  <div class="calc-line" id="${buildId}-calc">${defaultLabel}${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}</div>
+                  <div class="calc-line" id="${buildId}-calc">${calcLineHtml}</div>
                   <div class="row-actions">
                     <button class="confirm-btn" onclick="confirmMaterial('${buildId}', ${itemId}, ${optIdx})">Add to Quote</button>
                     <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
@@ -2682,6 +2742,8 @@
             } else if (opt.fields.includes('QTY')) {
                 const el = document.getElementById(`${buildId}-QTY`);
                 sqft = parseFloat(el.value) || 0;
+            } else if (opt.fields.length === 0) {
+                sqft = 1;
             } else {
                 const v = readValues(buildId, opt.fields);
                 sqft = opt.formula(v);
@@ -2694,6 +2756,11 @@
             const amount = sqft * rate;
 
             let previewStr = '';
+            if (opt.fields.length === 0) {
+                document.getElementById(`${buildId}-calc`).innerHTML = `Amount: <b>₹${amount.toFixed(2)}</b>`;
+                return;
+            }
+
             if (opt.fields.includes('QTY')) {
                 previewStr = `Qty: <b>${sqft}</b>`;
             } else {
@@ -2757,7 +2824,7 @@
             let sizeDesc = '';
             if (opt.fields.includes('QTY')) {
                 sizeDesc = `QT:${v.QTY || sqft || 1}`;
-            } else if (opt.label.includes("(Direct Price)")) {
+            } else if (opt.fields.length === 0) {
                 sizeDesc = '—';
             } else {
                 sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
@@ -2767,7 +2834,7 @@
             }
 
             const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
             const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
@@ -2808,7 +2875,7 @@
             }
 
             const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || desc.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || desc.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
             const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, desc, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
@@ -2922,7 +2989,7 @@
                 const style = img.ratio === '9:16'
                     ? `width: 80px; height: 142px;`
                     : `width: 120px; height: 68px;`;
-                return `<img src="${img.src}" alt="${materialLabel}" style="${style} object-fit: cover; border-radius: 4px; border: 1px solid ${borderStyle};">`;
+                return `<a href="${img.src}" target="_blank" style="display: inline-block;"><img src="${img.src}" alt="${materialLabel}" style="${style} object-fit: cover; border-radius: 4px; border: 1px solid ${borderStyle}; cursor: pointer;"></a>`;
             }).join('')}
                 </div>
             `;
@@ -2953,12 +3020,14 @@
             }
 
             // Separate room lines from accessory lines
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
             const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
-            const grandTotal = roomTotal + accessoryTotal;
+            const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
+            const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
             // Offer price totals (use amount as fallback if no offer price entered)
             const grandOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
@@ -3093,6 +3162,70 @@
                           <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                         </tr>
                     `;
+                });
+            }
+
+
+            // ── False Celling group ──
+            if (falseCellingLines.length > 0) {
+                const roomOrder = [];
+                const roomMap = {};
+                falseCellingLines.forEach(l => {
+                    if (!roomMap[l.roomName]) {
+                        roomMap[l.roomName] = [];
+                        roomOrder.push(l.roomName);
+                    }
+                    roomMap[l.roomName].push(l);
+                });
+
+                roomOrder.forEach(roomName => {
+                    const lines = roomMap[roomName];
+                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+
+                    // Room group header row
+                    html += `
+                        <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                            <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                                🏠 ${roomName}
+                            </td>
+                        </tr>
+                    `;
+
+                    lines.forEach(l => {
+                        let shortName = shortenItemName(l.itemName, roomName);
+                        const typeMatch = l.material ? l.material.match(/\(([^)]+)\)/) : null;
+                        if (typeMatch && typeMatch[1]) {
+                            const typeStr = typeMatch[1].toUpperCase();
+                            if (!shortName.toUpperCase().includes(typeStr)) {
+                                shortName += ` (${typeStr})`;
+                            }
+                        }
+
+                        const materialCellContent = l.specs ? `
+                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
+                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
+                            </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+
+                        html += `
+                            <tr>
+                              <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
+                              <td style="vertical-align:top; padding-top:10px;">
+                                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
+                                  <strong>${shortName}</strong>
+                              </td>
+                              <td style="vertical-align:top; padding-top:10px;">
+                                  ${materialCellContent}
+                              </td>
+                              <td style="vertical-align:top; padding-top:10px;">${l.size}</td>
+                              ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">${l.sqft}</td>` : ''}
+                              ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">₹${l.rate.toFixed(2)}</td>` : ''}
+                              <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
+                              ${offerCell(l)}
+                              <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                            </tr>
+                        `;
+                    });
                 });
             }
 
@@ -3285,11 +3418,13 @@
                 const existingLogoImg = document.querySelector('.print-invoice-header img, header img');
                 const logoSrc = existingLogoImg ? existingLogoImg.src : '';
 
-                const roomLines = quoteLines.filter(l => !l.roomName.toLowerCase().includes('accessories'));
+                const roomLines = quoteLines.filter(l => !l.roomName.toLowerCase().includes('accessories') && !l.roomName.toLowerCase().includes('false celling'));
                 const accessoryLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('accessories'));
+                const falseCellingLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('false celling'));
                 const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
                 const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
-                const grandTotal = roomTotal + accessoryTotal;
+                const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
+                const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
                 const showSqFt = (typeof showSqftRate !== 'undefined') ? showSqftRate : true;
                 const cols = 4 + (showSqFt ? 1 : 0) + (showRate ? 1 : 0) + 1; // S.NO + Item + Material + Size + Amount (+SqFt, +Rate)
@@ -3373,6 +3508,44 @@
                         </tr>`;
                 }
 
+                if (falseCellingLines.length > 0) {
+                    const roomOrder = [];
+                    const roomMap = {};
+                    falseCellingLines.forEach(l => {
+                        if (!roomMap[l.roomName]) {
+                            roomMap[l.roomName] = [];
+                            roomOrder.push(l.roomName);
+                        }
+                        roomMap[l.roomName].push(l);
+                    });
+
+                    roomOrder.forEach(roomName => {
+                        const lines = roomMap[roomName];
+                        rowsHTML += `
+                            <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
+                                    🏠 ${roomName}
+                                </td>
+                            </tr>`;
+
+                        lines.forEach(l => {
+                            rowsHTML += `
+                                <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
+                                    <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
+                                        <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
+                                        ${l.itemName}
+                                    </td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                    <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
+                                    ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
+                                    ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
+                                    <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
+                                </tr>`;
+                        });
+                    });
+                }
+
                 const specsRaw = localStorage.getItem('pks_material_specs') || '[]';
                 let specsList = [];
                 try { const p = JSON.parse(specsRaw); if (Array.isArray(p)) specsList = p; } catch (e) { }
@@ -3380,7 +3553,13 @@
                 const activeMaterials = quoteLines.map(l => (l.material || '').toLowerCase());
                 const filteredSpecs = specsList.filter(s => {
                     const rm = s.room === 'all' || activeRoomIds.has(s.room);
-                    const mm = s.material === 'all' || activeMaterials.some(m => m.includes((s.material || '').toLowerCase()));
+                    const mm = s.material === 'all' || activeMaterials.some(m => {
+                        const specMat = (s.material || '').toLowerCase();
+                        if (specMat === 'wpc' && (m.includes('celling') || m.includes('ceiling'))) {
+                            return false;
+                        }
+                        return m.includes(specMat);
+                    });
                     return rm && mm;
                 }).map(s => (s.text || s.TEXT || '').toUpperCase());
                 const specsText = filteredSpecs.join(', ');
@@ -3404,7 +3583,7 @@
                 const coverDiv = document.createElement('div');
                 coverDiv.style.cssText = 'width:794px;height:1123px;margin:0;padding:0;overflow:hidden;page-break-after:always;break-after:page;';
                 const coverImg = document.createElement('img');
-                coverImg.src = 'pravin front.png';
+                coverImg.src = 'pravin_front.png';
                 coverImg.style.cssText = 'width:100%;height:100%;object-fit:fill;display:block;';
                 coverDiv.appendChild(coverImg);
                 container.appendChild(coverDiv);
@@ -3941,7 +4120,15 @@
                 { text: "Super Premium PVC Panel", room: "all", material: "Wall Panel PVC" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "Wall Panel Charcoal" },
                 { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
-                { text: "Finish Freelamp", room: "all", material: "engineering wood" }
+                { text: "Finish Freelamp", room: "all", material: "engineering wood" },
+
+                // False Celling specifications
+                { text: "section-ultrasection", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "board-gypsum board", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "board brand -gyprock", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "section-ultrasection", room: "false_celling", material: "Sitout- design celling" },
+                { text: "board-gypsum board", room: "false_celling", material: "Sitout- design celling" },
+                { text: "board brand -gyprock", room: "false_celling", material: "Sitout- design celling" }
             ];
 
             let needsReset = !current;
@@ -3962,7 +4149,11 @@
                             const mat = (item.material || '').toLowerCase();
                             return mat === 'engineering wood' && (item.text || '').toLowerCase().includes('warrenty');
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty) {
+                        const hasFalseCellingSpec = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'sitout-plane seeling';
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || !hasFalseCellingSpec) {
                             needsReset = true;
                         }
                     } else {
