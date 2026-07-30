@@ -465,6 +465,14 @@
             localStorage.setItem('pks_employee_pass', 'a123');
         }
 
+        // Force reload default rates if rate version is older (Phase 2 update)
+        const CURRENT_RATE_VERSION = 2;
+        if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
+            localStorage.removeItem('pks_rates');
+            localStorage.removeItem('pks_room_rates');
+            localStorage.setItem('pks_rate_version', String(CURRENT_RATE_VERSION));
+        }
+
         function openAdminModal() {
             document.getElementById('adminModal').classList.add('active');
             document.getElementById('adminPass').focus();
