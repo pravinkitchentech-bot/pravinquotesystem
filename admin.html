@@ -1185,6 +1185,7 @@
                                     <option value="toilet_area">Toilet Area</option>
                                     <option value="store_room">Store Room</option>
                                     <option value="sitout">Sitout</option>
+                                    <option value="false_celling">False Celling</option>
                                     <option value="accessories">Accessories</option>
                                 </select>
                             </div>
@@ -1355,6 +1356,7 @@
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+            { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
@@ -1363,7 +1365,19 @@
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        if (!parsed.some(r => r.id === 'false_celling')) {
+                            const accIdx = parsed.findIndex(r => r.id === 'accessories');
+                            const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
+                            if (accIdx !== -1) {
+                                parsed.splice(accIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            localStorage.setItem('pks_rooms', JSON.stringify(parsed));
+                        }
+                        return parsed;
+                    }
                 } catch (e) {
                     console.error("Error parsing rooms, using defaults", e);
                 }
@@ -1384,6 +1398,11 @@
 
         /* ---------- Base Materials & Defaults ---------- */
         const DEFAULT_RATES = {
+            "Sitout-plane seeling": 0,
+            "Sitout- design celling": 0,
+            "Sitpoout -wpc celling": 0,
+            "Sitout -wpc celling": 0,
+            "Sitout - wpc celling": 0,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Only)": 450,
@@ -1423,6 +1442,12 @@
             "Engineering Wood": 280,
             "Engineering Wood (Box Type)": 280,
             "Engineering Wood (Door Only)": 280,
+            "28::Marine Ply – Lamination": 35000,
+            "28::Marine Ply – Acrylic": 42000,
+            "28::Engineering Wood": 28000,
+            "280::Marine Ply – Lamination": 28000,
+            "280::Marine Ply – Acrylic": 35000,
+            "280::Engineering Wood": 22000,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1499,8 +1524,8 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 27, name: "Bed back wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 28, name: "King Size Bed", options: ["King Size Bed (Direct Price)", "Marine Ply – Lamination", "Marine Ply – Acrylic"] },
-                { id: 280, name: "Queen Size Bed", options: ["Queen Size Bed (Direct Price)", "Marine Ply – Lamination", "Marine Ply – Acrylic"] },
+                { id: 28, name: "King Size Bed", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic"] },
+                { id: 280, name: "Queen Size Bed", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic"] },
                 { id: 29, name: "Bay window", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 30, name: "Dressing unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 31, name: "Dressing unit bottom cabinet", options: ["Marine Ply – Lamination (Box)", "Marine Ply – Acrylic (Box)", "WPC (Box)", "WPC – Lamination (Box)"] },
@@ -1541,6 +1566,18 @@
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+            ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
             ]
@@ -1577,8 +1614,8 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ["Engineering Wood"] },
                 { id: 27, name: "Bed back wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 28, name: "King Size Bed", options: ["King Size Bed (Direct Price)", "Engineering Wood"] },
-                { id: 280, name: "Queen Size Bed", options: ["Queen Size Bed (Direct Price)", "Engineering Wood"] },
+                { id: 28, name: "King Size Bed", options: ["Engineering Wood"] },
+                { id: 280, name: "Queen Size Bed", options: ["Engineering Wood"] },
                 { id: 29, name: "Bay window", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 30, name: "Dressing unit wall paneling", options: ["Engineering Wood"] },
                 { id: 31, name: "Dressing unit bottom cabinet", options: ["Engineering Wood (Box Type)"] },
@@ -1618,6 +1655,18 @@
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
+            ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -2755,6 +2804,7 @@
                 toilet_area: "Toilet Area",
                 store_room: "Store Room",
                 sitout: "Sitout",
+                false_celling: "False Celling",
                 accessories: "Accessories"
             };
             return map[roomKey] || roomKey;
@@ -2969,7 +3019,7 @@
 
             const editRoom = confirm(`Keep specific room condition (${oldSpec.room === 'all' ? 'Global' : getRoomLabel(oldSpec.room)})?`);
             if (!editRoom) {
-                const newRoom = prompt(`Enter new Room ID (kitchen, bedroom, living_room, prayer_unit, dining_room, study_room, toilet_area, store_room, sitout, accessories, or 'all'):`, oldSpec.room);
+                const newRoom = prompt(`Enter new Room ID (kitchen, bedroom, living_room, prayer_unit, dining_room, study_room, toilet_area, store_room, sitout, false_celling, accessories, or 'all'):`, oldSpec.room);
                 if (newRoom !== null) specs[index].room = newRoom.trim().toLowerCase() || 'all';
             }
 
@@ -3159,7 +3209,15 @@
                 { text: "Super Premium PVC Panel", room: "all", material: "Wall Panel PVC" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "Wall Panel Charcoal" },
                 { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
-                { text: "Finish Freelamp", room: "all", material: "engineering wood" }
+                { text: "Finish Freelamp", room: "all", material: "engineering wood" },
+
+                // False Celling specifications
+                { text: "section-ultrasection", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "board-gypsum board", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "board brand -gyprock", room: "false_celling", material: "Sitout-plane seeling" },
+                { text: "section-ultrasection", room: "false_celling", material: "Sitout- design celling" },
+                { text: "board-gypsum board", room: "false_celling", material: "Sitout- design celling" },
+                { text: "board brand -gyprock", room: "false_celling", material: "Sitout- design celling" }
             ];
 
             let needsReset = !current;
@@ -3183,7 +3241,11 @@
                         const hasWallPanelLam = parsed.some(item => {
                             return (item.material || '').toLowerCase() === 'wall panel lamination';
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || hasWallPanelLam) {
+                        const hasFalseCellingSpec = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'sitout-plane seeling';
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || hasWallPanelLam || !hasFalseCellingSpec) {
                             needsReset = true;
                         }
                     } else {
