@@ -1258,6 +1258,11 @@
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam"
             },
+            {
+                label: "WPC – Lamination",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates"
+            },
         ];
         const WALL_PANEL = [
             { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
@@ -1304,6 +1309,11 @@
                 fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam"
             },
+            {
+                label: "WPC – Lamination",
+                fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates"
+            },
         ];
         const LEDGE = [
             {
@@ -1320,6 +1330,11 @@
                 label: "WPC",
                 fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam"
+            },
+            {
+                label: "WPC – Lamination",
+                fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates"
             },
         ];
         const PARTITION = [
@@ -1592,7 +1607,8 @@
             { label: "Marine Ply – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Acrylic (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+            { label: "WPC – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
 
         const GLASS_PARTITION_OPTS = [
@@ -1629,27 +1645,14 @@
         ];
 
         const ENG_WOOD_WALL_PANEL = [
-            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
-        ];
-
-        const ENG_WOOD_KING_BED = [
-            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
-        ];
-
-        const ENG_WOOD_QUEEN_BED = [
-            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
-        ];
-
-        // Default Rates lookup (fallback if not in localStorage)
-        const DEFAULT_RATES = {
-            "Sitout-plane seeling": 0,
-            "Sitout- design celling": 0,
-            "Sitpoout -wpc celling": 0,
-            "Sitout -wpc celling": 0,
-            "Sitout - wpc celling": 0,
+                  const DEFAULT_RATES = {
+            "Sitout-plane seeling": 95,
+            "Sitout- design celling": 95,
+            "Sitpoout -wpc celling": 95,
+            "Sitout -wpc celling": 95,
+            "Sitout - wpc celling": 95,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
-            "Marine Ply – Lamination (Door Only)": 450,
             "Marine Ply – Lamination (Door Only)": 450,
             "Marine Ply – Lamination (Partition Type)": 450,
             "Marine Ply – Lamination (Framed)": 450,
@@ -1660,14 +1663,12 @@
             "Marine Ply – Acrylic": 650,
             "Marine Ply – Acrylic (Box Type)": 650,
             "Marine Ply – Acrylic (Door Only)": 650,
-            "Marine Ply – Acrylic (Door Only)": 650,
             "Marine Ply – Acrylic (Partition Type)": 650,
             "Marine Ply – Acrylic (Framed)": 650,
             "Marine Ply – Acrylic (Box)": 650,
 
             "WPC": 550,
             "WPC (Box Type)": 550,
-            "WPC (Door Only)": 550,
             "WPC (Door Only)": 550,
             "WPC (Partition Type)": 550,
             "WPC (Framed)": 550,
@@ -1676,68 +1677,494 @@
             "WPC – Lamination": 550,
             "WPC – Lamination (Box Type)": 550,
             "WPC – Lamination (Door Only)": 550,
-            "WPC – Lamination (Door Only)": 550,
             "WPC – Lamination (Partition Type)": 550,
             "WPC – Lamination (Framed)": 550,
             "WPC – Lamination (Box)": 550,
 
-            "Wall Panel PVC": 300,
-            "Wall Panel Lamination": 250,
-            "Wall Panel Charcoal": 400,
+            "Wall Panel PVC": 400,
+            "Wall Panel Lamination": 550,
+            "Wall Panel Charcoal": 800,
             "Marine Plane": 350,
             "Engineering Wood": 280,
             "Engineering Wood (Box Type)": 280,
             "Engineering Wood (Door Only)": 280,
-            "28::Marine Ply – Lamination": 35000,
-            "28::Marine Ply – Acrylic": 42000,
+            "28::Marine Ply – Lamination": 42000,
+            "28::Marine Ply – Acrylic": 550,
             "28::Engineering Wood": 28000,
-            "280::Marine Ply – Lamination": 28000,
-            "280::Marine Ply – Acrylic": 35000,
-            "280::Engineering Wood": 22000,
-            "King Size Bed (Direct Price)": 35000,
-            "Queen Size Bed (Direct Price)": 28000,
+            "280::Marine Ply – Lamination": 40000,
+            "280::Marine Ply – Acrylic": 0,
+            "280::Engineering Wood": 27000,
+            "King Size Bed (Direct Price)": 42000,
+            "Queen Size Bed (Direct Price)": 40000,
             "Glass": 350,
             "Wood finishing": 500,
             "Veneer finishing": 700,
             "PU Paint": 600,
-            "Basket": 0,
-            "Tandom Box": 0,
-            "Oil Pull Out": 0,
-            "PVC Cutlery Tray": 0,
-            "SS Cutlery Tray": 0,
-            "Dustbin Unit": 0,
-            "Detergent Holder": 0,
-            "GTBT": 0,
-            "ROLLING SHUTTER": 0,
-            "Tall Unit": 0,
-            "Swing Corner": 0,
-            "Magic Corner": 0,
-            "CAROUSEL CORNER": 0,
-            "D-Tray": 0,
-            "Soft Closing Runner": 0,
-            "Soft Closing Hinges": 0,
-            "Profile Handle": 0
-        };
 
-        const ACCESSORY_OPTS = [
-            { label: "Basket", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Tandom Box", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Oil Pull Out", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "PVC Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "SS Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Dustbin Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Detergent Holder", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "GTBT", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "ROLLING SHUTTER", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Tall Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Swing Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Magic Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "CAROUSEL CORNER", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "D-Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Soft Closing Runner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Profile Handle", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
-        ];
+            // Accessories
+            "Basket": 3000,
+            "Tandom Box": 4500,
+            "Oil Pull Out": 6500,
+            "PVC Cutlery Tray": 2000,
+            "SS Cutlery Tray": 0,
+            "Dustbin Unit": 4800,
+            "Detergent Holder": 4800,
+            "GTBT": 4800,
+            "D-Tray": 9500,
+            "Soft Closing Runner": 1050,
+            "Soft Closing Hinges": 0,
+            "Profile Handle": 0,
+            "Swing Corner epco brand": 21000,
+            "Swing Corner unbrand": 16000,
+            "Carousel Corner epco brand": 1200,
+            "Magic Corner epco brand": 28000,
+            "Magic Corner unbrand": 19500,
+            "Rolling Shutter Black": 19500,
+            "Rolling Shutter except Black": 16000,
+            "Tall Unit epco brand (ss)": 42000,
+            "Tall Unit epco brand (glass)": 38000,
+            "Tall Unit epco brand (Normal)": 29000,
+            "Tall Unit unbrand (ss)": 24000,
+            "Tall Unit unbrand (Normal)": 17800,
+
+            // Kitchen Bottom (ID 1)
+            "1::Marine Ply – Lamination (Box Type)": 1500,
+            "1::Marine Ply – Lamination (Partition Type)": 1400,
+            "1::Marine Ply – Lamination (Door Only)": 800,
+            "1::Marine Ply – Acrylic (Box Type)": 2800,
+            "1::Marine Ply – Acrylic (Partition Type)": 2600,
+            "1::Marine Ply – Acrylic (Door Only)": 1800,
+            "1::WPC (Box Type)": 1500,
+            "1::WPC (Partition Type)": 1400,
+            "1::WPC (Door Only)": 800,
+            "1::WPC – Lamination (Box Type)": 1600,
+            "1::WPC – Lamination (Partition Type)": 1500,
+            "1::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Overhead Cabinets (ID 2)
+            "2::Marine Ply – Lamination (Box Type)": 1300,
+            "2::Marine Ply – Lamination (Door Only)": 800,
+            "2::Marine Ply – Acrylic (Box Type)": 2600,
+            "2::Marine Ply – Acrylic (Door Only)": 1800,
+            "2::WPC (Box Type)": 1300,
+            "2::WPC (Door Only)": 800,
+            "2::WPC – Lamination (Box Type)": 1400,
+            "2::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Loft (ID 3)
+            "3::Marine Ply – Lamination (Box Type)": 1300,
+            "3::Marine Ply – Lamination (Framed)": 1000,
+            "3::Marine Ply – Lamination (Door Only)": 800,
+            "3::Marine Ply – Acrylic (Box Type)": 2600,
+            "3::Marine Ply – Acrylic (Framed)": 2200,
+            "3::Marine Ply – Acrylic (Door Only)": 1800,
+            "3::WPC (Box Type)": 1300,
+            "3::WPC (Framed)": 1000,
+            "3::WPC (Door Only)": 800,
+            "3::WPC – Lamination (Box Type)": 1400,
+            "3::WPC – Lamination (Framed)": 1100,
+            "3::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Island Cabin (ID 4)
+            "4::Marine Ply – Lamination (Box Type)": 1500,
+            "4::Marine Ply – Lamination (Door Only)": 800,
+            "4::Marine Ply – Acrylic (Box Type)": 2600,
+            "4::Marine Ply – Acrylic (Door Only)": 1800,
+            "4::WPC (Box Type)": 1300,
+            "4::WPC (Door Only)": 800,
+            "4::WPC – Lamination (Box Type)": 1600,
+            "4::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Breakfast Table (ID 5)
+            "5::Marine Ply – Lamination (Box Type)": 1500,
+            "5::Marine Ply – Lamination (Door Only)": 800,
+            "5::Marine Ply – Acrylic (Box Type)": 2600,
+            "5::Marine Ply – Acrylic (Door Only)": 1800,
+            "5::WPC (Box Type)": 1500,
+            "5::WPC (Door Only)": 800,
+            "5::WPC – Lamination (Box Type)": 1600,
+            "5::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Breakfast Table - Wall Panelling (ID 6)
+            "6::Wall Panel PVC": 400,
+            "6::Wall Panel Lamination": 550,
+            "6::Wall Panel Charcoal": 800,
+
+            // Kitchen Breakfast Table - Beam Covering (ID 7)
+            "7::Wall Panel Lamination": 850,
+
+            // Kitchen Breakfast Table - Open Box (ID 8)
+            "8::Marine Ply – Lamination": 1400,
+            "8::Marine Ply – Acrylic": 2600,
+            "8::WPC": 1400,
+            "8::WPC – Lamination": 1500,
+
+            // Kitchen Spice Rack (ID 9)
+            "9::Marine Ply – Lamination": 1400,
+            "9::Marine Ply – Acrylic": 2600,
+            "9::WPC": 1400,
+            "9::WPC – Lamination": 1500,
+
+            // Kitchen Ledge (ID 10)
+            "10::Marine Ply – Lamination": 1000,
+            "10::Marine Ply – Acrylic": 1500,
+            "10::WPC": 1000,
+            "10::WPC – Lamination": 1100,
+
+            // Kitchen Side Storage Cabinet (ID 11)
+            "11::Marine Ply – Lamination (Box Type)": 1400,
+            "11::Marine Ply – Lamination (Door Only)": 800,
+            "11::Marine Ply – Acrylic (Box Type)": 2600,
+            "11::Marine Ply – Acrylic (Door Only)": 1800,
+            "11::WPC (Box Type)": 1400,
+            "11::WPC (Door Only)": 800,
+            "11::WPC – Lamination (Box Type)": 1500,
+            "11::WPC – Lamination (Door Only)": 900,
+
+            // Kitchen Dining Partition (ID 12)
+            "12::WPC": 0,
+            "12::WPC – Lamination": 1400,
+            "12::Marine Ply – Lamination": 1300,
+            "12::Marine Ply – Acrylic": 0,
+            "12::Engineering Wood": 900,
+
+            // Living Room TV Unit Wall Panelling (ID 16)
+            "16::Wall Panel PVC": 400,
+            "16::Wall Panel Lamination": 550,
+            "16::Wall Panel Charcoal": 800,
+
+            // Living Room TV Unit Bottom Cabinet (ID 17)
+            "17::Marine Ply – Lamination (Box Type)": 1300,
+            "17::Marine Ply – Lamination (Door Only)": 800,
+            "17::Marine Ply – Acrylic (Box Type)": 2600,
+            "17::Marine Ply – Acrylic (Door Only)": 1800,
+            "17::WPC (Box Type)": 1300,
+            "17::WPC (Door Only)": 800,
+            "17::WPC – Lamination (Box Type)": 1400,
+            "17::WPC – Lamination (Door Only)": 900,
+
+            // Living Room TV Unit Side Show Wall Cabinet (ID 18)
+            "18::Marine Ply – Lamination (Box Type)": 1400,
+            "18::Marine Ply – Lamination (Door Only)": 800,
+            "18::Marine Ply – Acrylic (Box Type)": 2600,
+            "18::Marine Ply – Acrylic (Door Only)": 1800,
+            "18::WPC (Box Type)": 1400,
+            "18::WPC (Door Only)": 800,
+            "18::WPC – Lamination (Box Type)": 1500,
+            "18::WPC – Lamination (Door Only)": 900,
+
+            // Living Room Partition (ID 19)
+            "19::WPC": 0,
+            "19::WPC – Lamination": 1400,
+            "19::Marine Ply – Lamination": 1300,
+            "19::Marine Ply – Acrylic": 0,
+            "19::Engineering Wood": 900,
+
+            // Living Room Wall Panelling (ID 20)
+            "20::Wall Panel PVC": 400,
+            "20::Wall Panel Lamination": 550,
+            "20::Wall Panel Charcoal": 800,
+
+            // Staircase Bottom (ID 21)
+            "21::Marine Ply – Lamination (Box Type)": 1300,
+            "21::Marine Ply – Lamination (Door Only)": 800,
+            "21::Marine Ply – Acrylic (Box Type)": 2600,
+            "21::Marine Ply – Acrylic (Door Only)": 1800,
+            "21::WPC (Box Type)": 1300,
+            "21::WPC (Door Only)": 800,
+            "21::WPC – Lamination (Box Type)": 1400,
+            "21::WPC – Lamination (Door Only)": 900,
+            "21::Engineering Wood (Box Type)": 900,
+            "21::Engineering Wood (Door Only)": 500,
+
+            // Living and Kitchen Partition (ID 61)
+            "61::WPC": 0,
+            "61::WPC – Lamination": 1400,
+            "61::Marine Ply – Lamination": 1300,
+            "61::Marine Ply – Acrylic": 0,
+            "61::Engineering Wood": 900,
+
+            // Prayer Unit Wall Panel (ID 74)
+            "74::Wall Panel PVC": 400,
+            "74::Wall Panel Lamination": 550,
+            "74::Wall Panel Charcoal": 800,
+
+            // Prayer Unit Bottom Cabinet (ID 75)
+            "75::Marine Ply – Lamination (Box Type)": 1300,
+            "75::Marine Ply – Lamination (Door Only)": 800,
+            "75::Marine Ply – Acrylic (Box Type)": 2600,
+            "75::Marine Ply – Acrylic (Door Only)": 1800,
+            "75::WPC (Box Type)": 1300,
+            "75::WPC (Door Only)": 800,
+            "75::WPC – Lamination (Box Type)": 1400,
+            "75::WPC – Lamination (Door Only)": 900,
+
+            // Bedroom Wardrobe (ID 25)
+            "25::Marine Ply – Lamination (Box Type)": 1300,
+            "25::Marine Ply – Lamination (Door Only)": 800,
+            "25::Marine Ply – Acrylic (Box Type)": 2600,
+            "25::Marine Ply – Acrylic (Door Only)": 1800,
+            "25::WPC (Box Type)": 1300,
+            "25::WPC (Door Only)": 800,
+            "25::WPC – Lamination (Box Type)": 1400,
+            "25::WPC – Lamination (Door Only)": 900,
+            "25::Engineering Wood (Box Type)": 900,
+            "25::Engineering Wood (Door Only)": 500,
+            "25::Engineering Wood": 280,
+
+            // Bed back wall paneling (ID 27)
+            "27::Wall Panel PVC": 400,
+            "27::Wall Panel Lamination": 550,
+            "27::Wall Panel Charcoal": 800,
+
+            // Bay Window (ID 29)
+            "29::Marine Ply – Lamination (Box Type)": 1300,
+            "29::Marine Ply – Lamination (Door Only)": 800,
+            "29::Marine Ply – Acrylic (Box Type)": 2600,
+            "29::Marine Ply – Acrylic (Door Only)": 1800,
+            "29::WPC (Box Type)": 1300,
+            "29::WPC (Door Only)": 800,
+            "29::WPC – Lamination (Box Type)": 1400,
+            "29::WPC – Lamination (Door Only)": 900,
+            "29::Engineering Wood (Box Type)": 900,
+            "29::Engineering Wood (Door Only)": 500,
+
+            // Dressing Unit Wall Panelling (ID 30)
+            "30::Wall Panel PVC": 400,
+            "30::Wall Panel Lamination": 550,
+            "30::Wall Panel Charcoal": 800,
+            "30::Engineering Wood": 0,
+
+            // Dressing Unit Bottom Cabinet (ID 31)
+            "31::Marine Ply – Lamination (Box)": 1300,
+            "31::Marine Ply – Acrylic (Box)": 2600,
+            "31::WPC (Box)": 1300,
+            "31::WPC – Lamination (Box)": 1400,
+            "31::Engineering Wood (Box)": 900,
+            "31::Engineering Wood (Box Type)": 0,
+
+            // TV Unit Wall Panelling - Bedroom (ID 32)
+            "32::Wall Panel PVC": 400,
+            "32::Wall Panel Lamination": 550,
+            "32::Wall Panel Charcoal": 800,
+
+            // TV Unit Bottom Cabinet - Bedroom (ID 33)
+            "33::Marine Ply – Lamination (Box Type)": 1300,
+            "33::Marine Ply – Lamination (Door Only)": 800,
+            "33::Marine Ply – Acrylic (Box Type)": 2600,
+            "33::Marine Ply – Acrylic (Door Only)": 1800,
+            "33::WPC (Box Type)": 1300,
+            "33::WPC (Door Only)": 900,
+            "33::WPC – Lamination (Box Type)": 1400,
+            "33::WPC – Lamination (Door Only)": 900,
+
+            // TV Unit Side Show Wall Cabinet - Bedroom (ID 34)
+            "34::Marine Ply – Lamination (Box Type)": 1400,
+            "34::Marine Ply – Lamination (Door Only)": 900,
+            "34::Marine Ply – Acrylic (Box Type)": 2600,
+            "34::Marine Ply – Acrylic (Door Only)": 1800,
+            "34::WPC (Box Type)": 1400,
+            "34::WPC (Door Only)": 900,
+            "34::WPC – Lamination (Box Type)": 1500,
+            "34::WPC – Lamination (Door Only)": 1000,
+
+            // Side Cabinet - Bedroom (ID 65)
+            "65::Marine Ply – Lamination (Box Type)": 1300,
+            "65::Marine Ply – Lamination (Door Only)": 800,
+            "65::Marine Ply – Acrylic (Box Type)": 2600,
+            "65::Marine Ply – Acrylic (Door Only)": 1800,
+            "65::WPC (Box Type)": 1300,
+            "65::WPC (Door Only)": 800,
+            "65::WPC – Lamination (Box Type)": 1400,
+            "65::WPC – Lamination (Door Only)": 900,
+            "65::Engineering Wood (Box Type)": 900,
+            "65::Engineering Wood (Door Only)": 500,
+
+            // Cupboard 1 (ID 66)
+            "66::Marine Ply – Lamination (Box Type)": 1300,
+            "66::Marine Ply – Lamination (Door Only)": 800,
+            "66::Marine Ply – Acrylic (Box Type)": 2600,
+            "66::Marine Ply – Acrylic (Door Only)": 1800,
+            "66::WPC (Box Type)": 1300,
+            "66::WPC (Door Only)": 800,
+            "66::WPC – Lamination (Box Type)": 1400,
+            "66::WPC – Lamination (Door Only)": 900,
+            "66::Engineering Wood (Box Type)": 900,
+            "66::Engineering Wood (Door Only)": 500,
+
+            // Cupboard 2 (ID 67)
+            "67::Marine Ply – Lamination (Box Type)": 1300,
+            "67::Marine Ply – Lamination (Door Only)": 500,
+            "67::Marine Ply – Acrylic (Box Type)": 2600,
+            "67::Marine Ply – Acrylic (Door Only)": 1800,
+            "67::WPC (Box Type)": 1300,
+            "67::WPC (Door Only)": 800,
+            "67::WPC – Lamination (Box Type)": 1400,
+            "67::WPC – Lamination (Door Only)": 900,
+            "67::Engineering Wood (Box Type)": 900,
+            "67::Engineering Wood (Door Only)": 500,
+
+            // Loft 1 (ID 68)
+            "68::Marine Ply – Lamination (Box Type)": 1300,
+            "68::Marine Ply – Lamination (Door Only)": 500,
+            "68::Marine Ply – Acrylic (Box Type)": 2600,
+            "68::Marine Ply – Acrylic (Door Only)": 1800,
+            "68::WPC (Box Type)": 1300,
+            "68::WPC (Door Only)": 800,
+            "68::WPC – Lamination (Box Type)": 1400,
+            "68::WPC – Lamination (Door Only)": 900,
+            "68::Engineering Wood (Box Type)": 900,
+            "68::Engineering Wood (Door Only)": 500,
+
+            // Loft 2 (ID 69)
+            "69::Marine Ply – Lamination (Box Type)": 1300,
+            "69::Marine Ply – Lamination (Door Only)": 500,
+            "69::Marine Ply – Acrylic (Box Type)": 2600,
+            "69::Marine Ply – Acrylic (Door Only)": 1800,
+            "69::WPC (Box Type)": 1300,
+            "69::WPC (Door Only)": 800,
+            "69::WPC – Lamination (Box Type)": 1400,
+            "69::WPC – Lamination (Door Only)": 900,
+            "69::Engineering Wood (Box Type)": 900,
+            "69::Engineering Wood (Door Only)": 500,
+
+            // Wall Panelling (ID 70)
+            "70::Wall Panel PVC": 400,
+            "70::Wall Panel Lamination": 550,
+            "70::Wall Panel Charcoal": 800,
+
+            // Wall Panelling with Hidden Door (ID 71)
+            "71::Wall Panel PVC": 400,
+            "71::Wall Panel Lamination": 550,
+            "71::Wall Panel Charcoal": 800,
+
+            // Dining Wash Basin Bottom Cabinet (ID 37)
+            "37::Marine Ply – Lamination (Box Type)": 1300,
+            "37::Marine Ply – Lamination (Door Only)": 800,
+            "37::Marine Ply – Acrylic (Box Type)": 2600,
+            "37::Marine Ply – Acrylic (Door Only)": 1800,
+            "37::WPC (Box Type)": 1300,
+            "37::WPC (Door Only)": 800,
+            "37::WPC – Lamination (Box Type)": 1400,
+            "37::WPC – Lamination (Door Only)": 900,
+            "37::Engineering Wood (Box Type)": 280,
+            "37::Engineering Wood (Door Only)": 280,
+
+            // Dining Wash Basin Wall Panelling (ID 38)
+            "38::Wall Panel PVC": 400,
+            "38::Wall Panel Lamination": 550,
+            "38::Wall Panel Charcoal": 800,
+
+            // Dining Room Crockery Unit (ID 39)
+            "39::Marine Ply – Lamination (Box Type)": 1500,
+            "39::Marine Ply – Lamination (Door Only)": 900,
+            "39::Marine Ply – Acrylic (Box Type)": 2600,
+            "39::Marine Ply – Acrylic (Door Only)": 1800,
+            "39::WPC (Box Type)": 1500,
+            "39::WPC (Door Only)": 900,
+            "39::WPC – Lamination (Box Type)": 1600,
+            "39::WPC – Lamination (Door Only)": 1000,
+            "39::Engineering Wood (Box Type)": 1000,
+            "39::Engineering Wood (Door Only)": 600,
+
+            // Musical Room Wall Panel (ID 80)
+            "80::Wall Panel PVC": 1500,
+            "80::Wall Panel Lamination": 550,
+            "80::Wall Panel Charcoal": 800,
+
+            // Musical Table (ID 81)
+            "81::Marine Ply – Lamination (Box Type)": 1500,
+            "81::Marine Ply – Acrylic (Box Type)": 2600,
+            "81::WPC (Box Type)": 1500,
+            "81::WPC – Lamination (Box Type)": 1600,
+            "81::Engineering Wood (Box Type)": 1000,
+
+            // Study Room Book Shelf (ID 85)
+            "85::Marine Ply – Lamination (Box Type)": 1400,
+            "85::Marine Ply – Lamination (Door Only)": 800,
+            "85::Marine Ply – Acrylic (Box Type)": 2600,
+            "85::Marine Ply – Acrylic (Door Only)": 1800,
+            "85::WPC (Box Type)": 1400,
+            "85::WPC (Door Only)": 800,
+            "85::WPC – Lamination (Box Type)": 1500,
+            "85::WPC – Lamination (Door Only)": 900,
+            "85::Engineering Wood (Box Type)": 900,
+            "85::Engineering Wood (Door Only)": 500,
+
+            // Study Room Computer Table (ID 88)
+            "88::Marine Ply – Lamination (Box Type)": 1500,
+            "88::Marine Ply – Acrylic (Box Type)": 2600,
+            "88::WPC (Box Type)": 1500,
+            "88::WPC – Lamination (Box Type)": 1600,
+            "88::Engineering Wood (Box Type)": 1000,
+
+            // Sitout Chappal Stand (ID 46)
+            "46::Marine Ply – Lamination (Box Type)": 1300,
+            "46::Marine Ply – Lamination (Door Only)": 800,
+            "46::Marine Ply – Acrylic (Box Type)": 2600,
+            "46::Marine Ply – Acrylic (Door Only)": 1800,
+            "46::WPC (Box Type)": 1300,
+            "46::WPC (Door Only)": 800,
+            "46::WPC – Lamination (Box Type)": 1400,
+            "46::WPC – Lamination (Door Only)": 900,
+            "46::Engineering Wood (Box Type)": 900,
+            "46::Engineering Wood (Door Only)": 500,
+
+            // Sitout Area Wall Panelling (ID 47)
+            "47::Marine Ply – Lamination (Box Type)": 1300,
+            "47::Marine Ply – Lamination (Door Only)": 800,
+            "47::Marine Ply – Acrylic (Box Type)": 2600,
+            "47::Marine Ply – Acrylic (Door Only)": 1800,
+            "47::WPC (Box Type)": 1300,
+            "47::WPC (Door Only)": 800,
+            "47::WPC – Lamination (Box Type)": 1400,
+            "47::WPC – Lamination (Door Only)": 900,
+            "47::Engineering Wood (Box Type)": 900,
+            "47::Engineering Wood (Door Only)": 500,
+
+            // Toilet Area Washbasin Cabinet (ID 41)
+            "41::Marine Ply – Lamination (Box Type)": 1300,
+            "41::Marine Ply – Lamination (Door Only)": 800,
+            "41::Marine Ply – Acrylic (Box Type)": 2600,
+            "41::Marine Ply – Acrylic (Door Only)": 800,
+            "41::WPC (Box Type)": 1300,
+            "41::WPC (Door Only)": 800,
+            "41::WPC – Lamination (Box Type)": 1400,
+            "41::WPC – Lamination (Door Only)": 900,
+            "41::Engineering Wood (Box Type)": 0,
+            "41::Engineering Wood (Door Only)": 0,
+
+            // Study Room Study Table (ID 86)
+            "86::Marine Ply – Lamination (Box Type)": 1500,
+            "86::Marine Ply – Acrylic (Box Type)": 2600,
+            "86::WPC (Box Type)": 1500,
+            "86::WPC – Lamination (Box Type)": 1600,
+            "86::Engineering Wood (Box Type)": 1000,
+
+            // Study Room Study Table Top Box (ID 87)
+            "87::Marine Ply – Lamination (Box Type)": 1400,
+            "87::Marine Ply – Lamination (Door Only)": 800,
+            "87::Marine Ply – Acrylic (Box Type)": 2600,
+            "87::Marine Ply – Acrylic (Door Only)": 1800,
+            "87::WPC (Box Type)": 1400,
+            "87::WPC (Door Only)": 800,
+            "87::WPC – Lamination (Box Type)": 1500,
+            "87::WPC – Lamination (Door Only)": 900,
+            "87::Engineering Wood (Box Type)": 900,
+            "87::Engineering Wood (Door Only)": 500,
+
+            // Store Room Cupboard (ID 44)
+            "44::Marine Ply – Lamination (Box Type)": 1300,
+            "44::Marine Ply – Lamination (Door Only)": 800,
+            "44::Marine Ply – Acrylic (Box Type)": 2600,
+            "44::Marine Ply – Acrylic (Door Only)": 1800,
+            "44::WPC (Box Type)": 1300,
+            "44::WPC (Door Only)": 800,
+            "44::WPC – Lamination (Box Type)": 1400,
+            "44::WPC – Lamination (Door Only)": 900,
+            "44::Engineering Wood (Box Type)": 900,
+            "44::Engineering Wood (Door Only)": 500
+        };
 
         function getStoredRoomRates() {
             if (cachedRoomRates !== null) return cachedRoomRates;
@@ -1792,6 +2219,13 @@
 
             // 4. Fallback to default rates
             const ratesObj = getRates();
+            if (itemId !== undefined && itemId !== null) {
+                const itemKey = `${itemId}::${materialLabel}`;
+                if (ratesObj[itemKey] !== undefined) return ratesObj[itemKey];
+                const cleanLbl = getCleanMaterialName(materialLabel);
+                const itemCleanKey = `${itemId}::${cleanLbl}`;
+                if (ratesObj[itemCleanKey] !== undefined) return ratesObj[itemCleanKey];
+            }
             if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
             if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
@@ -1923,7 +2357,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL },
+                { id: 47, name: "Sit out area wall panelling", options: MP_LAM_ACR_WPC_BOX_DOOR },
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
@@ -2007,7 +2441,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
-                { id: 47, name: "Sit out area wall panelling", options: WALL_PANEL }
+                { id: 47, name: "Sit out area wall panelling", options: ENG_WOOD_BOX_DOOR }
             ],
             store_room: [
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
