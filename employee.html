@@ -2984,12 +2984,10 @@
             if (list.length === 0) return '';
 
             return `
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; page-break-inside: avoid; break-inside: avoid;">
-                    ${list.map(img => {
-                const style = img.ratio === '9:16'
-                    ? `width: 80px; height: 142px;`
-                    : `width: 120px; height: 68px;`;
-                return `<img src="${img.src}" alt="${materialLabel}" style="${style} object-fit: cover; border-radius: 4px; border: 1px solid ${borderStyle};">`;
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px; page-break-inside: avoid; break-inside: avoid;">
+                    ${list.map((img, i) => {
+                const numSuffix = list.length > 1 ? ` ${i + 1}` : '';
+                return `<a href="${img.src}" target="_blank" style="color: #b07d2e; text-decoration: underline; font-size: 0.73rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">🔗 View Image${numSuffix}</a>`;
             }).join('')}
                 </div>
             `;
