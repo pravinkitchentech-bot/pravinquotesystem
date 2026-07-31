@@ -465,8 +465,8 @@
             localStorage.setItem('pks_employee_pass', 'a123');
         }
 
-        // Force reload default rates if rate version is older (Phase 2 update)
-        const CURRENT_RATE_VERSION = 2;
+        // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
+        const CURRENT_RATE_VERSION = 4;
         if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
             localStorage.removeItem('pks_rates');
             localStorage.removeItem('pks_room_rates');
