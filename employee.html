@@ -1165,8 +1165,8 @@
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
         const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
-        // Force reload default rates if rate version is older (Phase 2 update)
-        const CURRENT_RATE_VERSION = 2;
+        // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
+        const CURRENT_RATE_VERSION = 4;
         if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
             localStorage.removeItem('pks_rates');
             localStorage.removeItem('pks_room_rates');
@@ -1204,6 +1204,7 @@
                 { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
                 { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
                 { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
+                { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
                 { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
             ];
             const stored = localStorage.getItem('pks_rooms');
@@ -1211,6 +1212,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
+                        let updated = false;
                         if (!parsed.some(r => r.id === 'false_celling')) {
                             const accIdx = parsed.findIndex(r => r.id === 'accessories');
                             const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
@@ -1219,6 +1221,19 @@
                             } else {
                                 parsed.push(newRoom);
                             }
+                            updated = true;
+                        }
+                        if (!parsed.some(r => r.id === 'profile_glass_door')) {
+                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
+                            const newRoom = { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true };
+                            if (fcIdx !== -1) {
+                                parsed.splice(fcIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            updated = true;
+                        }
+                        if (updated) {
                             localStorage.setItem('pks_rooms', JSON.stringify(parsed));
                         }
                         return parsed;
@@ -1653,7 +1668,29 @@
         ];
 
         const ENG_WOOD_WALL_PANEL = [
-                  const DEFAULT_RATES = {
+            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const ENG_WOOD_KING_BED = [
+            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
+        ];
+
+        const ENG_WOOD_QUEEN_BED = [
+            { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
+        ];
+
+        const PROFILE_GLASS_DOOR_OPTS = [
+            {
+                label: "Profile Glass Door",
+                fields: ["W", "H"],
+                formula: v => (v.W * v.H) / 144,
+                note: "W×H/144",
+                specs: "Normal profile handle 4mm glasses | handle G-type | Black, gold, rosegold, ss finishing"
+            }
+        ];
+
+        // Default Rates lookup (fallback if not in localStorage)
+        const DEFAULT_RATES = {
             "Sitout-plane seeling": 95,
             "Sitout- design celling": 95,
             "Sitpoout -wpc celling": 95,
@@ -1709,6 +1746,13 @@
             "Veneer finishing": 700,
             "PU Paint": 600,
 
+            // Profile Glass Door Rates
+            "Profile Glass Door": 200,
+            "101::Profile Glass Door": 200,
+            "102::Profile Glass Door": 200,
+            "103::Profile Glass Door": 200,
+            "104::Profile Glass Door": 200,
+
             // Accessories
             "Basket": 3000,
             "Tandom Box": 4500,
@@ -1722,6 +1766,8 @@
             "Soft Closing Runner": 1050,
             "Soft Closing Hinges": 0,
             "Profile Handle": 0,
+            "Hinges": 2000,
+            "Soft Closing Handles": 2000,
             "Swing Corner epco brand": 21000,
             "Swing Corner unbrand": 16000,
             "Carousel Corner epco brand": 1200,
@@ -2174,6 +2220,35 @@
             "44::Engineering Wood (Door Only)": 500
         };
 
+        const ACCESSORY_OPTS = [
+            { label: "Basket", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tandom Box", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Oil Pull Out", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "PVC Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "SS Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Dustbin Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Detergent Holder", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "GTBT", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Rolling Shutter Black", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Rolling Shutter except Black", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit epco brand (ss)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit epco brand (glass)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit epco brand (Normal)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit unbrand (ss)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit unbrand (Normal)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Swing Corner epco brand", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Swing Corner unbrand", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Magic Corner epco brand", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Magic Corner unbrand", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Carousel Corner epco brand", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "D-Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Soft Closing Runner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Profile Handle", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Soft Closing Handles", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+        ];
+
         function getStoredRoomRates() {
             if (cachedRoomRates !== null) return cachedRoomRates;
             const stored = localStorage.getItem('pks_room_rates');
@@ -2190,12 +2265,52 @@
             return cachedRoomRates;
         }
 
+        function getKitchenTotalExcludingAccessories() {
+            if (!Array.isArray(quoteLines)) return 0;
+            return quoteLines
+                .filter(l => l && (l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen'))) && l.itemName !== 'Accessories' && l.itemName !== 'ACCESSORIES')
+                .reduce((sum, l) => sum + (l.amount || 0), 0);
+        }
+
+        function recalculateDynamicRates() {
+            const kTotal = getKitchenTotalExcludingAccessories();
+            let dynamicRate = 3000;
+            if (kTotal < 100000) {
+                dynamicRate = 2000;
+            } else if (kTotal >= 300000) {
+                dynamicRate = 6000;
+            }
+
+            if (Array.isArray(quoteLines)) {
+                quoteLines.forEach(l => {
+                    if (!l) return;
+                    const cleanMat = (l.material || '').trim().toLowerCase();
+                    if (cleanMat === 'hinges' || cleanMat === 'soft closing hinges' || cleanMat === 'soft closing handles') {
+                        l.rate = dynamicRate;
+                        l.amount = (l.sqft || 1) * dynamicRate;
+                    }
+                });
+            }
+        }
+
         function getCleanMaterialName(rawName) {
             if (!rawName || typeof rawName !== 'string') return rawName;
             return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Only|Framed|Box)\)/gi, '').trim();
         }
 
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
+            const cleanMat = (materialLabel || '').trim().toLowerCase();
+            if (cleanMat === 'hinges' || cleanMat === 'soft closing hinges' || cleanMat === 'soft closing handles') {
+                const kTotal = getKitchenTotalExcludingAccessories();
+                if (kTotal < 100000) {
+                    return 2000;
+                } else if (kTotal >= 300000) {
+                    return 6000;
+                } else {
+                    return 3000;
+                }
+            }
+
             const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
             const room = roomId || selectedRoom || 'kitchen';
@@ -2308,6 +2423,7 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -2316,7 +2432,8 @@
                 { id: 19, name: "Living & Dining Room Partition", options: PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION },
+                { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
                 { id: 74, name: "PRAYER UNIT WALL PANEL", options: WALL_PANEL },
@@ -2339,7 +2456,8 @@
                 { id: 68, name: "LOFT 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 69, name: "LOFT 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL }
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
+                { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -2381,6 +2499,12 @@
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 102, name: "Bedroom glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
             ]
         };
 
@@ -2398,6 +2522,7 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -2406,7 +2531,8 @@
                 { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION },
+                { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
                 { id: 74, name: "Prayer Unit Wall Panel", options: WALL_PANEL },
@@ -2429,7 +2555,8 @@
                 { id: 68, name: "Loft 1", options: ENG_WOOD_BOX_DOOR },
                 { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
                 { id: 70, name: "Wall Panneling", options: WALL_PANEL },
-                { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL }
+                { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL },
+                { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
@@ -2471,6 +2598,12 @@
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 102, name: "Bedroom glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
             ]
         };
 
@@ -2601,6 +2734,7 @@
         let ITEMS = [];
         let quoteLines = [];
         let lineIdCounter = 1;
+        let isRestoringQuote = false;
 
         function getFullRoomLabel() {
             const floor = document.getElementById('floorSelector').value;
@@ -3456,6 +3590,7 @@
         }
 
         function renderQuote() {
+            recalculateDynamicRates();
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
             const showSqFt = showSqftRate;
@@ -3739,6 +3874,46 @@
             `;
 
             body.innerHTML = html;
+            updatePaymentSplits();
+        }
+
+        function updatePaymentSplits() {
+            if (isRestoringQuote) return;
+
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+
+            const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
+            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+            const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
+            const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
+
+            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
+
+            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
+
+            const activeTotal = hasAnyOfferPrice ? grandOfferTotal : grandTotal;
+
+            const payTokenEl = document.getElementById('payToken');
+            const payAdvanceEl = document.getElementById('payAdvance');
+            const paySecondEl = document.getElementById('paySecond');
+            const payFinalEl = document.getElementById('payFinal');
+
+            if (quoteLines.length > 0 && activeTotal > 0) {
+                if (payTokenEl) payTokenEl.value = Math.round(activeTotal * 0.10);
+                if (payAdvanceEl) payAdvanceEl.value = Math.round(activeTotal * 0.50);
+                if (paySecondEl) paySecondEl.value = Math.round(activeTotal * 0.35);
+                if (payFinalEl) payFinalEl.value = Math.round(activeTotal * 0.05);
+            } else {
+                if (payTokenEl) payTokenEl.value = '';
+                if (payAdvanceEl) payAdvanceEl.value = '';
+                if (paySecondEl) paySecondEl.value = '';
+                if (payFinalEl) payFinalEl.value = '';
+            }
         }
 
         function deleteLine(id) {
@@ -3776,6 +3951,7 @@
                 const offerCell = gtEl.nextElementSibling;
                 if (offerCell) offerCell.textContent = hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—';
             }
+            updatePaymentSplits();
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
@@ -4498,6 +4674,7 @@
         }
 
         function restoreQuoteState(quote) {
+            isRestoringQuote = true;
             document.getElementById('docType').value = quote.docType;
             document.getElementById('quoteNo').value = quote.quoteNo;
             document.getElementById('quoteRefNo').value = quote.quoteRefNo || '';
@@ -4516,6 +4693,7 @@
 
             renderQuote();
             updateDocLabels();
+            isRestoringQuote = false;
         }
 
         function deleteSavedQuote(quoteId) {
@@ -4657,7 +4835,12 @@
                 { text: "board brand -gyprock", room: "false_celling", material: "Sitout-plane seeling" },
                 { text: "section-ultrasection", room: "false_celling", material: "Sitout- design celling" },
                 { text: "board-gypsum board", room: "false_celling", material: "Sitout- design celling" },
-                { text: "board brand -gyprock", room: "false_celling", material: "Sitout- design celling" }
+                { text: "board brand -gyprock", room: "false_celling", material: "Sitout- design celling" },
+
+                // Profile Glass Door specifications
+                { text: "Normal profile handle 4mm glasses", room: "profile_glass_door", material: "Profile Glass Door" },
+                { text: "handle G-type", room: "profile_glass_door", material: "Profile Glass Door" },
+                { text: "Black, gold, rosegold, ss finishing", room: "profile_glass_door", material: "Profile Glass Door" }
             ];
 
             let needsReset = !current;
@@ -4682,7 +4865,11 @@
                             const mat = (item.material || '').toLowerCase();
                             return mat === 'sitout-plane seeling';
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || !hasFalseCellingSpec) {
+                        const hasProfileGlassSpec = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'profile glass door';
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty || !hasFalseCellingSpec || !hasProfileGlassSpec) {
                             needsReset = true;
                         }
                     } else {
