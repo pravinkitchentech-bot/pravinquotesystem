@@ -1302,8 +1302,8 @@
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
 
-        // Force reload default rates if rate version is older (Phase 2 update)
-        const CURRENT_RATE_VERSION = 2;
+        // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
+        const CURRENT_RATE_VERSION = 4;
         if (localStorage.getItem('pks_rate_version') !== String(CURRENT_RATE_VERSION)) {
             localStorage.removeItem('pks_rates');
             localStorage.removeItem('pks_room_rates');
@@ -1365,6 +1365,7 @@
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
+            { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
@@ -1374,6 +1375,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
+                        let updated = false;
                         if (!parsed.some(r => r.id === 'false_celling')) {
                             const accIdx = parsed.findIndex(r => r.id === 'accessories');
                             const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
@@ -1382,6 +1384,19 @@
                             } else {
                                 parsed.push(newRoom);
                             }
+                            updated = true;
+                        }
+                        if (!parsed.some(r => r.id === 'profile_glass_door')) {
+                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
+                            const newRoom = { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true };
+                            if (fcIdx !== -1) {
+                                parsed.splice(fcIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            updated = true;
+                        }
+                        if (updated) {
                             localStorage.setItem('pks_rooms', JSON.stringify(parsed));
                         }
                         return parsed;
@@ -1461,6 +1476,13 @@
             "Veneer finishing": 700,
             "PU Paint": 600,
 
+            // Profile Glass Door Rates
+            "Profile Glass Door": 200,
+            "101::Profile Glass Door": 200,
+            "102::Profile Glass Door": 200,
+            "103::Profile Glass Door": 200,
+            "104::Profile Glass Door": 200,
+
             // Accessories
             "Basket": 3000,
             "Tandom Box": 4500,
@@ -1474,6 +1496,8 @@
             "Soft Closing Runner": 1050,
             "Soft Closing Hinges": 0,
             "Profile Handle": 0,
+            "Hinges": 2000,
+            "Soft Closing Handles": 2000,
             "Swing Corner epco brand": 21000,
             "Swing Corner unbrand": 16000,
             "Carousel Corner epco brand": 1200,
@@ -1950,7 +1974,9 @@
             "D-Tray",
             "Soft Closing Runner",
             "Soft Closing Hinges",
-            "Profile Handle"
+            "Profile Handle",
+            "Hinges",
+            "Soft Closing Handles"
         ];
 
         const ROOM_ITEMS = {
@@ -1966,7 +1992,8 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
@@ -1975,7 +2002,8 @@
                 { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
                 { id: 20, name: "Living Room Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
                 { id: 74, name: "PRAYER UNIT WALL PANEL", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
@@ -1998,7 +2026,8 @@
                 { id: 68, name: "LOFT 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 69, name: "LOFT 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
@@ -2040,6 +2069,12 @@
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: ["Profile Glass Door"] },
+                { id: 102, name: "Bedroom glass profile door", options: ["Profile Glass Door"] },
+                { id: 103, name: "Tv-unit glass profile door", options: ["Profile Glass Door"] },
+                { id: 104, name: "Crockery unit glass profile door", options: ["Profile Glass Door"] }
             ]
         };
 
@@ -2056,7 +2091,8 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
@@ -2065,7 +2101,8 @@
                 { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
                 { id: 20, name: "Living Room Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
                 { id: 74, name: "Prayer Unit Wall Panel", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
@@ -2088,7 +2125,8 @@
                 { id: 68, name: "LOFT 1", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 69, name: "LOFT 2", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
@@ -2130,6 +2168,12 @@
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: ["Profile Glass Door"] },
+                { id: 102, name: "Bedroom glass profile door", options: ["Profile Glass Door"] },
+                { id: 103, name: "Tv-unit glass profile door", options: ["Profile Glass Door"] },
+                { id: 104, name: "Crockery unit glass profile door", options: ["Profile Glass Door"] }
             ]
         };
 
