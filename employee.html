@@ -906,7 +906,14 @@
                 </div>
 
                 <!-- Top Right Page Actions -->
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number" onclick="useNextQuoteNo()"
+                        style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 46, 0.18); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #e5b869; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(176, 125, 46, 0.3)'"
+                        onmouseout="this.style.background='rgba(176, 125, 46, 0.18)'">
+                        <span>📋 Last Quote:</span>
+                        <span id="lastQuoteNoText" style="color: #ffffff; font-family: var(--mono); font-size: 0.85rem;">—</span>
+                    </div>
                     <button class="back-btn"
                         style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
                         onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
@@ -2271,22 +2278,6 @@
             { label: "Soft Closing Handles", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
         ];
 
-        function getStoredRoomRates() {
-            if (cachedRoomRates !== null) return cachedRoomRates;
-            const stored = localStorage.getItem('pks_room_rates');
-            if (stored) {
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (parsed && typeof parsed === 'object') {
-                        cachedRoomRates = parsed;
-                        return cachedRoomRates;
-                    }
-                } catch (e) { }
-            }
-            cachedRoomRates = {};
-            return cachedRoomRates;
-        }
-
         function getKitchenTotalExcludingAccessories() {
             if (!Array.isArray(quoteLines)) return 0;
             return quoteLines
@@ -2320,6 +2311,59 @@
             return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Only|Framed|Box)\)/gi, '').trim();
         }
 
+        function getStoredRoomRates() {
+            const stored = localStorage.getItem('pks_room_rates');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object') {
+                        return parsed;
+                    }
+                } catch (e) { }
+            }
+            return {};
+        }
+
+        function normalizeMatString(str) {
+            if (!str || typeof str !== 'string') return '';
+            return str.replace(/–/g, '-').replace(/\s+/g, ' ').toLowerCase().trim();
+        }
+
+        function findRateInObject(ratesObj, itemId, materialLabel) {
+            if (!ratesObj || typeof ratesObj !== 'object') return undefined;
+
+            const normMat = normalizeMatString(materialLabel);
+            const cleanLbl = getCleanMaterialName(materialLabel);
+            const normCleanLbl = normalizeMatString(cleanLbl);
+
+            // 1. Direct item key match with original & normalized variations
+            if (itemId !== undefined && itemId !== null) {
+                if (ratesObj[`${itemId}::${materialLabel}`] !== undefined) return ratesObj[`${itemId}::${materialLabel}`];
+                if (ratesObj[`${itemId}::${cleanLbl}`] !== undefined) return ratesObj[`${itemId}::${cleanLbl}`];
+
+                for (const key in ratesObj) {
+                    if (key.startsWith(`${itemId}::`)) {
+                        const matPart = key.split('::')[1] || '';
+                        if (normalizeMatString(matPart) === normMat || normalizeMatString(matPart) === normCleanLbl) {
+                            return ratesObj[key];
+                        }
+                    }
+                }
+            }
+
+            // 2. Room-level / material-level match
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLbl] !== undefined) return ratesObj[cleanLbl];
+
+            for (const key in ratesObj) {
+                if (normalizeMatString(key) === normMat || normalizeMatString(key) === normCleanLbl) {
+                    return ratesObj[key];
+                }
+            }
+
+            return undefined;
+        }
+
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
             const cleanMat = (materialLabel || '').trim().toLowerCase();
             if (cleanMat === 'hinges' || cleanMat === 'soft closing hinges' || cleanMat === 'soft closing handles') {
@@ -2339,40 +2383,52 @@
 
             const allRoomRates = getStoredRoomRates();
             const modeStr = eco ? 'economy' : 'premium';
-            const specificKey = `${divId}_${modeStr}_${room}`;
-            const roomRatesObj = allRoomRates[specificKey] || {};
+            const otherModeStr = eco ? 'premium' : 'economy';
 
-            // 1. Item-specific match (itemId::materialLabel) — highest priority
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (roomRatesObj[itemKey] !== undefined) return roomRatesObj[itemKey];
-                const cleanLbl = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLbl}`;
-                if (roomRatesObj[itemCleanKey] !== undefined) return roomRatesObj[itemCleanKey];
+            const candidateKeys = [
+                `${divId}_${modeStr}_${room}`,
+                `${divId}_${otherModeStr}_${room}`,
+                `marketing_${modeStr}_${room}`,
+                `marketing_${otherModeStr}_${room}`
+            ];
+
+            const aliases = [room];
+            if (room === 'dining_room') aliases.push('dinning_room', 'dining', 'dinning');
+            else if (room === 'dinning_room') aliases.push('dining_room', 'dining', 'dinning');
+
+            aliases.forEach(rAlias => {
+                if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`${divId}_${otherModeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${otherModeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${modeStr}_${rAlias}`)) candidateKeys.push(`marketing_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${otherModeStr}_${rAlias}`)) candidateKeys.push(`marketing_${otherModeStr}_${rAlias}`);
+            });
+
+            // 1. Search candidate room keys
+            for (const key of candidateKeys) {
+                if (allRoomRates[key]) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 2. Room-level flat match (backward compat with old saved data)
-            if (roomRatesObj[materialLabel] !== undefined) {
-                return roomRatesObj[materialLabel];
+            // 2. Search ANY room key ending in room ID or alias
+            for (const key in allRoomRates) {
+                if (aliases.some(rAlias => key.endsWith(`_${rAlias}`))) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 3. Clean base material room-level match
-            const cleanLabel = getCleanMaterialName(materialLabel);
-            if (roomRatesObj[cleanLabel] !== undefined) {
-                return roomRatesObj[cleanLabel];
-            }
-
-            // 4. Fallback to default rates
+            // 3. Fallback to default rates
             const ratesObj = getRates();
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (ratesObj[itemKey] !== undefined) return ratesObj[itemKey];
-                const cleanLbl = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLbl}`;
-                if (ratesObj[itemCleanKey] !== undefined) return ratesObj[itemCleanKey];
+            const defaultRate = findRateInObject(ratesObj, itemId, materialLabel);
+            if (defaultRate !== undefined && defaultRate !== null && !isNaN(parseFloat(defaultRate))) {
+                return parseFloat(defaultRate);
             }
-            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
-            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
@@ -2867,6 +2923,7 @@
                 try { renderRoomTabs(); } catch (_) { }
                 try { renderItemsGrid(); } catch (_) { }
             }
+            updateLastQuoteDisplay();
         }
         // Strategy 1: DOMContentLoaded
         document.addEventListener('DOMContentLoaded', _doInit);
@@ -2883,6 +2940,7 @@
             if (e.key === 'pks_custom_items') cachedCustomItems = null;
             if (e.key === 'pks_deleted_standard_items') cachedDeletedStandardItems = null;
             if (e.key === 'pks_deleted_standard_materials') cachedDeletedStandardMaterials = null;
+            if (e.key === 'pks_saved_quotes') updateLastQuoteDisplay();
 
             if (e.key === 'pks_rates' || e.key === 'pks_custom_materials' || e.key === 'pks_custom_items' || e.key === 'pks_deleted_standard_items' || e.key === 'pks_deleted_standard_materials' || e.key === 'pks_room_rates') {
                 ITEMS = getFullItemsList();
@@ -4042,27 +4100,55 @@
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
-        function getNextQuoteNo() {
+        function getLastQuoteNoInfo() {
             const stored = localStorage.getItem('pks_saved_quotes');
-            let nextNum = 1;
+            let maxNum = 0;
+            let lastQuoteNo = null;
             if (stored) {
                 try {
                     const saved = JSON.parse(stored);
-                    if (Array.isArray(saved)) {
-                        let maxNum = 0;
+                    if (Array.isArray(saved) && saved.length > 0) {
                         saved.forEach(q => {
-                            if (q.quoteNo && q.quoteNo.startsWith('QT-')) {
-                                const numPart = parseInt(q.quoteNo.replace('QT-', ''), 10);
-                                if (!isNaN(numPart) && numPart > maxNum) {
-                                    maxNum = numPart;
+                            if (q.quoteNo) {
+                                const numMatch = q.quoteNo.match(/(\d+)/);
+                                if (numMatch) {
+                                    const num = parseInt(numMatch[1], 10);
+                                    if (num > maxNum) {
+                                        maxNum = num;
+                                        lastQuoteNo = q.quoteNo;
+                                    }
                                 }
                             }
                         });
-                        nextNum = maxNum + 1;
                     }
                 } catch (e) { }
             }
-            return 'QT-' + String(nextNum).padStart(3, '0');
+            const nextNum = maxNum + 1;
+            const nextQuoteNo = 'QT-' + String(nextNum).padStart(3, '0');
+            return {
+                lastQuoteNo: lastQuoteNo || '—',
+                nextQuoteNo: nextQuoteNo
+            };
+        }
+
+        function updateLastQuoteDisplay() {
+            const info = getLastQuoteNoInfo();
+            const el = document.getElementById('lastQuoteNoText');
+            if (el) {
+                el.innerHTML = `<span style="font-weight:700; color:#fff;">${info.lastQuoteNo}</span> <span style="font-size:0.72rem; color:var(--accent); font-weight:600; margin-left:4px;">(Next: ${info.nextQuoteNo})</span>`;
+            }
+        }
+
+        function useNextQuoteNo() {
+            const info = getLastQuoteNoInfo();
+            const quoteNoInput = document.getElementById('quoteNo');
+            if (quoteNoInput && !quoteNoInput.value.trim()) {
+                quoteNoInput.value = info.nextQuoteNo;
+            }
+        }
+
+        function getNextQuoteNo() {
+            return getLastQuoteNoInfo().nextQuoteNo;
         }
 
         function incrementQuoteNo() {
