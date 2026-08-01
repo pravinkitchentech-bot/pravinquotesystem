@@ -3665,11 +3665,11 @@
             const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
             // Offer price totals (use amount as fallback if no offer price entered)
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0) + kitchenAutoAccTotal;
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
 
             let html = '';
             let lineIndex = 1;
@@ -3893,7 +3893,7 @@
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${totalCols - 3}" style="text-align:right;">Accessories Total</td>
                         <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
-                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—'}</td>
+                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -3905,7 +3905,7 @@
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${totalCols - 3}" style="text-align:right;">False Ceiling Total</td>
                         <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
-                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—'}</td>
+                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -3916,7 +3916,7 @@
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
                     <td colspan="${totalCols - 3}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                    <td class="num" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—'}</td>
+                    <td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>
                     <td></td>
                 </tr>
             `;
@@ -3925,7 +3925,7 @@
             html += `
                 <tr style="background: rgba(176, 125, 46, 0.12); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
                     <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
-                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">${hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—'}</td>
+                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
                     <td></td>
                 </tr>
             `;
@@ -3941,19 +3941,22 @@
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAccTotal = getKitchenAutoAccessories(kitchenSubTotal).reduce((s, a) => s + a.amount, 0);
+
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0) + kitchenAutoAccTotal;
             const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
             const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
 
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
-
-            const activeTotal = hasAnyOfferPrice ? grandOfferTotal : grandTotal;
+            const activeTotal = grandOfferTotal > 0 ? grandOfferTotal : grandTotal;
 
             const payTokenEl = document.getElementById('payToken');
             const payAdvanceEl = document.getElementById('payAdvance');
@@ -3981,33 +3984,36 @@
         function updateOfferPrice(lineId, val) {
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
-            line.offerPrice = val === '' ? null : parseFloat(val);
+            line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
 
             const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAccTotal = getKitchenAutoAccessories(kitchenSubTotal).reduce((s, a) => s + a.amount, 0);
+
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
 
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
-
             const accOfferSubEl = document.getElementById('accessoriesOfferSubtotal');
-            if (accOfferSubEl) accOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—';
+            if (accOfferSubEl) accOfferSubEl.textContent = '₹' + accessoryOfferTotal.toFixed(2);
 
             const fcOfferSubEl = document.getElementById('falseCellingOfferSubtotal');
-            if (fcOfferSubEl) fcOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—';
+            if (fcOfferSubEl) fcOfferSubEl.textContent = '₹' + falseCellingOfferTotal.toFixed(2);
 
             const gtEl = document.getElementById('grandTotal');
             if (gtEl && gtEl.parentElement) {
                 const offerCell = gtEl.nextElementSibling;
-                if (offerCell) offerCell.textContent = hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—';
+                if (offerCell) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
             }
 
             const gotRowEl = document.getElementById('grandOfferTotalRow');
-            if (gotRowEl) gotRowEl.textContent = hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—';
+            if (gotRowEl) gotRowEl.textContent = '₹' + grandOfferTotal.toFixed(2);
 
             updatePaymentSplits();
         }
@@ -4418,12 +4424,10 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
-                            ${hasAnyOfferPrice ? `
                             <tr style="background:#fffdf8;border-top:1px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">Offer Price Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>
                             </tr>
-                            ` : ''}
                         </tbody>
                     </table>
                     ${specsText || payItems ? `
@@ -4520,13 +4524,12 @@
                 const baseGrandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
                 const shareKitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
                 const shareKitchenTotal = shareKitchenLines.reduce((s, l) => s + l.amount, 0);
-                const shareAutoAcc = getKitchenAutoAccessories(shareKitchenTotal);
-                const shareAutoAccTotal = shareAutoAcc.reduce((s, a) => s + a.amount, 0);
+                const shareAutoAccTotal = getKitchenAutoAccessories(shareKitchenTotal).reduce((s, a) => s + a.amount, 0);
                 const grandTotal = baseGrandTotal + shareAutoAccTotal;
 
-                const baseOfferTotal = quoteLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+                const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+                const baseOfferTotal = quoteLines.reduce((s, l) => s + safeParseOffer(l), 0);
                 const grandOfferTotal = baseOfferTotal + shareAutoAccTotal;
-                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
@@ -4534,8 +4537,8 @@
                     `• Customer: ${custName}\n` +
                     `• Place: ${custAddress}\n` +
                     `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    (hasAnyOfferPrice ? `• Offer Price Total: ₹${grandOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` : '') +
-                    `\nAttached is your quotation PDF. Thank you!`;
+                    `• Offer Price Total: ₹${grandOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n\n` +
+                    `Attached is your quotation PDF. Thank you!`;
 
                 const blob = await generatePdfBlob();
                 const pdfFile = new File([blob], filename, { type: 'application/pdf' });
