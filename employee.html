@@ -3305,17 +3305,10 @@
             return filtered;
         }
 
-        function openSizePanel(buildId, itemId, optIdx) {
-            const item = ITEMS.find(i => i.id === itemId);
-            const opt = item.options[optIdx];
-            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
-
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
-
-            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
-            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
+        function getAllMaterialSpecs(roomId, materialLabel, itemName, optSpecs) {
+            const matchedGeneralSpecs = getMatchingSpecifications(roomId, materialLabel, itemName);
             const allSpecsArray = [];
+
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
                 if (ts) {
@@ -3334,7 +3327,52 @@
                 }
             });
 
-            const specsHtml = ((!isEconomyMode || isBypassEconomySpecs) && allSpecsArray.length > 0) ? `
+            if (optSpecs && typeof optSpecs === 'string') {
+                optSpecs.split('|').forEach(sub => {
+                    const tsub = sub.trim();
+                    if (tsub && !allSpecsArray.includes(tsub)) {
+                        allSpecsArray.push(tsub);
+                    }
+                });
+            }
+
+            // Fallback matching if empty
+            if (allSpecsArray.length === 0 && materialLabel) {
+                const cleanMat = materialLabel.toLowerCase();
+                if (cleanMat.includes('marine') || cleanMat.includes('ply')) {
+                    allSpecsArray.push("Marine Ply – 710 grade - 16mm Thickness");
+                    if (cleanMat.includes('acrylic')) allSpecsArray.push("Outer Finish: German Acrylic");
+                    else allSpecsArray.push("Outer Finish: Customer Choice Laminates");
+                } else if (cleanMat.includes('wpc')) {
+                    allSpecsArray.push("WPC – 0.7 Density – 17mm Thickness");
+                    allSpecsArray.push("Finish: Freelam");
+                } else if (cleanMat.includes('engineering') || cleanMat.includes('wood')) {
+                    allSpecsArray.push("Engineering Wood – 18mm Thickness");
+                    allSpecsArray.push("Finish: Pre-laminated");
+                } else if (cleanMat.includes('pvc')) {
+                    allSpecsArray.push("Super Premium PVC Panel");
+                } else if (cleanMat.includes('charcoal')) {
+                    allSpecsArray.push("Super Premium Charcoal Panel – Korea");
+                } else if (cleanMat.includes('glass') || cleanMat.includes('profile')) {
+                    allSpecsArray.push("Normal profile handle 4mm glasses");
+                } else if (cleanMat.includes('celling') || cleanMat.includes('ceiling') || roomId === 'false_celling') {
+                    allSpecsArray.push("section-ultrasection", "board-gypsum board", "board brand -gyprock");
+                }
+            }
+
+            return allSpecsArray;
+        }
+
+        function openSizePanel(buildId, itemId, optIdx) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
+
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
+
+            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
+
+            const specsHtml = (allSpecsArray.length > 0) ? `
                 <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
                     <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
                     ${allSpecsArray.map(s => {
@@ -3503,16 +3541,7 @@
                 }
             }
 
-            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
-            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
-            const allSpecsArray = [];
-            matchedGeneralSpecs.forEach(s => {
-                const ts = s.trim();
-                if (ts && !allSpecsArray.includes(ts)) {
-                    allSpecsArray.push(ts);
-                }
-            });
+            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
 
             quoteLines.push({
                 id: lineIdCounter++,
@@ -3684,7 +3713,7 @@
         }
 
 
-        let customOverallOfferPrice = null;
+        let customFinalAmount = null;
 
         // ── Kitchen Auto-Accessories ─────────────────────────────────────
         function getKitchenAutoAccessories(kitchenTotal) {
@@ -3697,10 +3726,7 @@
         }
         // ─────────────────────────────────────────────────────────────────
 
-        function getEffectiveOfferTotal() {
-            if (customOverallOfferPrice !== null && customOverallOfferPrice !== '' && !isNaN(parseFloat(customOverallOfferPrice))) {
-                return parseFloat(customOverallOfferPrice);
-            }
+        function getCalculatedOfferTotal() {
             const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
@@ -3717,8 +3743,19 @@
             return roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
         }
 
-        function updateOverallOfferPrice(val) {
-            customOverallOfferPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
+        function getEffectiveOfferTotal() {
+            return getCalculatedOfferTotal();
+        }
+
+        function getEffectiveFinalAmount() {
+            if (customFinalAmount !== null && customFinalAmount !== '' && !isNaN(parseFloat(customFinalAmount))) {
+                return parseFloat(customFinalAmount);
+            }
+            return getCalculatedOfferTotal();
+        }
+
+        function updateFinalAmount(val) {
+            customFinalAmount = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
             updatePaymentSplits();
         }
 
@@ -3826,10 +3863,13 @@
                             }
                         }
 
-                        const materialCellContent = l.specs ? `
-                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
+                        const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                        const materialCellContent = `
+                            <strong style="color:var(--text); display:block; margin-bottom:4px;">${renderSpecText(l.material, 'var(--border)')}</strong>
+                            ${specsStr ? `
+                                <div style="font-size: 0.73rem; color: var(--muted); line-height: 1.45;">
+                                    ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                                </div>` : ''}`;
 
                         html += `
                             <tr>
@@ -3959,10 +3999,13 @@
                             }
                         }
 
-                        const materialCellContent = l.specs ? `
-                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
+                        const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                        const materialCellContent = `
+                            <strong style="color:var(--text); display:block; margin-bottom:4px;">${renderSpecText(l.material, 'var(--border)')}</strong>
+                            ${specsStr ? `
+                                <div style="font-size: 0.73rem; color: var(--text); line-height: 1.45;">
+                                    ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                                </div>` : ''}`;
 
                         html += `
                             <tr>
@@ -4021,18 +4064,27 @@
             `;
 
             // ── Offer Price Total Row (Below Grand Total) ──
-            const effectiveOfferTotal = getEffectiveOfferTotal();
             html += `
-                <tr style="background: rgba(176, 125, 46, 0.12); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
+                <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
                     <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
+                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
+            `;
+
+            // ── Final Amount Row (Below Offer Price Total - Editable) ──
+            const finalAmount = getEffectiveFinalAmount();
+            html += `
+                <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
+                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
                     <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
                         <div style="display:inline-flex; align-items:center; gap:4px;">
-                            <span style="color:#b07d2e; font-size:0.95rem; font-weight:700;">₹</span>
-                            <input type="number" min="0" id="overallOfferPriceInput"
-                                placeholder="${grandOfferTotal.toFixed(0)}"
-                                value="${customOverallOfferPrice !== null ? customOverallOfferPrice : ''}"
-                                oninput="updateOverallOfferPrice(this.value)"
-                                style="width:130px; background:rgba(176,125,46,0.12); border:1px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#b07d2e; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                            <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
+                            <input type="number" min="0" id="finalAmountInput"
+                                placeholder="${grandOfferTotal.toFixed(2)}"
+                                value="${customFinalAmount !== null ? customFinalAmount : ''}"
+                                oninput="updateFinalAmount(this.value)"
+                                style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
                         </div>
                     </td>
                     <td></td>
@@ -4046,7 +4098,7 @@
         function updatePaymentSplits() {
             if (isRestoringQuote) return;
 
-            const activeTotal = getEffectiveOfferTotal();
+            const activeTotal = getEffectiveFinalAmount();
 
             const payTokenEl = document.getElementById('payToken');
             const payAdvanceEl = document.getElementById('payAdvance');
@@ -4067,7 +4119,7 @@
 
             const payHeaderLabel = document.getElementById('payTermsHeaderLabel');
             if (payHeaderLabel) {
-                payHeaderLabel.textContent = `Payment Terms (Offer Price Split: ₹${activeTotal.toLocaleString('en-IN')})`;
+                payHeaderLabel.textContent = `Payment Terms (Final Amount Split: ₹${activeTotal.toLocaleString('en-IN')})`;
             }
         }
 
@@ -4107,8 +4159,11 @@
                 if (offerCell) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
             }
 
-            const overallInput = document.getElementById('overallOfferPriceInput');
-            if (overallInput) overallInput.placeholder = grandOfferTotal.toFixed(0);
+            const gotRowEl = document.getElementById('grandOfferTotalRow');
+            if (gotRowEl) gotRowEl.textContent = '₹' + grandOfferTotal.toFixed(2);
+
+            const finalInput = document.getElementById('finalAmountInput');
+            if (finalInput) finalInput.placeholder = grandOfferTotal.toFixed(2);
 
             updatePaymentSplits();
         }
@@ -4350,6 +4405,15 @@
                             </tr>`;
 
                         lines.forEach(l => {
+                            const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                            const pdfMaterialSpecs = specsStr ? specsStr.split('|').map(s => s.trim()).filter(Boolean) : [];
+                            const pdfMatContent = `
+                                <strong style="color:#1c2820;display:block;margin-bottom:2px;">${renderSpecText(l.material, '#e8ddd0')}</strong>
+                                ${pdfMaterialSpecs.length > 0 ? `
+                                    <div style="font-size:8.5px;color:#555;line-height:1.35;">
+                                        ${pdfMaterialSpecs.map(s => `<div>• ${renderSpecText(s, '#e8ddd0')}</div>`).join('')}
+                                    </div>` : ''}
+                            `;
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
@@ -4357,7 +4421,7 @@
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
-                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${pdfMatContent}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                     ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                     ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
@@ -4550,7 +4614,11 @@
                             </tr>
                             <tr style="background:#fffdf8;border-top:1px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">Offer Price Total</td>
-                                <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getEffectiveOfferTotal().toFixed(2)}</td>
+                                <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getCalculatedOfferTotal().toFixed(2)}</td>
+                            </tr>
+                            <tr style="background:#fff7ec;border-top:1.5px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#8f6320;">Final Amount</td>
+                                <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getEffectiveFinalAmount().toFixed(2)}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -4651,7 +4719,8 @@
                 const shareAutoAccTotal = getKitchenAutoAccessories(shareKitchenTotal).reduce((s, a) => s + a.amount, 0);
                 const grandTotal = baseGrandTotal + shareAutoAccTotal;
 
-                const effectiveOfferTotal = getEffectiveOfferTotal();
+                const calculatedOfferTotal = getCalculatedOfferTotal();
+                const effectiveFinal = getEffectiveFinalAmount();
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
@@ -4659,7 +4728,8 @@
                     `• Customer: ${custName}\n` +
                     `• Place: ${custAddress}\n` +
                     `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    `• Offer Price Total: ₹${effectiveOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n\n` +
+                    `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n\n` +
                     `Attached is your quotation PDF. Thank you!`;
 
                 const blob = await generatePdfBlob();
@@ -4775,6 +4845,7 @@
                 economyMode: isEconomyMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
+                customFinalAmount,
                 payToken: document.getElementById('payToken').value,
                 payAdvance: document.getElementById('payAdvance').value,
                 paySecond: document.getElementById('paySecond').value,
@@ -4903,6 +4974,8 @@
             document.getElementById('custName').value = quote.custName || '';
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
+
+            customFinalAmount = (quote.customFinalAmount !== undefined && quote.customFinalAmount !== null) ? quote.customFinalAmount : (quote.customOverallOfferPrice !== undefined ? quote.customOverallOfferPrice : null);
 
             document.getElementById('payToken').value = quote.payToken || '';
             document.getElementById('payAdvance').value = quote.payAdvance || '';
@@ -5158,7 +5231,7 @@
         <div
             style="background:var(--surface, #1e1e1e); border:1px solid var(--border, #333); border-radius:14px; padding:24px 28px; max-width:420px; width:90%; box-shadow:0 12px 35px rgba(0,0,0,0.6); color:var(--text, #fff); text-align:center;">
             <div style="font-size:1.4rem; font-weight:700; color:var(--accent, #b07d2e); margin-bottom:6px;">📲 Share
-                PDF Document</div>final amount
+                PDF Document</div>
             <p style="font-size:0.85rem; color:var(--muted, #aaa); margin-bottom:22px; line-height:1.4;">Share the exact
                 quotation PDF file with your customer.</p>
 
