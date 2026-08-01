@@ -3589,6 +3589,20 @@
             `;
         }
 
+        // ── Kitchen Auto-Accessories ─────────────────────────────────────
+        // For every ₹1,00,000 in kitchen total:
+        //   Profile Handle: ₹3,000 per lakh
+        //   Hinges:         ₹2,000 per lakh
+        function getKitchenAutoAccessories(kitchenTotal) {
+            const lakhs = Math.floor(kitchenTotal / 100000);
+            if (lakhs <= 0) return [];
+            return [
+                { label: 'Profile Handle', amount: lakhs * 3000, note: `₹3,000 × ${lakhs} lakh${lakhs > 1 ? 's' : ''}` },
+                { label: 'Hinges',         amount: lakhs * 2000, note: `₹2,000 × ${lakhs} lakh${lakhs > 1 ? 's' : ''}` }
+            ];
+        }
+        // ─────────────────────────────────────────────────────────────────
+
         function renderQuote() {
             recalculateDynamicRates();
             const body = document.getElementById('quoteBody');
@@ -3619,14 +3633,20 @@
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
+            // ── Kitchen auto-accessories (Profile Handle + Hinges per lakh) ──
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAcc = getKitchenAutoAccessories(kitchenSubTotal);
+            const kitchenAutoAccTotal = kitchenAutoAcc.reduce((s, a) => s + a.amount, 0);
+
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0) + kitchenAutoAccTotal;
             const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
             const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
             // Offer price totals (use amount as fallback if no offer price entered)
             const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0) + kitchenAutoAccTotal;
             const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
             const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
@@ -3716,7 +3736,7 @@
 
 
             // ── Accessories group ──
-            if (accessoryLines.length > 0) {
+            if (accessoryLines.length > 0 || kitchenAutoAcc.length > 0) {
                 html += `
                     <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                         <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
@@ -3758,6 +3778,28 @@
                           <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
                           ${offerCell(l)}
                           <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                        </tr>
+                    `;
+                });
+
+                // ── Auto kitchen accessories (Profile Handle + Hinges) ──
+                kitchenAutoAcc.forEach(a => {
+                    const colSpanExtra = (showSqFt ? 1 : 0) + (showSqFt && showRate ? 1 : 0);
+                    html += `
+                        <tr style="background: rgba(176,125,46,0.06);">
+                          <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
+                          <td style="vertical-align:top; padding-top:10px;">
+                              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Accessories</div>
+                              <strong>${a.label}</strong>
+                              <div style="font-size:0.68rem; color:var(--muted); margin-top:2px;">🔧 Auto (Kitchen) — ${a.note}</div>
+                          </td>
+                          <td style="vertical-align:top; padding-top:10px; font-size:0.75rem; color:var(--muted);">Included with Kitchen</td>
+                          <td style="vertical-align:top; padding-top:10px;">—</td>
+                          ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
+                          ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
+                          <td class="num" style="vertical-align:top; padding-top:10px; color:var(--accent-dark); font-weight:600;">₹${a.amount.toFixed(2)}</td>
+                          <td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted); font-size:0.75rem;">Auto</td>
+                          <td style="vertical-align:top; padding-top:10px;"><span title="Auto-calculated from Kitchen total" style="color:var(--muted); font-size:0.75rem;">🔒</span></td>
                         </tr>
                     `;
                 });
@@ -4113,8 +4155,15 @@
                 const roomLines = quoteLines.filter(l => !l.roomName.toLowerCase().includes('accessories') && !l.roomName.toLowerCase().includes('false celling'));
                 const accessoryLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('accessories'));
                 const falseCellingLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('false celling'));
+
+                // ── Kitchen auto-accessories for PDF ──
+                const kitchenLinesForPdf = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+                const kitchenSubTotalForPdf = kitchenLinesForPdf.reduce((s, l) => s + l.amount, 0);
+                const kitchenAutoAccForPdf = getKitchenAutoAccessories(kitchenSubTotalForPdf);
+                const kitchenAutoAccTotalForPdf = kitchenAutoAccForPdf.reduce((s, a) => s + a.amount, 0);
+
                 const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-                const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+                const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0) + kitchenAutoAccTotalForPdf;
                 const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
                 const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
@@ -4166,7 +4215,7 @@
                     });
                 }
 
-                if (accessoryLines.length > 0) {
+                if (accessoryLines.length > 0 || kitchenAutoAccForPdf.length > 0) {
                     rowsHTML += `
                         <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
@@ -4190,6 +4239,24 @@
                                 ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                 ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
+                            </tr>`;
+                    });
+
+                    // Auto kitchen accessories rows in PDF
+                    kitchenAutoAccForPdf.forEach(a => {
+                        rowsHTML += `
+                            <tr style="border-bottom:1px solid #e8ddd0;background:#fffdf8;page-break-inside:avoid;break-inside:avoid;">
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
+                                    ${a.label}
+                                    <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Auto — Kitchen</div>
+                                    <div style="font-size:8px;color:#888;margin-top:1px;">${a.note}</div>
+                                </td>
+                                <td style="padding:6px 7px;font-size:10px;color:#888;">Included with Kitchen</td>
+                                <td style="padding:6px 7px;font-size:9.5px;color:#888;font-family:monospace;">—</td>
+                                ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;color:#888;">—</td>` : ''}
+                                ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;color:#888;">—</td>` : ''}
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#b07d2e;">₹${a.amount.toFixed(2)}</td>
                             </tr>`;
                     });
 
@@ -4430,7 +4497,13 @@
                 const custName = document.getElementById('custName').value || '—';
                 const custAddress = document.getElementById('custAddress').value || '—';
                 const filename = `${docType}_${quoteNo}_${custName}`.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf';
-                const grandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+                const baseGrandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+                // Include kitchen auto-accessories in share text total
+                const shareKitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+                const shareKitchenTotal = shareKitchenLines.reduce((s, l) => s + l.amount, 0);
+                const shareAutoAcc = getKitchenAutoAccessories(shareKitchenTotal);
+                const shareAutoAccTotal = shareAutoAcc.reduce((s, a) => s + a.amount, 0);
+                const grandTotal = baseGrandTotal + shareAutoAccTotal;
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
