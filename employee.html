@@ -907,12 +907,14 @@
 
                 <!-- Top Right Page Actions -->
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                    <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number" onclick="useNextQuoteNo()"
+                    <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number"
+                        onclick="useNextQuoteNo()"
                         style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 46, 0.18); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #e5b869; cursor: pointer; transition: all 0.2s;"
                         onmouseover="this.style.background='rgba(176, 125, 46, 0.3)'"
                         onmouseout="this.style.background='rgba(176, 125, 46, 0.18)'">
                         <span>📋 Last Quote:</span>
-                        <span id="lastQuoteNoText" style="color: #ffffff; font-family: var(--mono); font-size: 0.85rem;">—</span>
+                        <span id="lastQuoteNoText"
+                            style="color: #ffffff; font-family: var(--mono); font-size: 0.85rem;">—</span>
                     </div>
                     <button class="back-btn"
                         style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
@@ -1414,6 +1416,10 @@
 
 
         /* ---------- Shared Materials Groups ---------- */
+        const MP_LAM_BOX_DOOR = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
         const MP_LAM_ACR_WPC_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
@@ -2637,7 +2643,7 @@
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
@@ -2660,7 +2666,7 @@
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet Area Washbasin Cabinet", options: ENG_WOOD_BOX_DOOR }
+                { id: 41, name: "Toilet Area Washbasin Cabinet", options: MP_LAM_BOX_DOOR }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
@@ -5152,7 +5158,7 @@
         <div
             style="background:var(--surface, #1e1e1e); border:1px solid var(--border, #333); border-radius:14px; padding:24px 28px; max-width:420px; width:90%; box-shadow:0 12px 35px rgba(0,0,0,0.6); color:var(--text, #fff); text-align:center;">
             <div style="font-size:1.4rem; font-weight:700; color:var(--accent, #b07d2e); margin-bottom:6px;">📲 Share
-                PDF Document</div>
+                PDF Document</div>final amount
             <p style="font-size:0.85rem; color:var(--muted, #aaa); margin-bottom:22px; line-height:1.4;">Share the exact
                 quotation PDF file with your customer.</p>
 
