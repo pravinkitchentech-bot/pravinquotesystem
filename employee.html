@@ -2307,6 +2307,15 @@
                     if (cleanMat === 'hinges' || cleanMat === 'soft closing hinges' || cleanMat === 'soft closing handles') {
                         l.rate = dynamicRate;
                         l.amount = (l.sqft || 1) * dynamicRate;
+                    } else {
+                        const currentRate = (l.rate !== undefined && l.rate !== null) ? l.rate : 0;
+                        if (currentRate === 0) {
+                            const newRate = getRateForMaterial(l.material, l.roomId, selectedDivision, isEconomyMode, l.id);
+                            if (newRate > 0) {
+                                l.rate = newRate;
+                                l.amount = (l.sqft || 1) * newRate;
+                            }
+                        }
                     }
                 });
             }
@@ -2385,7 +2394,7 @@
 
             const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
-            const room = roomId || selectedRoom || 'kitchen';
+            const room = (roomId || selectedRoom || 'kitchen').toLowerCase();
 
             const allRoomRates = getStoredRoomRates();
             const modeStr = eco ? 'economy' : 'premium';
@@ -2399,8 +2408,9 @@
             ];
 
             const aliases = [room];
-            if (room === 'dining_room') aliases.push('dinning_room', 'dining', 'dinning');
-            else if (room === 'dinning_room') aliases.push('dining_room', 'dining', 'dinning');
+            if (room === 'dining_room' || room === 'dinning_room') aliases.push('dining_room', 'dinning_room', 'dining', 'dinning');
+            if (room === 'profile_glass_door') aliases.push('profile_glass_door', 'profile_glass', 'profile_door');
+            if (room === 'false_celling') aliases.push('false_celling', 'false_ceiling', 'celling', 'ceiling');
 
             aliases.forEach(rAlias => {
                 if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
@@ -2429,7 +2439,17 @@
                 }
             }
 
-            // 3. Fallback to default rates
+            // 3. Search ALL room keys in allRoomRates for itemId::materialLabel or materialLabel match > 0
+            for (const key in allRoomRates) {
+                if (allRoomRates[key] && typeof allRoomRates[key] === 'object') {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
+            }
+
+            // 4. Fallback to default rates
             const ratesObj = getRates();
             const defaultRate = findRateInObject(ratesObj, itemId, materialLabel);
             if (defaultRate !== undefined && defaultRate !== null && !isNaN(parseFloat(defaultRate))) {
