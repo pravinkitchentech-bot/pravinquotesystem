@@ -1100,6 +1100,16 @@
 
                 </div>
 
+                <!-- Any Requirements Box (Screen Only) -->
+                <div id="requirementsBoxContainer"
+                    style="margin-top: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 10px;">
+                    <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Any Requirements</div>
+                    <textarea id="anyRequirements" placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
+                        rows="3"
+                        style="width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--text); outline: none; font-family: inherit; resize: vertical; box-sizing: border-box; line-height: 1.5;"></textarea>
+                </div>
+
                 <!-- Print-Only Payment Terms (shown only during browser print) -->
                 <div class="print-only-specs-terms"
                     style="display: none; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
@@ -1119,6 +1129,15 @@
                                 in site.<span id="printPayFinal"></span></li>
                         </ul>
 
+                    </div>
+                </div>
+
+                <!-- Print-Only Any Requirements -->
+                <div id="printRequirementsBox" class="print-only-specs-terms"
+                    style="display: none; margin-top: 12px; page-break-inside: avoid; break-inside: avoid;">
+                    <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any Requirements:</strong>
+                        <div id="printRequirementsText" style="white-space: pre-wrap; color: #333;"></div>
                     </div>
                 </div>
 
@@ -3801,9 +3820,13 @@
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
                 document.querySelector('.specs-and-terms-container').style.display = 'none';
+                const reqBox = document.getElementById('requirementsBoxContainer');
+                if (reqBox) reqBox.style.display = 'none';
                 return;
             } else {
                 document.querySelector('.specs-and-terms-container').style.display = 'flex';
+                const reqBox = document.getElementById('requirementsBoxContainer');
+                if (reqBox) reqBox.style.display = 'flex';
             }
 
             // Separate room lines from accessory lines
@@ -4268,6 +4291,8 @@
                 document.getElementById('payAdvance').value = '';
                 document.getElementById('paySecond').value = '';
                 document.getElementById('payFinal').value = '';
+                const anyReqEl = document.getElementById('anyRequirements');
+                if (anyReqEl) anyReqEl.value = '';
 
 
                 // Reset docType
@@ -4644,10 +4669,19 @@
                             </tr>
                         </tbody>
                     </table>
-                    ${specsText || payItems ? `
-                    <div style="margin-top:16px;display:flex;gap:12px;page-break-inside:avoid;break-inside:avoid;">
-                        ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
-                        ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
+                    const anyReqVal = (document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '');
+
+                    ${specsText || payItems || anyReqVal ? `
+                    <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;page-break-inside:avoid;break-inside:avoid;">
+                        <div style="display:flex;gap:12px;">
+                            ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
+                            ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
+                        </div>
+                        ${anyReqVal ? `
+                        <div style="padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;">
+                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">Any Requirements</strong>
+                            <div style="white-space:pre-wrap;color:#333;line-height:1.45;">${anyReqVal}</div>
+                        </div>` : ''}
                     </div>` : ''}
                     <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;page-break-inside:avoid;break-inside:avoid;">
                         <div style="width:55%;font-size:9.5px;color:#666;">
@@ -4744,6 +4778,8 @@
                 const calculatedOfferTotal = getCalculatedOfferTotal();
                 const effectiveFinal = getEffectiveFinalAmount();
 
+                const reqText = document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '';
+
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
                     `• ${docType} No: ${quoteNo}\n` +
@@ -4751,8 +4787,9 @@
                     `• Place: ${custAddress}\n` +
                     `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
                     `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n\n` +
-                    `Attached is your quotation PDF. Thank you!`;
+                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    (reqText ? `• Requirements: ${reqText}\n` : '') +
+                    `\nAttached is your quotation PDF. Thank you!`;
 
                 const blob = await generatePdfBlob();
                 const pdfFile = new File([blob], filename, { type: 'application/pdf' });
@@ -4872,6 +4909,7 @@
                 payAdvance: document.getElementById('payAdvance').value,
                 paySecond: document.getElementById('paySecond').value,
                 payFinal: document.getElementById('payFinal').value,
+                anyRequirements: document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value : '',
 
                 lineIdCounter,
                 timestamp: Date.now()
@@ -5003,6 +5041,9 @@
             document.getElementById('payAdvance').value = quote.payAdvance || '';
             document.getElementById('paySecond').value = quote.paySecond || '';
             document.getElementById('payFinal').value = quote.payFinal || '';
+            if (document.getElementById('anyRequirements')) {
+                document.getElementById('anyRequirements').value = quote.anyRequirements || '';
+            }
 
 
             quoteLines = [...quote.quoteLines];
