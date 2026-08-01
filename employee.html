@@ -2760,16 +2760,20 @@
                     customMats[item.id].forEach(m => {
                         if (!m) return;
                         let formula;
-                        if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                        else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                        else if (m.formulaType === "SQFT") formula = v => v.SQFT;
+                        let fields = m.fields || [];
+                        let note = m.note || '';
+                        const isFalseCelling = selectedRoom === 'false_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(item.id);
+
+                        if (m.formulaType === "L*H") { formula = v => (v.L * v.H) / 144; }
+                        else if (m.formulaType === "L*W" || isFalseCelling) { formula = v => (v.L * v.W) / 144; if (isFalseCelling && (!fields || fields.length === 0)) { fields = ["L", "W"]; note = "L×W/144"; } }
+                        else if (m.formulaType === "SQFT") { formula = v => v.SQFT; }
                         else formula = v => ((v.L + v.W) * v.H) / 144;
 
                         item.options.push({
                             label: m.label || '',
-                            fields: m.fields || [],
+                            fields: fields,
                             formula: formula,
-                            note: m.note || ''
+                            note: note
                         });
                     });
                 }
@@ -2784,16 +2788,20 @@
                         const processedOptions = item.options.map(opt => {
                             if (!opt) return null;
                             let formula;
-                            if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                            else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                            else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                            let fields = opt.fields || [];
+                            let note = opt.note || '';
+                            const isFalseCelling = selectedRoom === 'false_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(item.id);
+
+                            if (opt.formulaType === "L*H") { formula = v => (v.L * v.H) / 144; }
+                            else if (opt.formulaType === "L*W" || isFalseCelling) { formula = v => (v.L * v.W) / 144; if (isFalseCelling && (!fields || fields.length === 0)) { fields = ["L", "W"]; note = "L×W/144"; } }
+                            else if (opt.formulaType === "SQFT") { formula = v => v.SQFT; }
                             else formula = v => ((v.L + v.W) * v.H) / 144;
 
                             return {
                                 label: opt.label || '',
-                                fields: opt.fields || [],
+                                fields: fields,
                                 formula: formula,
-                                note: opt.note || ''
+                                note: note
                             };
                         }).filter(Boolean);
 
