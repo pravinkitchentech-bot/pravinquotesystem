@@ -5361,6 +5361,23 @@
         }
         window.addEventListener('beforeunload', handleBeforeUnload);
 
+        // Intercept browser back button
+        try {
+            history.pushState({ page: 'employee' }, null, window.location.href);
+            window.addEventListener('popstate', function(event) {
+                if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
+                    history.pushState({ page: 'employee' }, null, window.location.href);
+                    pendingNavigationUrl = 'rooms.html';
+                    document.getElementById('navConfirmModal').style.display = 'flex';
+                } else {
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
+                    location.href = 'rooms.html';
+                }
+            });
+        } catch (e) {
+            console.error('History pushState error:', e);
+        }
+
         // Listen for input changes to set dirty status
         window.addEventListener('input', () => { isQuoteDirty = true; });
         window.addEventListener('change', () => { isQuoteDirty = true; });
