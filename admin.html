@@ -1947,7 +1947,15 @@
             "44::WPC – Lamination (Box Type)": 1400,
             "44::WPC – Lamination (Door Only)": 900,
             "44::Engineering Wood (Box Type)": 900,
-            "44::Engineering Wood (Door Only)": 500
+            "44::Engineering Wood (Door Only)": 500,
+
+            // Teak Wood Kitchen (ID 110)
+            "110::Full Teak Wood - Box Type": 3800,
+            "110::Full Teak Wood - Partition Type": 3500,
+            "110::Full Teak Wood - Door Only": 2200,
+            "110::Semi-Teak Wood - Marine Ply - Box Type": 2600,
+            "110::Semi-Teak Wood - Marine Ply - Partition Type": 2200,
+            "110::Semi-Teak Wood - Marine Ply - Door Only": 1800
         };
 
         const ACCESSORY_LIST = [
@@ -1995,6 +2003,14 @@
                 { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 110, name: "TEAK WOOD", options: [
+                    "Full Teak Wood - Box Type",
+                    "Full Teak Wood - Partition Type",
+                    "Full Teak Wood - Door Only",
+                    "Semi-Teak Wood - Marine Ply - Box Type",
+                    "Semi-Teak Wood - Marine Ply - Partition Type",
+                    "Semi-Teak Wood - Marine Ply - Door Only"
+                ] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
@@ -2099,6 +2115,14 @@
                 { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 110, name: "TEAK WOOD", options: [
+                    "Full Teak Wood - Box Type",
+                    "Full Teak Wood - Partition Type",
+                    "Full Teak Wood - Door Only",
+                    "Semi-Teak Wood - Marine Ply - Box Type",
+                    "Semi-Teak Wood - Marine Ply - Partition Type",
+                    "Semi-Teak Wood - Marine Ply - Door Only"
+                ] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
@@ -2387,6 +2411,13 @@
             if (stored) {
                 try {
                     let rates = JSON.parse(stored);
+                    let updated = false;
+                    Object.keys(DEFAULT_RATES).forEach(key => {
+                        if (rates[key] === undefined) {
+                            rates[key] = DEFAULT_RATES[key];
+                            updated = true;
+                        }
+                    });
                     if (rates["WPC"] === 0 || rates["Marine Ply – Lamination"] === 0) {
                         rates = { ...DEFAULT_RATES, ...rates };
                         Object.keys(DEFAULT_RATES).forEach(key => {
@@ -2394,6 +2425,9 @@
                                 rates[key] = DEFAULT_RATES[key];
                             }
                         });
+                        updated = true;
+                    }
+                    if (updated) {
                         localStorage.setItem('pks_rates', JSON.stringify(rates));
                     }
                     return rates;
