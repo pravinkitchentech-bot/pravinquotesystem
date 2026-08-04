@@ -2027,12 +2027,15 @@
                 { id: 69, name: "LOFT 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 39, name: "Dining room crockery unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 370, name: "Beam Covering", options: ["Marine Ply – Lamination", "Wall Panel Lamination"] },
                 { id: 40, name: "Accessories", options: ACCESSORY_LIST }
             ],
             musical_room: [
@@ -2126,12 +2129,15 @@
                 { id: 69, name: "LOFT 2", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
+                { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 39, name: "Dining room crockery unit", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 370, name: "Beam Covering", options: ["Marine Ply – Lamination", "Wall Panel Lamination"] },
                 { id: 40, name: "Accessories", options: ACCESSORY_LIST }
             ],
             musical_room: [
@@ -2145,7 +2151,7 @@
                 { id: 88, name: "COMPUTER TABLE", options: ["Engineering Wood (Box Type)"] }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet area washbasin cabinet", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
             ],
             store_room: [
                 { id: 44, name: "Store room cupboard", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] }
@@ -2215,46 +2221,110 @@
             return `${cleanDivId}_${mode}_${roomId}`;
         }
 
+        function normalizeMatString(str) {
+            if (!str || typeof str !== 'string') return '';
+            return str.replace(/–/g, '-').replace(/\s+/g, ' ').toLowerCase().trim();
+        }
+
+        function findRateInObject(ratesObj, itemId, materialLabel) {
+            if (!ratesObj || typeof ratesObj !== 'object') return undefined;
+
+            const normMat = normalizeMatString(materialLabel);
+            const cleanLbl = getCleanMaterialName(materialLabel);
+            const normCleanLbl = normalizeMatString(cleanLbl);
+
+            // 1. Direct item key match with original & normalized variations
+            if (itemId !== undefined && itemId !== null) {
+                if (ratesObj[`${itemId}::${materialLabel}`] !== undefined) return ratesObj[`${itemId}::${materialLabel}`];
+                if (ratesObj[`${itemId}::${cleanLbl}`] !== undefined) return ratesObj[`${itemId}::${cleanLbl}`];
+
+                for (const key in ratesObj) {
+                    if (key.startsWith(`${itemId}::`)) {
+                        const matPart = key.split('::')[1] || '';
+                        if (normalizeMatString(matPart) === normMat || normalizeMatString(matPart) === normCleanLbl) {
+                            return ratesObj[key];
+                        }
+                    }
+                }
+            }
+
+            // 2. Room-level / material-level match
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLbl] !== undefined) return ratesObj[cleanLbl];
+
+            for (const key in ratesObj) {
+                if (normalizeMatString(key) === normMat || normalizeMatString(key) === normCleanLbl) {
+                    return ratesObj[key];
+                }
+            }
+
+            return undefined;
+        }
+
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
             const divId = (divisionId || selectedDivision || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
-            const room = roomId || selectedRoom || 'kitchen';
+            const room = (roomId || selectedRoom || 'kitchen').toLowerCase();
 
             const allRoomRates = getStoredRoomRates();
-            const specificKey = getRoomRatesKey(divId, eco, room);
-            const roomRatesObj = allRoomRates[specificKey] || {};
+            const modeStr = eco ? 'economy' : 'premium';
+            const otherModeStr = eco ? 'premium' : 'economy';
 
-            // 1. Item-specific match (itemId::materialLabel)
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (roomRatesObj[itemKey] !== undefined) return roomRatesObj[itemKey];
-                const cleanLabel = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLabel}`;
-                if (roomRatesObj[itemCleanKey] !== undefined) return roomRatesObj[itemCleanKey];
+            const candidateKeys = [
+                `${divId}_${modeStr}_${room}`,
+                `${divId}_${otherModeStr}_${room}`,
+                `marketing_${modeStr}_${room}`,
+                `marketing_${otherModeStr}_${room}`
+            ];
+
+            const aliases = [room];
+            if (room === 'dining_room' || room === 'dinning_room') aliases.push('dining_room', 'dinning_room', 'dining', 'dinning');
+            if (room === 'profile_glass_door') aliases.push('profile_glass_door', 'profile_glass', 'profile_door');
+            if (room === 'false_celling') aliases.push('false_celling', 'false_ceiling', 'celling', 'ceiling');
+
+            aliases.forEach(rAlias => {
+                if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`${divId}_${otherModeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${otherModeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${modeStr}_${rAlias}`)) candidateKeys.push(`marketing_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${otherModeStr}_${rAlias}`)) candidateKeys.push(`marketing_${otherModeStr}_${rAlias}`);
+            });
+
+            // 1. Search candidate room keys
+            for (const key of candidateKeys) {
+                if (allRoomRates[key]) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 2. Room-level flat match (backward compat)
-            if (roomRatesObj[materialLabel] !== undefined) {
-                return roomRatesObj[materialLabel];
+            // 2. Search ANY room key ending in room ID or alias
+            for (const key in allRoomRates) {
+                if (aliases.some(rAlias => key.endsWith(`_${rAlias}`))) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 3. Clean base material room-level match
-            const cleanLabel = getCleanMaterialName(materialLabel);
-            if (roomRatesObj[cleanLabel] !== undefined) {
-                return roomRatesObj[cleanLabel];
+            // 3. Search ALL room keys in allRoomRates for itemId::materialLabel or materialLabel match > 0
+            for (const key in allRoomRates) {
+                if (allRoomRates[key] && typeof allRoomRates[key] === 'object') {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
             // 4. Fallback to default rates
             const ratesObj = getRates();
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (ratesObj[itemKey] !== undefined) return ratesObj[itemKey];
-                const cleanLbl = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLbl}`;
-                if (ratesObj[itemCleanKey] !== undefined) return ratesObj[itemCleanKey];
+            const defaultRate = findRateInObject(ratesObj, itemId, materialLabel);
+            if (defaultRate !== undefined && defaultRate !== null && !isNaN(parseFloat(defaultRate))) {
+                return parseFloat(defaultRate);
             }
-            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
-            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
