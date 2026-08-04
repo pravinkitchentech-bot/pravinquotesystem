@@ -1447,6 +1447,39 @@
 
 
         /* ---------- Shared Materials Groups ---------- */
+        const TEAK_WOOD_OPTS = [
+            {
+                label: "Full Teak Wood - Box Type",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Structure: Kerala Teak Wood | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
+            },
+            {
+                label: "Full Teak Wood - Partition Type",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Structure: Kerala Teak Wood | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
+            },
+            {
+                label: "Full Teak Wood - Door Only",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
+            },
+            {
+                label: "Semi-Teak Wood - Marine Ply - Box Type",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Kerala Teak Wood outside and door only | Marine Ply 710 Grade | Brand: Saburi / Fineply | Door: Teak Wood"
+            },
+            {
+                label: "Semi-Teak Wood - Marine Ply - Partition Type",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Kerala Teak Wood outside and door only | Marine Ply 710 Grade | Brand: Saburi / Fineply | Door: Teak Wood"
+            },
+            {
+                label: "Semi-Teak Wood - Marine Ply - Door Only",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Kerala Teak Wood outside and door only | Frame and door teak wood"
+            }
+        ];
+
         const MP_LAM_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
@@ -2283,7 +2316,15 @@
             "44::WPC – Lamination (Box Type)": 1400,
             "44::WPC – Lamination (Door Only)": 900,
             "44::Engineering Wood (Box Type)": 900,
-            "44::Engineering Wood (Door Only)": 500
+            "44::Engineering Wood (Door Only)": 500,
+
+            // Teak Wood Kitchen (ID 110)
+            "110::Full Teak Wood - Box Type": 3800,
+            "110::Full Teak Wood - Partition Type": 3500,
+            "110::Full Teak Wood - Door Only": 2200,
+            "110::Semi-Teak Wood - Marine Ply - Box Type": 2600,
+            "110::Semi-Teak Wood - Marine Ply - Partition Type": 2200,
+            "110::Semi-Teak Wood - Marine Ply - Door Only": 1800
         };
 
         const ACCESSORY_OPTS = [
@@ -2497,6 +2538,13 @@
             if (stored) {
                 try {
                     cachedRates = JSON.parse(stored);
+                    let updated = false;
+                    Object.keys(DEFAULT_RATES).forEach(key => {
+                        if (cachedRates[key] === undefined) {
+                            cachedRates[key] = DEFAULT_RATES[key];
+                            updated = true;
+                        }
+                    });
                     if (cachedRates["WPC"] === 0 || cachedRates["Marine Ply – Lamination"] === 0) {
                         cachedRates = { ...DEFAULT_RATES, ...cachedRates };
                         Object.keys(DEFAULT_RATES).forEach(key => {
@@ -2504,6 +2552,9 @@
                                 cachedRates[key] = DEFAULT_RATES[key];
                             }
                         });
+                        updated = true;
+                    }
+                    if (updated) {
                         localStorage.setItem('pks_rates', JSON.stringify(cachedRates));
                     }
                     return cachedRates;
@@ -2560,6 +2611,7 @@
                 { id: 12, name: "Dining Partition", options: PARTITION },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
+                { id: 110, name: "TEAK WOOD", options: TEAK_WOOD_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -2664,6 +2716,7 @@
                 { id: 12, name: "Dining Partition", options: PARTITION },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
+                { id: 110, name: "TEAK WOOD", options: TEAK_WOOD_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -3387,13 +3440,24 @@
                 }
             });
 
-            if (optSpecs && typeof optSpecs === 'string') {
-                optSpecs.split('|').forEach(sub => {
-                    const tsub = sub.trim();
-                    if (tsub && !allSpecsArray.includes(tsub)) {
-                        allSpecsArray.push(tsub);
-                    }
-                });
+            if (optSpecs) {
+                if (typeof optSpecs === 'string') {
+                    optSpecs.split('|').forEach(sub => {
+                        const tsub = sub.trim();
+                        if (tsub && !allSpecsArray.includes(tsub)) {
+                            allSpecsArray.push(tsub);
+                        }
+                    });
+                } else if (Array.isArray(optSpecs)) {
+                    optSpecs.forEach(sub => {
+                        if (sub && typeof sub === 'string') {
+                            const tsub = sub.trim();
+                            if (tsub && !allSpecsArray.includes(tsub)) {
+                                allSpecsArray.push(tsub);
+                            }
+                        }
+                    });
+                }
             }
 
             // Fallback matching if empty
