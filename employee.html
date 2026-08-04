@@ -1115,7 +1115,7 @@
                 <div id="requirementsBoxContainer"
                     style="margin-top: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 10px;">
                     <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
-                        Any Requirements</div>
+                        NOTES</div>
                     <textarea id="anyRequirements" placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
                         rows="3"
                         style="width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--text); outline: none; font-family: inherit; resize: vertical; box-sizing: border-box; line-height: 1.5;"></textarea>
@@ -1147,7 +1147,7 @@
                 <div id="printRequirementsBox" class="print-only-specs-terms"
                     style="display: none; margin-top: 12px; page-break-inside: avoid; break-inside: avoid;">
                     <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any Requirements:</strong>
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">NOTES:</strong>
                         <div id="printRequirementsText" style="white-space: pre-wrap; color: #333;"></div>
                     </div>
                 </div>
@@ -2558,6 +2558,8 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -2660,6 +2662,8 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -4699,7 +4703,7 @@
                         </div>
                         ${anyReqVal ? `
                         <div style="padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;">
-                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">Any Requirements</strong>
+                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">NOTES</strong>
                             <div style="white-space:pre-wrap;color:#333;line-height:1.45;">${anyReqVal}</div>
                         </div>` : ''}
                     </div>` : ''}
