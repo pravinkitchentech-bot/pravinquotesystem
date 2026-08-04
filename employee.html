@@ -1224,7 +1224,7 @@
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
-        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
+        let isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
         // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
         const CURRENT_RATE_VERSION = 4;
@@ -5319,7 +5319,7 @@
         let pendingNavigationUrl = null;
 
         function handleBackNavigation(url) {
-            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+            if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
                 pendingNavigationUrl = url;
                 document.getElementById('navConfirmModal').style.display = 'flex';
             } else {
@@ -5353,7 +5353,7 @@
         }
 
         function handleBeforeUnload(e) {
-            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+            if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
                 e.preventDefault();
                 e.returnValue = '';
                 return '';
