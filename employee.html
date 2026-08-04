@@ -907,6 +907,17 @@
 
                 <!-- Top Right Page Actions -->
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <!-- Premium/Economy Toggle -->
+                    <div style="display: flex; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 2px; align-items: center;">
+                        <button id="togglePremiumBtn" onclick="setEconomyMode(false)"
+                            style="border: none; border-radius: 18px; padding: 6px 14px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #9a9186; font-family: var(--sans);">
+                            Premium
+                        </button>
+                        <button id="toggleEconomyBtn" onclick="setEconomyMode(true)"
+                            style="border: none; border-radius: 18px; padding: 6px 14px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #9a9186; font-family: var(--sans);">
+                            Economy
+                        </button>
+                    </div>
                     <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number"
                         onclick="useNextQuoteNo()"
                         style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 46, 0.18); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #e5b869; cursor: pointer; transition: all 0.2s;"
@@ -921,10 +932,10 @@
                         onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
                     <button class="back-btn"
                         style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
-                        onclick="location.href='rooms.html'">Change Division</button>
+                        onclick="handleBackNavigation('rooms.html')">Change Division</button>
                     <button class="back-btn"
                         style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
-                        onclick="location.href='index.html'">Logout</button>
+                        onclick="handleBackNavigation('index.html')">Logout</button>
                 </div>
             </div>
 
@@ -1240,6 +1251,7 @@
         let cachedCustomItems = null;
         let cachedDeletedStandardItems = null;
         let cachedDeletedStandardMaterials = null;
+        let isQuoteDirty = false;
 
         function getRooms() {
             const defaultRooms = [
@@ -2580,6 +2592,8 @@
                 { id: 69, name: "LOFT 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
                 { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
@@ -2680,6 +2694,8 @@
                 { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
                 { id: 70, name: "Wall Panneling", options: WALL_PANEL },
                 { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
@@ -2759,11 +2775,6 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
-        const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
-        const initialDeleted = getDeletedStandardItems() || [];
-        let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
-
         function getDeletedStandardMaterials() {
             if (cachedDeletedStandardMaterials !== null) return cachedDeletedStandardMaterials;
             const stored = localStorage.getItem('pks_deleted_standard_materials');
@@ -2780,10 +2791,13 @@
             return cachedDeletedStandardMaterials;
         }
 
-
-
         // Combine base items with admin customizations
         function getFullItemsList() {
+            const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
+            const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
+            const initialDeleted = getDeletedStandardItems() || [];
+            const BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
+
             const deletedMats = getDeletedStandardMaterials();
             const list = (BASE_ITEMS || []).map(item => {
                 if (!item) return null;
@@ -2974,6 +2988,7 @@
         function _doInit() {
             if (window._appInitialized) return;
             window._appInitialized = true;
+            try { updateEconomyModeToggleUI(); } catch (e) { }
             try { updateRoomState(selectedRoom, selectedRoomName); } catch (e) {
                 try { renderRoomTabs(); } catch (_) { }
                 try { renderItemsGrid(); } catch (_) { }
@@ -3539,6 +3554,7 @@
         }
 
         function confirmMaterial(buildId, itemId, optIdx) {
+            isQuoteDirty = true;
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
 
@@ -3600,6 +3616,7 @@
         }
 
         function confirmCustom(buildId, itemId) {
+            isQuoteDirty = true;
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
             const sqft = Math.round(parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0);
@@ -4169,11 +4186,13 @@
         }
 
         function deleteLine(id) {
+            isQuoteDirty = true;
             quoteLines = quoteLines.filter(l => l.id !== id);
             renderQuote();
         }
 
         function updateOfferPrice(lineId, val) {
+            isQuoteDirty = true;
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
             line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
@@ -4278,6 +4297,7 @@
 
         function resetQuote() {
             if (confirm('Clear the entire quote and customer details? This cannot be undone.')) {
+                isQuoteDirty = false;
                 quoteLines = [];
                 customOverallOfferPrice = null;
 
@@ -4333,7 +4353,7 @@
 
         function populatePrintDOM() {
             const docType = document.getElementById('docType').value;
-            document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' ' + docType).toUpperCase();
+            document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' (' + (isEconomyMode ? 'Economy' : 'Premium') + ') ' + docType).toUpperCase();
             document.getElementById('printQuoteNoLabel').textContent = docType + ' No:';
             document.getElementById('printQuoteNo').textContent = document.getElementById('quoteNo').value || '—';
 
@@ -4348,7 +4368,7 @@
                 }
             }
 
-            document.getElementById('printDivisionName').textContent = selectedDivisionName || '—';
+            document.getElementById('printDivisionName').textContent = (selectedDivisionName || '—') + (isEconomyMode ? ' (Economy)' : ' (Premium)');
             document.getElementById('printQuoteDate').textContent = document.getElementById('quoteDate').value || '—';
             document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
@@ -4590,6 +4610,8 @@
                 payItems += `<li style="margin-bottom:3px;"><strong>35% Part Payment:</strong> After the completion of frame work.${paySecond ? ` — <strong>${paySecond}</strong>` : ''}</li>`;
                 payItems += `<li><strong>5% Final Payment:</strong> The last day of work completion in site.${payFinal ? ` — <strong>${payFinal}</strong>` : ''}</li>`;
 
+                const anyReqVal = (document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '');
+
                 const container = document.createElement('div');
                 container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:#fff;margin:0;padding:0;';
                 document.body.appendChild(container);
@@ -4618,10 +4640,10 @@
                             </div>
                         </div>
                         <div style="width:44%;text-align:right;">
-                            <div style="font-size:20px;font-weight:700;color:#1c2820;border-bottom:2px solid #b07d2e;padding-bottom:3px;display:inline-block;margin-bottom:8px;">${(selectedDivisionName + ' ' + docType).toUpperCase()}</div>
+                            <div style="font-size:20px;font-weight:700;color:#1c2820;border-bottom:2px solid #b07d2e;padding-bottom:3px;display:inline-block;margin-bottom:8px;">${(selectedDivisionName + ' (' + (isEconomyMode ? 'Economy' : 'Premium') + ') ' + docType).toUpperCase()}</div>
                             <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;width:50%;">${docType} No:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${quoteNo}</td></tr>
-                                <tr><td style="padding:2px 0;font-weight:700;color:#777;">Division:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${selectedDivisionName}</td></tr>
+                                <tr><td style="padding:2px 0;font-weight:700;color:#777;">Division:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${selectedDivisionName} (${isEconomyMode ? 'Economy' : 'Premium'})</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;">Date:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${quoteDate}</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;">Customer:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${custName}</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;vertical-align:top;">Place:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${custAddress}</td></tr>
@@ -4669,8 +4691,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    const anyReqVal = (document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '');
-
                     ${specsText || payItems || anyReqVal ? `
                     <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;page-break-inside:avoid;break-inside:avoid;">
                         <div style="display:flex;gap:12px;">
@@ -4885,7 +4905,7 @@
 
             if (!quoteNo) {
                 alert("Please enter a Quotation/Invoice number before saving.");
-                return;
+                return false;
             }
 
             let totalAmount = quoteLines.reduce((sum, line) => sum + line.amount, 0);
@@ -4927,18 +4947,25 @@
             }
 
             const existingIdx = savedQuotes.findIndex(q => q.quoteNo === quoteNo && q.docType === docType);
+            let savedSuccess = false;
             if (existingIdx >= 0) {
                 if (confirm(`A quote with number "${quoteNo}" already exists. Overwrite?`)) {
                     savedQuotes[existingIdx] = newQuote;
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
                     alert("Quote updated successfully!");
+                    savedSuccess = true;
                 }
             } else {
                 savedQuotes.push(newQuote);
                 localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
                 alert("Quote saved successfully!");
+                savedSuccess = true;
             }
             initCustomerAutofill();
+            if (savedSuccess) {
+                isQuoteDirty = false;
+            }
+            return savedSuccess;
         }
 
         function openSavedQuotesModal() {
@@ -5052,6 +5079,7 @@
             renderQuote();
             updateDocLabels();
             isRestoringQuote = false;
+            isQuoteDirty = false;
         }
 
         function deleteSavedQuote(quoteId) {
@@ -5286,6 +5314,88 @@
 
         // Run default specs initialization
         initializeDefaultSpecsIfNeeded();
+
+        // --- Back Navigation and Prompt Logic ---
+        let pendingNavigationUrl = null;
+
+        function handleBackNavigation(url) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+                pendingNavigationUrl = url;
+                document.getElementById('navConfirmModal').style.display = 'flex';
+            } else {
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+                location.href = url;
+            }
+        }
+
+        function closeNavConfirmModal() {
+            document.getElementById('navConfirmModal').style.display = 'none';
+            pendingNavigationUrl = null;
+        }
+
+        function confirmNavDiscard() {
+            closeNavConfirmModal();
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            if (pendingNavigationUrl) {
+                location.href = pendingNavigationUrl;
+            }
+        }
+
+        function confirmNavSave() {
+            const success = saveCurrentQuote();
+            if (success) {
+                closeNavConfirmModal();
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+                if (pendingNavigationUrl) {
+                    location.href = pendingNavigationUrl;
+                }
+            }
+        }
+
+        function handleBeforeUnload(e) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        }
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // Listen for input changes to set dirty status
+        window.addEventListener('input', () => { isQuoteDirty = true; });
+        window.addEventListener('change', () => { isQuoteDirty = true; });
+
+        // --- Premium/Economy Switcher Logic ---
+        function setEconomyMode(val) {
+            if (isEconomyMode === val) return;
+            isEconomyMode = val;
+            sessionStorage.setItem('pks_economy_mode', val ? 'true' : 'false');
+            localStorage.setItem('pks_economy_mode', val ? 'true' : 'false');
+            updateEconomyModeToggleUI();
+            updateRoomState(selectedRoom, selectedRoomName);
+        }
+
+        function updateEconomyModeToggleUI() {
+            const pBtn = document.getElementById('togglePremiumBtn');
+            const eBtn = document.getElementById('toggleEconomyBtn');
+            if (pBtn && eBtn) {
+                if (isEconomyMode) {
+                    eBtn.style.background = 'var(--accent)';
+                    eBtn.style.color = '#ffffff';
+                    pBtn.style.background = 'transparent';
+                    pBtn.style.color = '#9a9186';
+                } else {
+                    pBtn.style.background = 'var(--accent)';
+                    pBtn.style.color = '#ffffff';
+                    eBtn.style.background = 'transparent';
+                    eBtn.style.color = '#9a9186';
+                }
+            }
+            const divBadgeEl = document.getElementById('divisionBadge');
+            if (divBadgeEl) {
+                divBadgeEl.textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
+            }
+        }
     </script>
 
     <!-- Share Modal -->
@@ -5315,6 +5425,40 @@
 
             <button onclick="closeShareModal()"
                 style="margin-top:20px; background:transparent; border:none; color:var(--muted, #888); font-size:0.85rem; cursor:pointer; text-decoration:underline;">Close</button>
+        </div>
+    </div>
+
+    <!-- Navigation Confirmation Modal -->
+    <div class="modal-overlay" id="navConfirmModal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 90%; max-width: 440px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 20px; text-align: center; color: var(--text);">
+            <div>
+                <span style="font-size: 3rem; display: block; margin-bottom: 12px;">💾</span>
+                <h3 style="color: var(--accent); margin: 0 0 10px 0; font-size: 1.4rem; font-family: var(--sans); font-weight: 700;">Save your changes?</h3>
+                <p style="color: var(--muted); margin: 0; font-size: 0.92rem; line-height: 1.5; font-family: var(--sans);">
+                    You have added materials/items to this quote. Leaving this page will discard any unsaved progress.
+                </p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <button onclick="confirmNavSave()"
+                    style="background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; font-family: var(--sans); transition: background 0.15s;"
+                    onmouseover="this.style.background='var(--accent-dark)'"
+                    onmouseout="this.style.background='var(--accent)'">
+                    Yes, Save &amp; Exit
+                </button>
+                <button onclick="confirmNavDiscard()"
+                    style="background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; font-family: var(--sans); transition: all 0.15s;"
+                    onmouseover="this.style.background='rgba(192,57,43,0.08)'"
+                    onmouseout="this.style.background='transparent'">
+                    Discard Changes &amp; Exit
+                </button>
+                <button onclick="closeNavConfirmModal()"
+                    style="background: var(--surface2); color: var(--text); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; font-family: var(--sans); transition: background 0.15s;"
+                    onmouseover="this.style.background='var(--border)'"
+                    onmouseout="this.style.background='var(--surface2)'">
+                    Cancel (Stay here)
+                </button>
+            </div>
         </div>
     </div>
 </body>
