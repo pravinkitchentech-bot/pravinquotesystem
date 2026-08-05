@@ -1005,22 +1005,60 @@
                     <h2>Quote Summary</h2>
                     <div class="line"></div>
                 </div>
-                <!-- Sq.Ft & Rate Toggle -->
+                <!-- Sq.Ft & Rate and Offer Price Toggles -->
                 <div class="no-print"
-                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content;">
-                    <span
-                        style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
-                        Sq.Ft &amp; Rate</span>
-                    <label class="sqft-toggle-wrap"
-                        style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
-                        <input type="checkbox" id="sqftRateToggle" onchange="toggleSqftRate(this.checked)"
-                            style="opacity:0; width:0; height:0; position:absolute;">
-                        <span id="sqftToggleTrack"
-                            style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--border); border-radius:24px; transition:background 0.2s;">
-                            <span id="sqftToggleThumb"
-                                style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-                        </span>
-                    </label>
+                    style="display: flex; align-items: center; gap: 18px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content; flex-wrap: wrap;">
+                    <!-- Show Sq.Ft & Rate Toggle -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span
+                            style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
+                            Sq.Ft &amp; Rate</span>
+                        <label class="sqft-toggle-wrap"
+                            style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
+                            <input type="checkbox" id="sqftRateToggle" onchange="toggleSqftRate(this.checked)"
+                                style="opacity:0; width:0; height:0; position:absolute;">
+                            <span id="sqftToggleTrack"
+                                style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--border); border-radius:24px; transition:background 0.2s;">
+                                <span id="sqftToggleThumb"
+                                    style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div style="width: 1px; height: 20px; background: var(--border);"></div>
+
+                    <!-- Show Offer Price Toggle -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span
+                            style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
+                            Offer Price</span>
+                        <label class="offer-toggle-wrap"
+                            style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
+                            <input type="checkbox" id="offerPriceToggle" checked onchange="toggleOfferPrice(this.checked)"
+                                style="opacity:0; width:0; height:0; position:absolute;">
+                            <span id="offerToggleTrack"
+                                style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--accent); border-radius:24px; transition:background 0.2s;">
+                                <span id="offerToggleThumb"
+                                    style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); transform:translateX(20px);"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div style="width: 1px; height: 20px; background: var(--border);"></div>
+
+                    <!-- Price Increase Buttons -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">Price:</span>
+                        <button type="button" onclick="applyBulkOfferPct(5, this)"
+                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
+                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+5%</button>
+                        <button type="button" onclick="applyBulkOfferPct(10, this)"
+                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
+                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+10%</button>
+                        <button type="button" onclick="applyBulkOfferPct(20, this)"
+                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
+                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+20%</button>
+                    </div>
                 </div>
                 <table class="quote-table">
                     <thead>
@@ -1032,7 +1070,7 @@
                             <th class="num" id="sqftHeader" style="display:none;">Sq.Ft</th>
                             <th class="num" id="rateHeader" style="display:none;">Rate</th>
                             <th class="num">Price</th>
-                            <th class="num" style="color:#b07d2e;">Offer Price</th>
+                            <th class="num" id="offerHeader" style="color:#b07d2e;">Offer Price</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -1451,12 +1489,12 @@
             {
                 label: "Full Teak Wood - Box Type",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Structure: Kerala Teak Wood | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
             },
             {
                 label: "Full Teak Wood - Partition Type",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Structure: Kerala Teak Wood | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
             },
             {
                 label: "Full Teak Wood - Door Only",
@@ -2319,12 +2357,12 @@
             "44::Engineering Wood (Door Only)": 500,
 
             // Teak Wood Kitchen (ID 110)
-            "110::Full Teak Wood - Box Type": 3800,
-            "110::Full Teak Wood - Partition Type": 3500,
-            "110::Full Teak Wood - Door Only": 2200,
-            "110::Semi-Teak Wood - Marine Ply - Box Type": 2600,
-            "110::Semi-Teak Wood - Marine Ply - Partition Type": 2200,
-            "110::Semi-Teak Wood - Marine Ply - Door Only": 1800
+            "110::Full Teak Wood - Box Type": 3600,
+            "110::Full Teak Wood - Partition Type": 3200,
+            "110::Full Teak Wood - Door Only": 1600,
+            "110::Semi-Teak Wood - Marine Ply - Box Type": 2800,
+            "110::Semi-Teak Wood - Marine Ply - Partition Type": 2400,
+            "110::Semi-Teak Wood - Marine Ply - Door Only": 1400
         };
 
         const ACCESSORY_OPTS = [
@@ -3677,7 +3715,8 @@
                 specs: allSpecsArray.join(' | '),
                 size: sizeDesc,
                 sqft, rate, amount,
-                offerPrice: null
+                offerPrice: null,
+                isEconomy: isEconomyMode
             });
             renderQuote();
             closeBuilder(buildId);
@@ -3719,7 +3758,8 @@
                 specs: allSpecsArray.join(' | '),
                 size: '—',
                 sqft, rate, amount,
-                offerPrice: null
+                offerPrice: null,
+                isEconomy: isEconomyMode
             });
             renderQuote();
             closeBuilder(buildId);
@@ -3738,6 +3778,18 @@
             showSqftRate = on;
             const track = document.getElementById('sqftToggleTrack');
             const thumb = document.getElementById('sqftToggleThumb');
+            if (track) track.style.background = on ? 'var(--accent)' : 'var(--border)';
+            if (thumb) thumb.style.transform = on ? 'translateX(20px)' : 'translateX(0)';
+            renderQuote();
+        }
+
+        // ── Offer Price toggle state ──────────────────────
+        let showOfferPrice = true;
+
+        function toggleOfferPrice(on) {
+            showOfferPrice = on;
+            const track = document.getElementById('offerToggleTrack');
+            const thumb = document.getElementById('offerToggleThumb');
             if (track) track.style.background = on ? 'var(--accent)' : 'var(--border)';
             if (thumb) thumb.style.transform = on ? 'translateX(20px)' : 'translateX(0)';
             renderQuote();
@@ -3890,17 +3942,20 @@
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
             const showSqFt = showSqftRate;
+            const showOffer = showOfferPrice;
 
-            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | Offer Price | Delete
+            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | [Offer Price] | Delete
             const baseColCount = 4;
             const extraCols = (showSqFt ? 1 : 0) + (showSqFt && showRate ? 1 : 0);
-            const totalCols = baseColCount + extraCols + 3; // +Amount +OfferPrice +Delete
+            const totalCols = baseColCount + extraCols + 2 + (showOffer ? 1 : 0); // +Amount + [OfferPrice] +Delete
 
             // Header column visibility
             const sqftHeader = document.getElementById('sqftHeader');
             const rateHeader = document.getElementById('rateHeader');
+            const offerHeader = document.getElementById('offerHeader');
             if (sqftHeader) sqftHeader.style.display = showSqFt ? '' : 'none';
             if (rateHeader) rateHeader.style.display = (showSqFt && showRate) ? '' : 'none';
+            if (offerHeader) offerHeader.style.display = showOffer ? '' : 'none';
 
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
@@ -3942,11 +3997,12 @@
 
             // Helper: offer price cell for a line
             function offerCell(l) {
+                if (!showOffer) return '';
                 const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
                 return `<td class="num" style="vertical-align:top; padding-top:8px;">
                     <div style="display:flex; align-items:center; gap:2px;">
                         <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
-                        <input type="number" min="0"
+                        <input type="number" min="0" id="offerInput-${l.id}"
                             placeholder="${l.amount.toFixed(0)}"
                             value="${val}"
                             oninput="updateOfferPrice(${l.id}, this.value)"
@@ -3956,6 +4012,7 @@
                     </div>
                 </td>`;
             }
+
 
             // ── Group room lines by roomName ──
             if (roomLines.length > 0) {
@@ -3971,8 +4028,6 @@
 
                 roomOrder.forEach(roomName => {
                     const lines = roomMap[roomName];
-                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
-                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
 
                     // Room group header row
                     html += `
@@ -4001,12 +4056,17 @@
                                     ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
                                 </div>` : ''}`;
 
+                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                        const modeLabel = isEcoLine
+                            ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
+                            : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
+
                         html += `
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
-                                  <strong>${shortName}</strong>
+                                  <strong>${shortName}</strong>${modeLabel}
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   ${materialCellContent}
@@ -4017,6 +4077,7 @@
                               <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
                               ${offerCell(l)}
                               <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                              <td style="vertical-align:top; padding-top:10px;"></td>
                             </tr>
                         `;
                     });
@@ -4051,12 +4112,17 @@
 
                     accMaterialCellContent += getAccessoryImagesHTML(l.material, 'var(--border)');
 
+                    const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                    const modeLabel = isEcoLine
+                        ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
+                        : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
+
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
                               <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
-                              <strong>${l.material}</strong>
+                              <strong>${l.material}</strong>${modeLabel}
                           </td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
@@ -4073,19 +4139,23 @@
 
                 // Auto kitchen accessories (Profile Handle + Hinges) — Clean rendering without "Auto" text/icon
                 kitchenAutoAcc.forEach(a => {
+                    const modeLabel = isEconomyMode
+                        ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
+                        : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
+
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
                               <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Accessories</div>
-                              <strong>${a.label}</strong>
+                              <strong>${a.label}</strong>${modeLabel}
                           </td>
                           <td style="vertical-align:top; padding-top:10px; font-size:0.75rem; color:var(--muted);">Included with Kitchen</td>
                           <td style="vertical-align:top; padding-top:10px;">—</td>
                           ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
                           ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
                           <td class="num" style="vertical-align:top; padding-top:10px;">₹${a.amount.toFixed(2)}</td>
-                          <td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted);">—</td>
+                          ${showOffer ? `<td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted);">—</td>` : ''}
                           <td style="vertical-align:top; padding-top:10px;"></td>
                         </tr>
                     `;
@@ -4107,8 +4177,6 @@
 
                 roomOrder.forEach(roomName => {
                     const lines = roomMap[roomName];
-                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
-                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
 
                     // Room group header row
                     html += `
@@ -4137,12 +4205,17 @@
                                     ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
                                 </div>` : ''}`;
 
+                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                        const modeLabel = isEcoLine
+                            ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
+                            : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
+
                         html += `
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
-                                  <strong>${shortName}</strong>
+                                  <strong>${shortName}</strong>${modeLabel}
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   ${materialCellContent}
@@ -4159,13 +4232,15 @@
                 });
             }
 
+            const labelColspan = totalCols - (showOffer ? 3 : 2);
+
             // ── Accessories Subtotal ──
             if (accessoryLines.length > 0) {
                 html += `
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
-                        <td colspan="${totalCols - 3}" style="text-align:right;">Accessories Total</td>
+                        <td colspan="${labelColspan}" style="text-align:right;">Accessories Total</td>
                         <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
-                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>
+                        ${showOffer ? `<td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>` : ''}
                         <td></td>
                     </tr>
                 `;
@@ -4175,9 +4250,9 @@
             if (falseCellingLines.length > 0) {
                 html += `
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
-                        <td colspan="${totalCols - 3}" style="text-align:right;">False Ceiling Total</td>
+                        <td colspan="${labelColspan}" style="text-align:right;">False Ceiling Total</td>
                         <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
-                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>
+                        ${showOffer ? `<td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>` : ''}
                         <td></td>
                     </tr>
                 `;
@@ -4186,40 +4261,75 @@
             // ── Grand Total ──
             html += `
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
-                    <td colspan="${totalCols - 3}" style="text-align:right;">Grand Total</td>
+                    <td colspan="${labelColspan}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                    <td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>
+                    ${showOffer ? `<td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>` : ''}
                     <td></td>
                 </tr>
             `;
 
-            // ── Offer Price Total Row (Below Grand Total) ──
-            html += `
-                <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
-                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
-                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
-                    <td></td>
-                </tr>
-            `;
+            if (showOffer) {
+                // ── Bulk % Adjustment Row (below Grand Total, above Offer Price Total) ──
+                html += `
+                    <tr style="background: rgba(176,125,46,0.04); border-top: 1px dashed rgba(176,125,46,0.25);">
+                        <td colspan="${totalCols - 3}" style="text-align:right; font-size:0.75rem; color:var(--muted); padding:6px 8px; font-family:var(--sans);">
+                            Bulk adjust Offer Price:
+                        </td>
+                        <td colspan="3" style="padding:5px 8px;">
+                            <div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:flex-end;">
+                                ${[
+                                    { label:'-5%',  pct: -5,  c:'#c0392b', bg:'rgba(192,57,43,0.08)', br:'rgba(192,57,43,0.3)'   },
+                                    { label:'-10%', pct: -10, c:'#c0392b', bg:'rgba(192,57,43,0.08)', br:'rgba(192,57,43,0.3)'   }
+                                ].map(b => `<button type="button"
+                                    onclick="applyBulkOfferPct(${b.pct}, this)"
+                                    title="Reduce Offer Price by ${b.label}"
+                                    style="padding:3px 9px; font-size:0.72rem; font-weight:700; border-radius:20px;
+                                           border:1px solid ${b.br}; background:${b.bg}; color:${b.c};
+                                           cursor:pointer; font-family:var(--mono); transition:all 0.15s;"
+                                    onmouseover="this.style.opacity='0.7'"
+                                    onmouseout="this.style.opacity='1'">${b.label}</button>`).join('')}
+                                <button type="button"
+                                    onclick="resetAllOfferPrices(this)"
+                                    title="Clear all offer prices"
+                                    style="padding:3px 9px; font-size:0.72rem; font-weight:700; border-radius:20px;
+                                           border:1px solid rgba(122,110,97,0.35); background:rgba(122,110,97,0.08); color:var(--muted);
+                                           cursor:pointer; font-family:var(--mono); transition:all 0.15s;"
+                                    onmouseover="this.style.opacity='0.7'"
+                                    onmouseout="this.style.opacity='1'">Reset</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
 
-            // ── Final Amount Row (Below Offer Price Total - Editable) ──
-            const finalAmount = getEffectiveFinalAmount();
-            html += `
-                <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
-                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
-                    <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
-                        <div style="display:inline-flex; align-items:center; gap:4px;">
-                            <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
-                            <input type="number" min="0" id="finalAmountInput"
-                                placeholder="${grandOfferTotal.toFixed(2)}"
-                                value="${customFinalAmount !== null ? customFinalAmount : ''}"
-                                oninput="updateFinalAmount(this.value)"
-                                style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
-                        </div>
-                    </td>
-                    <td></td>
-                </tr>
-            `;
+            if (showOffer) {
+                // ── Offer Price Total Row (Below Grand Total) ──
+                html += `
+                    <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
+                        <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
+                        <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
+                        <td></td>
+                    </tr>
+                `;
+
+                // ── Final Amount Row (Below Offer Price Total - Editable) ──
+                html += `
+                    <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
+                        <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
+                        <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
+                            <div style="display:inline-flex; align-items:center; gap:4px;">
+                                <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
+                                <input type="number" min="0" id="finalAmountInput"
+                                    placeholder="${grandOfferTotal.toFixed(2)}"
+                                    value="${customFinalAmount !== null ? customFinalAmount : ''}"
+                                    oninput="updateFinalAmount(this.value)"
+                                    style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                `;
+            }
 
             body.innerHTML = html;
             updatePaymentSplits();
@@ -4298,6 +4408,69 @@
             if (finalInput) finalInput.placeholder = grandOfferTotal.toFixed(2);
 
             updatePaymentSplits();
+        }
+
+        function applyOfferPct(lineId, pct, baseAmount, btnEl) {
+            const newPrice = Math.round(baseAmount * (1 + pct / 100));
+            updateOfferPrice(lineId, newPrice);
+            // Update the input field directly without a full re-render
+            const inp = document.getElementById('offerInput-' + lineId);
+            if (inp) {
+                inp.value = newPrice;
+                inp.style.borderColor = '#b07d2e';
+                inp.style.boxShadow = '0 0 6px rgba(176,125,46,0.5)';
+                setTimeout(() => {
+                    inp.style.boxShadow = 'none';
+                    inp.style.borderColor = 'rgba(176,125,46,0.35)';
+                }, 700);
+            }
+            // Briefly highlight the pressed button
+            if (btnEl) {
+                const orig = btnEl.style.opacity;
+                btnEl.style.opacity = '0.4';
+                setTimeout(() => { btnEl.style.opacity = orig || '1'; }, 300);
+            }
+        }
+
+        function applyBulkOfferPct(pct, btnEl) {
+            if (!quoteLines || quoteLines.length === 0) return;
+            isQuoteDirty = true;
+
+            if (pct > 0) {
+                // PLUS: Only Price (amount/rate) goes UP — Offer Price is NOT changed
+                const factor = 1 + pct / 100;
+                quoteLines.forEach(l => {
+                    l.amount = Math.round(l.amount * factor);
+                    if (l.rate) l.rate = Math.round(l.rate * factor);
+                    // Do NOT touch offerPrice — leave it as-is
+                });
+            } else {
+                // MINUS: Both Price (amount/rate) AND Offer Price reduce by the percentage
+                const factor = 1 + pct / 100; // e.g. 0.95 for -5%
+                quoteLines.forEach(l => {
+                    l.amount = Math.round(l.amount * factor);
+                    if (l.rate) l.rate = Math.round(l.rate * factor);
+                    l.offerPrice = l.amount; // Offer Price matches reduced Price
+                });
+            }
+
+            // Briefly animate the button
+            if (btnEl) {
+                btnEl.style.opacity = '0.3';
+                setTimeout(() => { btnEl.style.opacity = '1'; }, 300);
+            }
+            renderQuote();
+        }
+
+        function resetAllOfferPrices(btnEl) {
+            if (!quoteLines || quoteLines.length === 0) return;
+            isQuoteDirty = true;
+            quoteLines.forEach(l => { l.offerPrice = null; });
+            if (btnEl) {
+                btnEl.style.opacity = '0.3';
+                setTimeout(() => { btnEl.style.opacity = '1'; }, 300);
+            }
+            renderQuote();
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
@@ -4549,12 +4722,18 @@
                                         ${pdfMaterialSpecs.map(s => `<div>• ${renderSpecText(s, '#e8ddd0')}</div>`).join('')}
                                     </div>` : ''}
                             `;
+
+                            const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                            const modeLabel = isEcoLine
+                                ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
+                                : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
+
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
-                                        ${l.itemName}
+                                        ${l.itemName} ${modeLabel}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${pdfMatContent}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
@@ -4575,11 +4754,16 @@
                         </tr>`;
 
                     accessoryLines.forEach(l => {
+                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                        const modeLabel = isEcoLine
+                            ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
+                            : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
+
                         rowsHTML += `
                             <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    ${l.material}
+                                    ${l.material} ${modeLabel}
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">
@@ -4595,11 +4779,15 @@
 
                     // Auto kitchen accessories in PDF - Clean display without "Auto" text/subtitles
                     kitchenAutoAccForPdf.forEach(a => {
+                        const modeLabel = isEconomyMode
+                            ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
+                            : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
+
                         rowsHTML += `
                             <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    ${a.label}
+                                    ${a.label} ${modeLabel}
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">Included with Kitchen</td>
@@ -4632,12 +4820,17 @@
                             </tr>`;
 
                         lines.forEach(l => {
+                            const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
+                            const modeLabel = isEcoLine
+                                ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
+                                : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
+
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
-                                        ${l.itemName}
+                                        ${l.itemName} ${modeLabel}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
