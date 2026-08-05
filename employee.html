@@ -3974,16 +3974,25 @@
             // Helper: offer price cell for a line
             function offerCell(l) {
                 const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
-                return `<td class="num" style="vertical-align:top; padding-top:8px;">
-                    <div style="display:flex; align-items:center; gap:2px;">
-                        <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
-                        <input type="number" min="0"
-                            placeholder="${l.amount.toFixed(0)}"
-                            value="${val}"
-                            oninput="updateOfferPrice(${l.id}, this.value)"
-                            style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
-                            onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
-                            onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
+                return `<td class="num" style="vertical-align:top; padding-top:6px;">
+                    <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
+                            <input type="number" min="0" id="offer-input-${l.id}"
+                                placeholder="${l.amount.toFixed(0)}"
+                                value="${val}"
+                                oninput="updateOfferPrice(${l.id}, this.value)"
+                                style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
+                                onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
+                                onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
+                        </div>
+                        <div style="display:flex; gap:2px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+                            <button onclick="applyOfferPct(${l.id}, -5)" title="-5% discount" style="padding:1px 4px; font-size:0.63rem; background:rgba(220,53,69,0.12); border:1px solid rgba(220,53,69,0.35); color:#dc3545; border-radius:3px; cursor:pointer; font-weight:700;">-5%</button>
+                            <button onclick="applyOfferPct(${l.id}, -10)" title="-10% discount" style="padding:1px 4px; font-size:0.63rem; background:rgba(220,53,69,0.12); border:1px solid rgba(220,53,69,0.35); color:#dc3545; border-radius:3px; cursor:pointer; font-weight:700;">-10%</button>
+                            <button onclick="applyOfferPct(${l.id}, 5)" title="+5% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+5%</button>
+                            <button onclick="applyOfferPct(${l.id}, 10)" title="+10% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+10%</button>
+                            <button onclick="applyOfferPct(${l.id}, 20)" title="+20% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+20%</button>
+                        </div>
                     </div>
                 </td>`;
             }
@@ -4239,13 +4248,22 @@
                 <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
                     <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
                     <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
-                        <div style="display:inline-flex; align-items:center; gap:4px;">
-                            <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
-                            <input type="number" min="0" id="finalAmountInput"
-                                placeholder="${grandOfferTotal.toFixed(2)}"
-                                value="${customFinalAmount !== null ? customFinalAmount : ''}"
-                                oninput="updateFinalAmount(this.value)"
-                                style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                        <div style="display:inline-flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                            <div style="display:inline-flex; align-items:center; gap:4px;">
+                                <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
+                                <input type="number" min="0" id="finalAmountInput"
+                                    placeholder="${grandOfferTotal.toFixed(2)}"
+                                    value="${customFinalAmount !== null ? customFinalAmount : ''}"
+                                    oninput="updateFinalAmount(this.value)"
+                                    style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                            </div>
+                            <div style="display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+                                <button onclick="applyFinalAmountPct(-5)" title="-5% discount" style="padding:2px 5px; font-size:0.68rem; background:rgba(220,53,69,0.15); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; cursor:pointer; font-weight:700;">-5%</button>
+                                <button onclick="applyFinalAmountPct(-10)" title="-10% discount" style="padding:2px 5px; font-size:0.68rem; background:rgba(220,53,69,0.15); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; cursor:pointer; font-weight:700;">-10%</button>
+                                <button onclick="applyFinalAmountPct(5)" title="+5% markup" style="padding:2px 5px; font-size:0.68rem; background:rgba(40,167,69,0.15); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; cursor:pointer; font-weight:700;">+5%</button>
+                                <button onclick="applyFinalAmountPct(10)" title="+10% markup" style="padding:2px 5px; font-size:0.68rem; background:rgba(40,167,69,0.15); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; cursor:pointer; font-weight:700;">+10%</button>
+                                <button onclick="applyFinalAmountPct(20)" title="+20% markup" style="padding:2px 5px; font-size:0.68rem; background:rgba(40,167,69,0.15); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; cursor:pointer; font-weight:700;">+20%</button>
+                            </div>
                         </div>
                     </td>
                     <td></td>
@@ -4254,6 +4272,37 @@
 
             body.innerHTML = html;
             updatePaymentSplits();
+        }
+
+        function applyOfferPct(lineId, pct) {
+            const line = quoteLines.find(l => l.id === lineId);
+            if (!line) return;
+            const target = Math.round(line.amount * (1 + pct / 100));
+            updateOfferPrice(lineId, target);
+            const inputEl = document.getElementById(`offer-input-${lineId}`);
+            if (inputEl) inputEl.value = target;
+        }
+
+        function applyFinalAmountPct(pct) {
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAccTotal = getKitchenAutoAccessories(kitchenSubTotal).reduce((s, a) => s + a.amount, 0);
+
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
+
+            const base = grandOfferTotal || 0;
+            const target = Math.round(base * (1 + pct / 100));
+            updateFinalAmount(target);
+            const inputEl = document.getElementById('finalAmountInput');
+            if (inputEl) inputEl.value = target;
         }
 
         function updatePaymentSplits() {
