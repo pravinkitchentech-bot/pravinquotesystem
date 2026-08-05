@@ -1263,7 +1263,10 @@
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
-        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
+        const quoteMode = sessionStorage.getItem('pks_quote_mode') || localStorage.getItem('pks_quote_mode') || 
+            ((sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true' ? 'economy' : 'premium');
+        const isEconomyMode = quoteMode === 'economy';
+        const isMediumMode = quoteMode === 'medium';
 
         // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
         const CURRENT_RATE_VERSION = 4;
@@ -1276,7 +1279,10 @@
         // Render division badge in header
         const divBadgeEl = document.getElementById('divisionBadge');
         if (divBadgeEl) {
-            divBadgeEl.textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
+            let modeSuffix = ' (Premium)';
+            if (isEconomyMode) modeSuffix = ' (Economy)';
+            else if (isMediumMode) modeSuffix = ' (Medium)';
+            divBadgeEl.textContent = selectedDivisionName + modeSuffix;
         }
 
         let role = sessionStorage.getItem('pks_role') || localStorage.getItem('pks_role') || 'employee';
@@ -1505,36 +1511,74 @@
             { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const ECO_CABINET_OPTS = [
-            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Acrylic (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Engineering Wood (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
         const ECO_TV_BOTTOM_CABINET = [
-            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Engineering Wood (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
+
+        /* ---------- Medium Mode Materials Groups ---------- */
+        const MED_CABINET_OPTS = [
+            {
+                label: "Marine Ply – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Lamination (Partition Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            }
+        ];
+        const MED_CABINET_BOX_ONLY = [
+            {
+                label: "Marine Ply – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            }
+        ];
+        const MED_DRESSING_BOTTOM_OPTS = [
+            {
+                label: "Marine Ply – Lamination (Box)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates"
+            },
+            {
+                label: "Engineering Wood (Box)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144"
+            }
+        ];
+        const MED_PARTITION = [
+            {
+                label: "Marine Ply – Lamination",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Finish: Customer Choose Laminates"
+            }
+        ];
+        const MED_KING_BED_OPTS = [
+            {
+                label: "Marine Ply – Lamination",
+                fields: [], formula: v => 1, note: "direct price",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade"
+            }
+        ];
+        const MED_QUEEN_BED_OPTS = [
+            {
+                label: "Marine Ply – Lamination",
+                fields: [], formula: v => 1, note: "direct price",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade"
+            }
+        ];
+
         const MP_LAM_ACR_WPC_BOX_ONLY = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1796,19 +1840,21 @@
         ];
 
         const ENG_WOOD_ONLY = [
-            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Engineering Wood (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
 
         const ENG_WOOD_PARTITION = [
             {
-                label: "Engineering Wood",
+                label: "Engineering Wood (Partition Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "Engineering Wood – 18mm Thickness | Finish: Pre-laminated"
             }
         ];
 
         const ENG_WOOD_WALL_PANEL = [
-            { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
 
         const ENG_WOOD_KING_BED = [
@@ -2736,8 +2782,8 @@
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: ECO_WALL_PANEL },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ECO_TV_BOTTOM_CABINET },
+                { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: KITCHEN_BOTTOM_OPTS },
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ECO_CABINET_OPTS },
                 { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: ECO_WALL_PANEL },
@@ -2771,7 +2817,7 @@
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ECO_CABINET_OPTS },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: ECO_WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ECO_CABINET_OPTS },
                 { id: 370, name: "Beam Covering", options: BEAM },
@@ -2795,7 +2841,108 @@
                 { id: 44, name: "Store Room Cupboard", options: ECO_CABINET_OPTS }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet Area Washbasin Cabinet", options: ECO_CABINET_OPTS }
+                { id: 41, name: "Toilet Area Washbasin Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR }
+            ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 102, name: "Bedroom glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
+                { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
+            ]
+        };
+
+        const ROOM_ITEMS_MEDIUM = {
+            kitchen: [
+                { id: 1, name: "Bottom", options: KITCHEN_BOTTOM_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 3, name: "Loft", options: KITCHEN_LOFT_OPTS },
+                { id: 4, name: "Island Cabin", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 5, name: "Breakfast Table", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: BREAKFAST_WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: BEAM },
+                { id: 8, name: "Breakfast Table – Open Box", options: BREAKFAST_OPEN_BOX_OPTS },
+                { id: 9, name: "Spice Rack", options: SPICE },
+                { id: 10, name: "Ledge", options: LEDGE },
+                { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
+                { id: 12, name: "Dining Partition", options: PARTITION },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            living_room: [
+                { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: MED_CABINET_OPTS },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MED_CABINET_OPTS },
+                { id: 19, name: "Living & Dining Room Partition", options: MED_PARTITION },
+                { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
+                { id: 71, name: "Wall Panelling with Hidden Door", options: WALL_PANEL },
+                { id: 21, name: "Staircase Bottom", options: MED_CABINET_OPTS },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: MED_PARTITION },
+                { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            prayer_unit: [
+                { id: 74, name: "PRAYER UNIT WALL PANEL", options: WALL_PANEL },
+                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: MED_CABINET_OPTS }
+            ],
+            bedroom: [
+                { id: 25, name: "Wardrobe", options: MED_CABINET_OPTS },
+                { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
+                { id: 28, name: "King Size Bed", options: MED_KING_BED_OPTS },
+                { id: 280, name: "Queen Size Bed", options: MED_QUEEN_BED_OPTS },
+                { id: 29, name: "Bay window", options: MED_CABINET_OPTS },
+                { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
+                { id: 31, name: "Dressing unit bottom cabinet", options: MED_DRESSING_BOTTOM_OPTS },
+                { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
+                { id: 33, name: "Tv unit-bottom cabinet", options: MED_CABINET_OPTS },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MED_CABINET_OPTS },
+                { id: 65, name: "SIDE CABINET", options: MED_CABINET_OPTS },
+                { id: 66, name: "CUPBOARD 1", options: MED_CABINET_OPTS },
+                { id: 67, name: "CUPBOARD 2", options: MED_CABINET_OPTS },
+                { id: 68, name: "LOFT 1", options: MED_CABINET_OPTS },
+                { id: 69, name: "LOFT 2", options: MED_CABINET_OPTS },
+                { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
+                { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            dining_room: [
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
+                { id: 39, name: "Dining room crockery unit", options: MED_CABINET_OPTS },
+                { id: 370, name: "Beam Covering", options: BEAM },
+                { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            musical_room: [
+                { id: 80, name: "WALL PANEL", options: WALL_PANEL },
+                { id: 81, name: "MUSICAL TABLE", options: MED_CABINET_BOX_ONLY }
+            ],
+            study_room: [
+                { id: 85, name: "BOOK SHELF", options: MED_CABINET_OPTS },
+                { id: 86, name: "STUDY TABLE", options: MED_CABINET_BOX_ONLY },
+                { id: 87, name: "STUDY TABLE TOP BOX", options: MED_CABINET_OPTS },
+                { id: 88, name: "COMPUTER TABLE", options: MED_CABINET_BOX_ONLY }
+            ],
+            toilet_area: [
+                { id: 41, name: "Toilet area washbasin cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR }
+            ],
+            store_room: [
+                { id: 44, name: "Store room cupboard", options: MED_CABINET_OPTS }
+            ],
+            sitout: [
+                { id: 46, name: "Chappal stand", options: MED_CABINET_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: MED_CABINET_OPTS }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
@@ -2826,6 +2973,12 @@
             });
         }
 
+        for (const room in ROOM_ITEMS_MEDIUM) {
+            ROOM_ITEMS_MEDIUM[room].forEach(item => {
+                if (item.name) item.name = item.name.toUpperCase();
+            });
+        }
+
         for (const room in ROOM_ITEMS_ECONOMY) {
             ROOM_ITEMS_ECONOMY[room].forEach(item => {
                 if (item.name) item.name = item.name.toUpperCase();
@@ -2847,7 +3000,7 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
-        const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
+        const itemsSource = isMediumMode ? ROOM_ITEMS_MEDIUM : (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS);
         const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
         const initialDeleted = getDeletedStandardItems() || [];
         let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
@@ -5107,6 +5260,7 @@
                 divisionId: selectedDivision,
                 divisionName: selectedDivisionName,
                 economyMode: isEconomyMode,
+                quoteMode: quoteMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
                 customFinalAmount,
@@ -5254,12 +5408,15 @@
                 const quote = savedQuotes.find(q => q.id === quoteId);
                 if (quote) {
                     if (confirm("Load this quote? This will replace your current workspace modifications.")) {
-                        const quoteEconomyMode = quote.economyMode ? 'true' : 'false';
-                        const currentEconomyMode = sessionStorage.getItem('pks_economy_mode') || 'false';
-                        if ((quote.divisionId && quote.divisionId !== selectedDivision) || (quoteEconomyMode !== currentEconomyMode)) {
+                        const targetMode = quote.quoteMode || (quote.economyMode ? 'economy' : 'premium');
+                        const currentMode = sessionStorage.getItem('pks_quote_mode') || (sessionStorage.getItem('pks_economy_mode') === 'true' ? 'economy' : 'premium');
+                        const quoteEconomyMode = targetMode === 'economy' ? 'true' : 'false';
+                        if ((quote.divisionId && quote.divisionId !== selectedDivision) || (targetMode !== currentMode)) {
                             sessionStorage.setItem('pks_selected_division', quote.divisionId);
                             sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
                             sessionStorage.setItem('pks_economy_mode', quoteEconomyMode);
+                            sessionStorage.setItem('pks_quote_mode', targetMode);
+                            localStorage.setItem('pks_quote_mode', targetMode);
                             sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
                             location.reload();
                             return;
