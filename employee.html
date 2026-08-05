@@ -519,8 +519,9 @@
         }
 
         .print-cover-page,
-        .print-gallery-page {
-            display: none;
+        .print-gallery-page,
+        .print-only {
+            display: none !important;
         }
 
         .print-content-wrapper {
@@ -608,6 +609,10 @@
                 display: block !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+            }
+
+            .print-only {
+                display: inline-block !important;
             }
 
             body {
@@ -3943,6 +3948,8 @@
             const showRate = (role === 'admin');
             const showSqFt = showSqftRate;
             const showOffer = showOfferPrice;
+            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
+            const noPrintClass = hasAnyOfferPrice ? '' : 'no-print';
 
             // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | [Offer Price] | Delete
             const baseColCount = 4;
@@ -3955,7 +3962,14 @@
             const offerHeader = document.getElementById('offerHeader');
             if (sqftHeader) sqftHeader.style.display = showSqFt ? '' : 'none';
             if (rateHeader) rateHeader.style.display = (showSqFt && showRate) ? '' : 'none';
-            if (offerHeader) offerHeader.style.display = showOffer ? '' : 'none';
+            if (offerHeader) {
+                offerHeader.style.display = showOffer ? '' : 'none';
+                if (!hasAnyOfferPrice) {
+                    offerHeader.classList.add('no-print');
+                } else {
+                    offerHeader.classList.remove('no-print');
+                }
+            }
 
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
@@ -3999,16 +4013,18 @@
             function offerCell(l) {
                 if (!showOffer) return '';
                 const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
-                return `<td class="num" style="vertical-align:top; padding-top:8px;">
+                const cellClass = hasAnyOfferPrice ? '' : 'no-print';
+                return `<td class="num ${cellClass}" style="vertical-align:top; padding-top:8px;">
                     <div style="display:flex; align-items:center; gap:2px;">
-                        <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
-                        <input type="number" min="0" id="offerInput-${l.id}"
+                        <span style="color:var(--accent-dark); font-size:0.82rem;" class="no-print">₹</span>
+                        <input type="number" min="0" id="offerInput-${l.id}" class="no-print"
                             placeholder="${l.amount.toFixed(0)}"
                             value="${val}"
                             oninput="updateOfferPrice(${l.id}, this.value)"
                             style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
                             onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
                             onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
+                        ${val !== '' ? `<span class="print-only" style="color:#b07d2e; font-size:0.82rem; font-weight:600; font-family:var(--mono);">₹${parseFloat(val).toFixed(2)}</span>` : `<span class="print-only">—</span>`}
                     </div>
                 </td>`;
             }
@@ -4271,7 +4287,7 @@
             if (showOffer) {
                 // ── Bulk % Adjustment Row (below Grand Total, above Offer Price Total) ──
                 html += `
-                    <tr style="background: rgba(176,125,46,0.04); border-top: 1px dashed rgba(176,125,46,0.25);">
+                    <tr class="no-print" style="background: rgba(176,125,46,0.04); border-top: 1px dashed rgba(176,125,46,0.25);">
                         <td colspan="${totalCols - 3}" style="text-align:right; font-size:0.75rem; color:var(--muted); padding:6px 8px; font-family:var(--sans);">
                             Bulk adjust Offer Price:
                         </td>
@@ -4305,7 +4321,7 @@
             if (showOffer) {
                 // ── Offer Price Total Row (Below Grand Total) ──
                 html += `
-                    <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
+                    <tr class="${noPrintClass}" style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
                         <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
                         <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
                         <td></td>
@@ -4314,16 +4330,17 @@
 
                 // ── Final Amount Row (Below Offer Price Total - Editable) ──
                 html += `
-                    <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
+                    <tr class="${noPrintClass}" style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
                         <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
                         <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
                             <div style="display:inline-flex; align-items:center; gap:4px;">
-                                <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
-                                <input type="number" min="0" id="finalAmountInput"
+                                <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;" class="no-print">₹</span>
+                                <input type="number" min="0" id="finalAmountInput" class="no-print"
                                     placeholder="${grandOfferTotal.toFixed(2)}"
                                     value="${customFinalAmount !== null ? customFinalAmount : ''}"
                                     oninput="updateFinalAmount(this.value)"
                                     style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                                <span class="print-only" style="color:#8f6320; font-size:0.95rem; font-weight:700; font-family:var(--mono);">₹${getEffectiveFinalAmount().toFixed(2)}</span>
                             </div>
                         </td>
                         <td></td>
@@ -4680,7 +4697,7 @@
                 const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0) + kitchenAutoAccTotalForPdf;
                 const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
                 const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
-                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
+                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
 
                 const showSqFt = (typeof showSqftRate !== 'undefined') ? showSqftRate : true;
                 const cols = 4 + (showSqFt ? 1 : 0) + (showRate ? 1 : 0) + 1; // S.NO + Item + Material + Size + Amount (+SqFt, +Rate)
@@ -4942,6 +4959,7 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
+                            ${hasAnyOfferPrice ? `
                             <tr style="background:#fffdf8;border-top:1px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">Offer Price Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getCalculatedOfferTotal().toFixed(2)}</td>
@@ -4950,6 +4968,7 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#8f6320;">Final Amount</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getEffectiveFinalAmount().toFixed(2)}</td>
                             </tr>
+                            ` : ''}
                         </tbody>
                     </table>
                     ${specsText || payItems || anyReqVal ? `
@@ -5058,8 +5077,15 @@
 
                 const calculatedOfferTotal = getCalculatedOfferTotal();
                 const effectiveFinal = getEffectiveFinalAmount();
+                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
 
                 const reqText = document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '';
+
+                let offerText = '';
+                if (hasAnyOfferPrice) {
+                    offerText = `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                                `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n`;
+                }
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
@@ -5067,8 +5093,7 @@
                     `• Customer: ${custName}\n` +
                     `• Place: ${custAddress}\n` +
                     `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    offerText +
                     (reqText ? `• Requirements: ${reqText}\n` : '') +
                     `\nAttached is your quotation PDF. Thank you!`;
 
