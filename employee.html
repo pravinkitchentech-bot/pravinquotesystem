@@ -2911,7 +2911,8 @@
         function getFullRoomLabel() {
             const floor = document.getElementById('floorSelector').value;
             const roomNo = document.getElementById('roomNoSelector').value;
-            return `${floor} - ${selectedRoomName} ${roomNo}`;
+            const roomDisplayName = customRoomNames[selectedRoom] || selectedRoomName;
+            return `${floor} - ${roomDisplayName} ${roomNo}`;
         }
 
         function updateRoomState(roomId, roomName) {
@@ -2919,10 +2920,10 @@
                 const validRoom = ROOMS.find(r => r.id === roomId);
                 if (validRoom) {
                     selectedRoom = validRoom.id;
-                    selectedRoomName = roomName || validRoom.name;
+                    selectedRoomName = roomName || getRoomDisplayName(validRoom);
                 } else {
                     selectedRoom = 'kitchen';
-                    selectedRoomName = 'Kitchen';
+                    selectedRoomName = getRoomDisplayName('kitchen') || 'Kitchen';
                 }
                 sessionStorage.setItem('pks_selected_room', selectedRoom);
                 sessionStorage.setItem('pks_selected_room_name', selectedRoomName);
