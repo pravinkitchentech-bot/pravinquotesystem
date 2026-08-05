@@ -799,6 +799,25 @@
             margin-left: 4px;
         }
 
+        .rename-room-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 1px 3px;
+            border-radius: 3px;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            line-height: 1;
+            margin-left: 2px;
+            color: inherit;
+        }
+
+        .rename-room-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
         /* Print Invoice Header Styling */
         .print-invoice-header {
             display: none;
@@ -2991,6 +3010,34 @@
             });
         }
 
+        let customRoomNames = {};
+        try {
+            customRoomNames = JSON.parse(localStorage.getItem('pks_custom_room_names')) || {};
+        } catch (e) { customRoomNames = {}; }
+
+        function getRoomDisplayName(room) {
+            if (!room) return '';
+            const rId = typeof room === 'string' ? room : room.id;
+            return customRoomNames[rId] || (typeof room === 'object' ? room.name : room);
+        }
+
+        function renameRoom(roomId, event) {
+            if (event) event.stopPropagation();
+            const room = ROOMS.find(r => r.id === roomId);
+            const currentName = room ? getRoomDisplayName(room) : roomId;
+            const newName = prompt("Rename room tab:", currentName);
+            if (newName !== null && newName.trim() !== "") {
+                customRoomNames[roomId] = newName.trim();
+                localStorage.setItem('pks_custom_room_names', JSON.stringify(customRoomNames));
+                if (roomId === selectedRoom) {
+                    selectedRoomName = newName.trim();
+                    const subEl = document.getElementById('selectedRoomSubtitle');
+                    if (subEl) subEl.textContent = `Adding items to ${selectedRoomName}`;
+                }
+                renderRoomTabs();
+            }
+        }
+
         function renderRoomTabs() {
             const tabsEl = document.getElementById('roomTabs');
             if (!tabsEl) return;
@@ -2999,6 +3046,7 @@
             ROOMS.forEach(room => {
                 const tab = document.createElement('div');
                 tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
+                const displayName = getRoomDisplayName(room);
 
                 let badge = '';
                 if (!room.active) {
@@ -3007,13 +3055,15 @@
 
                 tab.innerHTML = `
                     <span class="tab-icon">${room.icon}</span>
-                    <span class="tab-name">${room.name}</span>
+                    <span class="tab-name">${displayName}</span>
+                    <button class="rename-room-btn" onclick="renameRoom('${room.id}', event)" title="Rename room tab">✏️</button>
                     ${badge}
                 `;
 
                 if (room.active) {
-                    tab.onclick = () => {
-                        updateRoomState(room.id, room.name);
+                    tab.onclick = (e) => {
+                        if (e.target && e.target.classList.contains('rename-room-btn')) return;
+                        updateRoomState(room.id, displayName);
                     };
                 }
                 tabsEl.appendChild(tab);
