@@ -2094,82 +2094,118 @@
             ]
         };
 
+        const ECO_WALL_PANEL = ["Wall Panel PVC", "Wall Panel Lamination"];
+        const ECO_CABINET_OPTS = [
+            "Marine Ply – Lamination (Box Type)",
+            "Marine Ply – Lamination (Door Only)",
+            "Marine Ply – Lamination (Partition Type)",
+            "Marine Ply – Acrylic (Box Type)",
+            "Marine Ply – Acrylic (Door Only)",
+            "Marine Ply – Acrylic (Partition Type)",
+            "WPC (Box Type)",
+            "WPC (Door Only)",
+            "WPC (Partition Type)",
+            "WPC – Lamination (Box Type)",
+            "WPC – Lamination (Door Only)",
+            "WPC – Lamination (Partition Type)",
+            "Engineering Wood (Box Type)",
+            "Engineering Wood (Door Only)",
+            "Engineering Wood (Partition Type)"
+        ];
+        const ECO_TV_BOTTOM_CABINET = [
+            "Marine Ply – Lamination (Box Type)",
+            "Marine Ply – Lamination (Door Only)",
+            "Marine Ply – Lamination (Partition Type)",
+            "WPC (Box Type)",
+            "WPC (Door Only)",
+            "WPC (Partition Type)",
+            "WPC – Lamination (Box Type)",
+            "WPC – Lamination (Door Only)",
+            "WPC – Lamination (Partition Type)",
+            "Engineering Wood (Box Type)",
+            "Engineering Wood (Door Only)",
+            "Engineering Wood (Partition Type)"
+        ];
+
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
-                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
-                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Framed)", "WPC – Lamination (Door Only)"] },
+                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination"] },
-                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
-                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
-                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
-                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 16, name: "Tv Unit – Wall Panelling", options: ECO_WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ECO_TV_BOTTOM_CABINET },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ECO_CABINET_OPTS },
                 { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
-                { id: 20, name: "Living Room Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 21, name: "Staircase Bottom", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 20, name: "Living Room Wall Panelling", options: ECO_WALL_PANEL },
+                { id: 71, name: "Wall Panelling with Hidden Door", options: ECO_WALL_PANEL },
+                { id: 21, name: "Staircase Bottom", options: ECO_CABINET_OPTS },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
                 { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
-                { id: 74, name: "Prayer Unit Wall Panel", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 75, name: "Prayer Unit Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] }
+                { id: 74, name: "Prayer Unit Wall Panel", options: ECO_WALL_PANEL },
+                { id: 75, name: "Prayer Unit Bottom Cabinet", options: ECO_CABINET_OPTS }
             ],
             bedroom: [
-                { id: 25, name: "Wardrobe", options: ["Engineering Wood"] },
-                { id: 27, name: "Bed back wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 25, name: "Wardrobe", options: ECO_CABINET_OPTS },
+                { id: 27, name: "Bed back wall paneling", options: ECO_WALL_PANEL },
                 { id: 28, name: "King Size Bed", options: ["Engineering Wood"] },
                 { id: 280, name: "Queen Size Bed", options: ["Engineering Wood"] },
-                { id: 29, name: "Bay window", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 30, name: "Dressing unit wall paneling", options: ["Engineering Wood"] },
-                { id: 31, name: "Dressing unit bottom cabinet", options: ["Engineering Wood (Box Type)"] },
-                { id: 32, name: "Tv unit-wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 33, name: "Tv unit-bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 65, name: "SIDE CABINET", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 66, name: "CUPBOARD 1", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 67, name: "CUPBOARD 2", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 68, name: "LOFT 1", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 69, name: "LOFT 2", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 29, name: "Bay window", options: ECO_CABINET_OPTS },
+                { id: 30, name: "Dressing unit wall paneling", options: ECO_WALL_PANEL },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ECO_CABINET_OPTS },
+                { id: 32, name: "Tv unit-wall paneling", options: ECO_WALL_PANEL },
+                { id: 33, name: "Tv unit-bottom cabinet", options: ECO_CABINET_OPTS },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: ECO_CABINET_OPTS },
+                { id: 65, name: "SIDE CABINET", options: ECO_CABINET_OPTS },
+                { id: 66, name: "CUPBOARD 1", options: ECO_CABINET_OPTS },
+                { id: 67, name: "CUPBOARD 2", options: ECO_CABINET_OPTS },
+                { id: 68, name: "LOFT 1", options: ECO_CABINET_OPTS },
+                { id: 69, name: "LOFT 2", options: ECO_CABINET_OPTS },
+                { id: 70, name: "WALL PANNELING", options: ECO_WALL_PANEL },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ECO_WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
-                { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 39, name: "Dining room crockery unit", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ECO_CABINET_OPTS },
+                { id: 38, name: "Wash basin unit wall paneling", options: ECO_WALL_PANEL },
+                { id: 39, name: "Dining room crockery unit", options: ECO_CABINET_OPTS },
                 { id: 370, name: "Beam Covering", options: ["Marine Ply – Lamination", "Wall Panel Lamination"] },
                 { id: 40, name: "Accessories", options: ACCESSORY_LIST }
             ],
             musical_room: [
-                { id: 80, name: "WALL PANEL", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 81, name: "MUSICAL TABLE", options: ["Engineering Wood (Box Type)"] }
+                { id: 80, name: "WALL PANEL", options: ECO_WALL_PANEL },
+                { id: 81, name: "MUSICAL TABLE", options: ECO_CABINET_OPTS }
             ],
             study_room: [
-                { id: 85, name: "BOOK SHELF", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 86, name: "STUDY TABLE", options: ["Engineering Wood (Box Type)"] },
-                { id: 87, name: "STUDY TABLE TOP BOX", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 88, name: "COMPUTER TABLE", options: ["Engineering Wood (Box Type)"] }
+                { id: 85, name: "BOOK SHELF", options: ECO_CABINET_OPTS },
+                { id: 86, name: "STUDY TABLE", options: ECO_CABINET_OPTS },
+                { id: 87, name: "STUDY TABLE TOP BOX", options: ECO_CABINET_OPTS },
+                { id: 88, name: "COMPUTER TABLE", options: ECO_CABINET_OPTS }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply - Lamination (Box Type)", "Marine Ply - Lamination (Door Only)"] },
+                { id: 41, name: "Toilet area washbasin cabinet", options: ECO_CABINET_OPTS },
             ],
             store_room: [
-                { id: 44, name: "Store room cupboard", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] }
+                { id: 44, name: "Store room cupboard", options: ECO_CABINET_OPTS }
             ],
             sitout: [
-                { id: 46, name: "Chappal stand", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 47, name: "Sit out area wall panelling", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] }
+                { id: 46, name: "Chappal stand", options: ECO_CABINET_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: ECO_CABINET_OPTS }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
