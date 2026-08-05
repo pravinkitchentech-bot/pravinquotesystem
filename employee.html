@@ -968,6 +968,12 @@
             <p class="intro">Pick an item below, choose the material, then click <b>Add Size</b> to enter measurements.
                 Rates are managed by the admin and locked for safety.</p>
 
+            <!-- Active Mode Details Card -->
+            <div id="modeDetailsContainer" style="margin-bottom: 20px; padding: 14px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2);">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;" id="modeDetailsTitle">Premium Mode Details</div>
+                <div style="font-size: 0.85rem; line-height: 1.5; color: var(--text);" id="modeDetailsText">710 Grade Marine Ply (16mm) | WPC 8mm Back Panel | Fabric/Off-White Inner Finish | German Acrylic / Laminates Outer Finish | Sleek/Hettich Soft-closing Hinges.</div>
+            </div>
+
             <!-- Room Selector Tabs -->
             <div class="room-tabs-container">
                 <div
@@ -1396,6 +1402,21 @@
             { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Wall Panel Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+        ];
+        const PRAYER_UNIT_OPTS = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Wall Panel Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
         const BREAKFAST_WALL_PANEL = [
             {
@@ -2080,12 +2101,22 @@
             "61::Marine Ply – Acrylic": 0,
             "61::Engineering Wood": 900,
 
-            // Prayer Unit Wall Panel (ID 74)
+            // Prayer Unit (ID 74)
+            "74::Marine Ply – Lamination (Box Type)": 1300,
+            "74::Marine Ply – Lamination (Door Only)": 800,
+            "74::Marine Ply – Acrylic (Box Type)": 2600,
+            "74::Marine Ply – Acrylic (Door Only)": 1800,
+            "74::WPC (Box Type)": 1300,
+            "74::WPC (Door Only)": 800,
+            "74::WPC – Lamination (Box Type)": 1400,
+            "74::WPC – Lamination (Door Only)": 900,
+            "74::Engineering Wood (Box Type)": 900,
+            "74::Engineering Wood (Door Only)": 500,
             "74::Wall Panel PVC": 400,
             "74::Wall Panel Lamination": 550,
             "74::Wall Panel Charcoal": 800,
 
-            // Prayer Unit Bottom Cabinet (ID 75)
+            // Pooja Unit (ID 75)
             "75::Marine Ply – Lamination (Box Type)": 1300,
             "75::Marine Ply – Lamination (Door Only)": 800,
             "75::Marine Ply – Acrylic (Box Type)": 2600,
@@ -2094,6 +2125,11 @@
             "75::WPC (Door Only)": 800,
             "75::WPC – Lamination (Box Type)": 1400,
             "75::WPC – Lamination (Door Only)": 900,
+            "75::Engineering Wood (Box Type)": 900,
+            "75::Engineering Wood (Door Only)": 500,
+            "75::Wall Panel PVC": 400,
+            "75::Wall Panel Lamination": 550,
+            "75::Wall Panel Charcoal": 800,
 
             // Bedroom Wardrobe (ID 25)
             "25::Marine Ply – Lamination (Box Type)": 1300,
@@ -2230,6 +2266,16 @@
             "70::Wall Panel Charcoal": 800,
 
             // Wall Panelling with Hidden Door (ID 71)
+            "71::Marine Ply – Lamination (Box Type)": 1300,
+            "71::Marine Ply – Lamination (Door Only)": 800,
+            "71::Marine Ply – Acrylic (Box Type)": 2600,
+            "71::Marine Ply – Acrylic (Door Only)": 1800,
+            "71::WPC (Box Type)": 1300,
+            "71::WPC (Door Only)": 800,
+            "71::WPC – Lamination (Box Type)": 1400,
+            "71::WPC – Lamination (Door Only)": 900,
+            "71::Engineering Wood (Box Type)": 900,
+            "71::Engineering Wood (Door Only)": 500,
             "71::Wall Panel PVC": 400,
             "71::Wall Panel Lamination": 550,
             "71::Wall Panel Charcoal": 800,
@@ -2663,13 +2709,14 @@
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: PRAYER_UNIT_OPTS },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION },
                 { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
-                { id: 74, name: "PRAYER UNIT WALL PANEL", options: WALL_PANEL },
-                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR }
+                { id: 74, name: "PRAYER UNIT", options: PRAYER_UNIT_OPTS },
+                { id: 75, name: "POOJA UNIT", options: PRAYER_UNIT_OPTS }
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -2688,7 +2735,7 @@
                 { id: 68, name: "LOFT 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 69, name: "LOFT 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: PRAYER_UNIT_OPTS },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
@@ -2768,13 +2815,14 @@
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
+                { id: 71, name: "Wall Panelling with Hidden Door", options: PRAYER_UNIT_OPTS },
                 { id: 21, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION },
                 { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
-                { id: 74, name: "Prayer Unit Wall Panel", options: WALL_PANEL },
-                { id: 75, name: "Prayer Unit Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR }
+                { id: 74, name: "Prayer Unit", options: PRAYER_UNIT_OPTS },
+                { id: 75, name: "Pooja Unit", options: PRAYER_UNIT_OPTS }
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
@@ -2782,11 +2830,11 @@
                 { id: 28, name: "King Size Bed", options: ENG_WOOD_KING_BED },
                 { id: 280, name: "Queen Size Bed", options: ENG_WOOD_QUEEN_BED },
                 { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
-                { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
-                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_ONLY },
-                { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
-                { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 30, name: "Dressing Unit Wall Paneling", options: WALL_PANEL },
+                { id: 31, name: "Dressing Unit Bottom Cabinet", options: ENG_WOOD_BOX_ONLY },
+                { id: 32, name: "Tv Unit-Wall Paneling", options: WALL_PANEL },
+                { id: 33, name: "Tv Unit-Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 34, name: "Tv Unit-Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 65, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
                 { id: 66, name: "Cupboard 1", options: ENG_WOOD_BOX_DOOR },
                 { id: 67, name: "Cupboard 2", options: ENG_WOOD_BOX_DOOR },
@@ -4015,16 +4063,29 @@
                 const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
                 const cellClass = hasAnyOfferPrice ? '' : 'no-print';
                 return `<td class="num ${cellClass}" style="vertical-align:top; padding-top:8px;">
-                    <div style="display:flex; align-items:center; gap:2px;">
-                        <span style="color:var(--accent-dark); font-size:0.82rem;" class="no-print">₹</span>
-                        <input type="number" min="0" id="offerInput-${l.id}" class="no-print"
-                            placeholder="${l.amount.toFixed(0)}"
-                            value="${val}"
-                            oninput="updateOfferPrice(${l.id}, this.value)"
-                            style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
-                            onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
-                            onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
-                        ${val !== '' ? `<span class="print-only" style="color:#b07d2e; font-size:0.82rem; font-weight:600; font-family:var(--mono);">₹${parseFloat(val).toFixed(2)}</span>` : `<span class="print-only">—</span>`}
+                    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:4px;">
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <span style="color:var(--accent-dark); font-size:0.82rem;" class="no-print">₹</span>
+                            <input type="number" min="0" id="offerInput-${l.id}" class="no-print"
+                                placeholder="${l.amount.toFixed(0)}"
+                                value="${val}"
+                                oninput="updateOfferPrice(${l.id}, this.value)"
+                                style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
+                                onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
+                                onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
+                            ${val !== '' ? `<span class="print-only" style="color:#b07d2e; font-size:0.82rem; font-weight:600; font-family:var(--mono);">₹${parseFloat(val).toFixed(2)}</span>` : `<span class="print-only">—</span>`}
+                        </div>
+                        <div class="no-print" style="display:flex; gap:3px; flex-wrap:wrap; margin-top:2px;">
+                            ${[+5, +10, +20, -5, -10].map(pct => {
+                                const label = pct > 0 ? `+${pct}%` : `${pct}%`;
+                                const color = pct > 0 ? '#27ae60' : '#c0392b';
+                                const bg = pct > 0 ? 'rgba(39,174,96,0.06)' : 'rgba(192,57,43,0.06)';
+                                const br = pct > 0 ? 'rgba(39,174,96,0.2)' : 'rgba(192,57,43,0.2)';
+                                return `<button type="button" onclick="applyOfferPct(${l.id}, ${pct}, ${l.amount}, this)"
+                                    style="padding:1px 4px; font-size:0.6rem; font-weight:700; border-radius:3px; border:1px solid ${br}; background:${bg}; color:${color}; cursor:pointer; font-family:var(--sans); line-height:1;"
+                                    title="Adjust price by ${label}">${label}</button>`;
+                            }).join('')}
+                        </div>
                     </div>
                 </td>`;
             }
@@ -4248,7 +4309,8 @@
                 });
             }
 
-            const labelColspan = totalCols - (showOffer ? 3 : 2);
+            const showOfferColInTotal = showOffer && hasAnyOfferPrice;
+            const labelColspan = totalCols - (showOfferColInTotal ? 3 : 2);
 
             // ── Accessories Subtotal ──
             if (accessoryLines.length > 0) {
@@ -4256,7 +4318,7 @@
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${labelColspan}" style="text-align:right;">Accessories Total</td>
                         <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
-                        ${showOffer ? `<td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>` : ''}
+                        ${showOfferColInTotal ? `<td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>` : ''}
                         <td></td>
                     </tr>
                 `;
@@ -4268,7 +4330,7 @@
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${labelColspan}" style="text-align:right;">False Ceiling Total</td>
                         <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
-                        ${showOffer ? `<td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>` : ''}
+                        ${showOfferColInTotal ? `<td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>` : ''}
                         <td></td>
                     </tr>
                 `;
@@ -4279,7 +4341,7 @@
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
                     <td colspan="${labelColspan}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                    ${showOffer ? `<td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>` : ''}
+                    ${showOfferColInTotal ? `<td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>` : ''}
                     <td></td>
                 </tr>
             `;
@@ -4390,7 +4452,20 @@
             isQuoteDirty = true;
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
+
+            const hadOffer = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
             line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
+            const hasOfferNow = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
+
+            if (hadOffer !== hasOfferNow) {
+                renderQuote();
+                const inp = document.getElementById('offerInput-' + lineId);
+                if (inp) {
+                    inp.focus();
+                    inp.selectionStart = inp.selectionEnd = inp.value.length;
+                }
+                return;
+            }
 
             const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
@@ -4413,9 +4488,9 @@
             if (fcOfferSubEl) fcOfferSubEl.textContent = '₹' + falseCellingOfferTotal.toFixed(2);
 
             const gtEl = document.getElementById('grandTotal');
-            if (gtEl && gtEl.parentElement) {
+            if (gtEl && gtEl.parentElement && hasOfferNow) {
                 const offerCell = gtEl.nextElementSibling;
-                if (offerCell) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
+                if (offerCell && offerCell.classList.contains('num')) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
             }
 
             const gotRowEl = document.getElementById('grandOfferTotalRow');
@@ -5681,17 +5756,23 @@
         function updateEconomyModeToggleUI() {
             const pBtn = document.getElementById('togglePremiumBtn');
             const eBtn = document.getElementById('toggleEconomyBtn');
+            const modeDetailsTitle = document.getElementById('modeDetailsTitle');
+            const modeDetailsText = document.getElementById('modeDetailsText');
             if (pBtn && eBtn) {
                 if (isEconomyMode) {
                     eBtn.style.background = 'var(--accent)';
                     eBtn.style.color = '#ffffff';
                     pBtn.style.background = 'transparent';
                     pBtn.style.color = '#9a9186';
+                    if (modeDetailsTitle) modeDetailsTitle.textContent = "Economy Mode Details";
+                    if (modeDetailsText) modeDetailsText.innerHTML = "Engineering Wood (18mm) | Pre-laminated Finish | Non Soft-closing Hinges for Rooms | Standard Budget Materials.";
                 } else {
                     pBtn.style.background = 'var(--accent)';
                     pBtn.style.color = '#ffffff';
                     eBtn.style.background = 'transparent';
                     eBtn.style.color = '#9a9186';
+                    if (modeDetailsTitle) modeDetailsTitle.textContent = "Premium Mode Details";
+                    if (modeDetailsText) modeDetailsText.innerHTML = "710 Grade Marine Ply (16mm) | WPC 8mm Back Panel | Fabric/Off-White Inner Finish | German Acrylic / Laminates Outer Finish | Sleek/Hettich Soft-closing Hinges.";
                 }
             }
             const divBadgeEl = document.getElementById('divisionBadge');
