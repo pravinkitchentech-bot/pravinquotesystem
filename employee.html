@@ -1215,13 +1215,17 @@
     <div class="modal-overlay" id="quotesFolderModal"
         style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
         <div
-            style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
+            style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes
-                    (45-Day Auto-Cleanup)</h2>
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">📁 Saved Quotes Folder</h2>
                 <button onclick="closeSavedQuotesModal()"
                     style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
+            </div>
+
+            <!-- Top Search Bar -->
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="quoteFolderSearchInput" placeholder="🔍 Search by Quotation No, Date, Customer Name, Place..." oninput="renderSavedQuotes()" style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: var(--surface2); color: var(--text);">
             </div>
 
             <div style="flex: 1; min-height: 250px; overflow-x: auto;">
@@ -1229,14 +1233,9 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>No.</th>
-                            <th>Type</th>
-                            <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Division</th>
-                            <th>Room</th>
-                            <th>Material</th>
-                            <th>Amount</th>
+                            <th>Quotation Number</th>
+                            <th>Customer Name</th>
+                            <th>Place</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
@@ -1244,6 +1243,19 @@
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal Popup -->
+    <div class="modal-overlay" id="deleteConfirmModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px 30px; width: 90%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; gap: 16px;">
+            <div style="font-size: 2.2rem; line-height: 1;">⚠️</div>
+            <h3 style="margin: 0; color: var(--text); font-size: 1.2rem;">Delete Quotation</h3>
+            <p id="deleteConfirmText" style="margin: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.4;">Are you sure you want to delete this quote?</p>
+            <div style="display: flex; gap: 12px; justify-content: center; margin-top: 8px;">
+                <button id="confirmDeleteYesBtn" onclick="executePendingDelete()" style="flex: 1; padding: 10px; background: var(--danger); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Yes, Delete</button>
+                <button onclick="closeDeleteConfirmModal()" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">No, Cancel</button>
             </div>
         </div>
     </div>
@@ -5065,8 +5077,34 @@
             document.getElementById('quotesFolderModal').style.display = 'none';
         }
 
+        let pendingDeleteQuoteId = null;
+
+        function promptDeleteSavedQuote(quoteId, quoteNo, custName) {
+            pendingDeleteQuoteId = quoteId;
+            const confirmText = document.getElementById('deleteConfirmText');
+            if (confirmText) {
+                confirmText.innerHTML = `Are you sure you want to delete quotation <strong>${quoteNo}</strong> ${custName ? `for <strong>${custName}</strong>` : ''}?`;
+            }
+            const modal = document.getElementById('deleteConfirmModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeDeleteConfirmModal() {
+            pendingDeleteQuoteId = null;
+            const modal = document.getElementById('deleteConfirmModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function executePendingDelete() {
+            if (!pendingDeleteQuoteId) return;
+            const idToDelete = pendingDeleteQuoteId;
+            closeDeleteConfirmModal();
+            deleteSavedQuote(idToDelete);
+        }
+
         function renderSavedQuotes() {
             const body = document.getElementById('quotesFolderTableBody');
+            if (!body) return;
             body.innerHTML = '';
 
             const stored = localStorage.getItem('pks_saved_quotes');
@@ -5078,33 +5116,44 @@
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
-                body.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); font-style: italic; padding: 25px;">No quotes saved in the folder yet.</td></tr>`;
                 return;
             }
 
             savedQuotes.sort((a, b) => b.timestamp - a.timestamp);
 
-            savedQuotes.forEach(q => {
-                const tr = document.createElement('tr');
+            const searchInput = document.getElementById('quoteFolderSearchInput');
+            const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
 
-                // Aggregate unique rooms and materials
-                const lines = q.quoteLines || [];
-                const uniqueRooms = [...new Set(lines.map(l => l.roomName || ''))].filter(Boolean).join(', ') || '—';
-                const uniqueMaterials = [...new Set(lines.map(l => l.material || ''))].filter(Boolean).join(', ') || '—';
+            let displayQuotes = savedQuotes;
+            if (query) {
+                displayQuotes = savedQuotes.filter(q => {
+                    const no = (q.quoteNo || '').toLowerCase();
+                    const date = (q.quoteDate || '').toLowerCase();
+                    const name = (q.custName || '').toLowerCase();
+                    const place = (q.custAddress || '').toLowerCase();
+                    return no.includes(query) || date.includes(query) || name.includes(query) || place.includes(query);
+                });
+            }
+
+            if (displayQuotes.length === 0) {
+                body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); font-style: italic; padding: 25px;">No matching quotes found.</td></tr>`;
+                return;
+            }
+
+            displayQuotes.forEach(q => {
+                const tr = document.createElement('tr');
+                const safeNo = (q.quoteNo || '').replace(/'/g, "\\'");
+                const safeName = (q.custName || '').replace(/'/g, "\\'");
 
                 tr.innerHTML = `
                     <td>${q.quoteDate || '—'}</td>
-                    <td>${q.quoteNo}</td>
-                    <td>${q.docType}</td>
+                    <td><strong style="color: var(--accent);">${q.quoteNo || '—'}</strong></td>
                     <td>${q.custName || '—'}</td>
-                    <td>${q.custPhone || '—'}</td>
-                    <td>${q.divisionName}</td>
-                    <td>${uniqueRooms}</td>
-                    <td>${uniqueMaterials}</td>
-                    <td>₹${q.totalAmount.toFixed(2)}</td>
+                    <td>${q.custAddress || '—'}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
-                        <button class="confirm-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg);" onclick="loadSavedQuote('${q.id}')">Edit</button>
-                        <button class="cancel-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteSavedQuote('${q.id}')">Delete</button>
+                        <button class="confirm-btn" style="padding: 5px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none; margin-right: 6px;" onclick="loadSavedQuote('${q.id}')">View / Edit</button>
+                        <button class="cancel-btn" style="padding: 5px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="promptDeleteSavedQuote('${q.id}', '${safeNo}', '${safeName}')">Delete</button>
                     </td>
                 `;
                 body.appendChild(tr);
@@ -5159,7 +5208,6 @@
                 document.getElementById('anyRequirements').value = quote.anyRequirements || '';
             }
 
-
             quoteLines = [...quote.quoteLines];
             lineIdCounter = quote.lineIdCounter || (quoteLines.length > 0 ? Math.max(...quoteLines.map(l => l.id)) + 1 : 1);
 
@@ -5170,22 +5218,20 @@
         }
 
         function deleteSavedQuote(quoteId) {
-            if (confirm("Are you sure you want to permanently delete this quote from the folder?")) {
-                const stored = localStorage.getItem('pks_saved_quotes');
-                if (!stored) return;
-                try {
-                    const savedQuotes = JSON.parse(stored);
-                    const filtered = savedQuotes.filter(q => q.id !== quoteId);
-                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            try {
+                const savedQuotes = JSON.parse(stored);
+                const filtered = savedQuotes.filter(q => q.id !== quoteId);
+                localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
 
-                    // Update the current form's quote number to next available
-                    setInitialQuoteNo(true);
+                // Update the current form's quote number to next available
+                setInitialQuoteNo(true);
 
-                    renderSavedQuotes();
-                    // Also refresh autocomplete datalists
-                    initCustomerAutofill();
-                } catch (e) { }
-            }
+                renderSavedQuotes();
+                // Also refresh autocomplete datalists
+                initCustomerAutofill();
+            } catch (e) { }
         }
 
 
