@@ -424,7 +424,7 @@
                 <button onclick="closeModeSelectionModal()"
                     style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Cancel</button>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 16px;">
+             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <!-- Premium Option -->
                 <div class="room-card"
                     style="width: 100%; text-align: left; padding: 20px; flex-direction: row; align-items: center; justify-content: space-between;"
@@ -435,6 +435,21 @@
                         <div>
                             <div class="room-name" style="font-size: 1.1rem; margin-bottom: 4px;">Premium</div>
                             <div style="font-size: 0.78rem; color: var(--muted);">Standard pricing and materials</div>
+                        </div>
+                    </div>
+                    <span style="color: var(--accent); font-size: 1.2rem;">→</span>
+                </div>
+
+                <!-- Medium Option -->
+                <div class="room-card"
+                    style="width: 100%; text-align: left; padding: 20px; flex-direction: row; align-items: center; justify-content: space-between;"
+                    onclick="selectMode('medium')">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="room-icon"
+                            style="width: 44px; height: 44px; font-size: 1.6rem; margin-right: 0;">⚖️</span>
+                        <div>
+                            <div class="room-name" style="font-size: 1.1rem; margin-bottom: 4px;">Medium</div>
+                            <div style="font-size: 0.78rem; color: var(--muted);">Balanced pricing & materials</div>
                         </div>
                     </div>
                     <span style="color: var(--accent); font-size: 1.2rem;">→</span>
@@ -525,6 +540,8 @@
                 document.getElementById('modeModalTitle').textContent = `Select Option for ${divName}`;
                 document.getElementById('modeSelectionModal').style.display = 'flex';
             } else {
+                sessionStorage.setItem('pks_quote_mode', 'premium');
+                localStorage.setItem('pks_quote_mode', 'premium');
                 sessionStorage.setItem('pks_economy_mode', 'false');
                 localStorage.setItem('pks_economy_mode', 'false');
                 proceedSelectDivision(divId, divName);
@@ -532,6 +549,8 @@
         }
 
         function selectMode(mode) {
+            sessionStorage.setItem('pks_quote_mode', mode);
+            localStorage.setItem('pks_quote_mode', mode);
             if (mode === 'economy') {
                 sessionStorage.setItem('pks_economy_mode', 'true');
                 localStorage.setItem('pks_economy_mode', 'true');
@@ -618,7 +637,7 @@
             closeDeleteConfirmModal();
             deleteSavedQuote(idToDelete);
         }
-,
+
         function renderSavedQuotes() {
             const body = document.getElementById('quotesFolderTableBody');
             if (!body) return;
@@ -688,6 +707,9 @@
                         sessionStorage.setItem('pks_selected_division', quote.divisionId);
                         sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
                         sessionStorage.setItem('pks_economy_mode', quote.economyMode ? 'true' : 'false');
+                        const mode = quote.quoteMode || (quote.economyMode ? 'economy' : 'premium');
+                        sessionStorage.setItem('pks_quote_mode', mode);
+                        localStorage.setItem('pks_quote_mode', mode);
                         sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
                         location.href = 'employee.html';
                     }
