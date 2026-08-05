@@ -200,6 +200,25 @@
             line-height: 1.3;
         }
 
+        .rename-item-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            opacity: 0.65;
+            transition: all 0.2s ease;
+            line-height: 1;
+            margin-left: auto;
+        }
+
+        .rename-item-btn:hover {
+            opacity: 1;
+            background: var(--accent-light);
+            transform: scale(1.15);
+        }
+
         .add-btn {
             align-self: flex-start;
             background: var(--header);
@@ -519,9 +538,8 @@
         }
 
         .print-cover-page,
-        .print-gallery-page,
-        .print-only {
-            display: none !important;
+        .print-gallery-page {
+            display: none;
         }
 
         .print-content-wrapper {
@@ -609,10 +627,6 @@
                 display: block !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-            }
-
-            .print-only {
-                display: inline-block !important;
             }
 
             body {
@@ -912,17 +926,6 @@
 
                 <!-- Top Right Page Actions -->
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                    <!-- Premium/Economy Toggle -->
-                    <div style="display: flex; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 2px; align-items: center;">
-                        <button id="togglePremiumBtn" onclick="setEconomyMode(false)"
-                            style="border: none; border-radius: 18px; padding: 6px 14px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #9a9186; font-family: var(--sans);">
-                            Premium
-                        </button>
-                        <button id="toggleEconomyBtn" onclick="setEconomyMode(true)"
-                            style="border: none; border-radius: 18px; padding: 6px 14px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #9a9186; font-family: var(--sans);">
-                            Economy
-                        </button>
-                    </div>
                     <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number"
                         onclick="useNextQuoteNo()"
                         style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 46, 0.18); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #e5b869; cursor: pointer; transition: all 0.2s;"
@@ -968,12 +971,6 @@
             <p class="intro">Pick an item below, choose the material, then click <b>Add Size</b> to enter measurements.
                 Rates are managed by the admin and locked for safety.</p>
 
-            <!-- Active Mode Details Card -->
-            <div id="modeDetailsContainer" style="margin-bottom: 20px; padding: 14px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2);">
-                <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;" id="modeDetailsTitle">Premium Mode Details</div>
-                <div style="font-size: 0.85rem; line-height: 1.5; color: var(--text);" id="modeDetailsText">710 Grade Marine Ply (16mm) | WPC 8mm Back Panel | Fabric/Off-White Inner Finish | German Acrylic / Laminates Outer Finish | Sleek/Hettich Soft-closing Hinges.</div>
-            </div>
-
             <!-- Room Selector Tabs -->
             <div class="room-tabs-container">
                 <div
@@ -1016,60 +1013,22 @@
                     <h2>Quote Summary</h2>
                     <div class="line"></div>
                 </div>
-                <!-- Sq.Ft & Rate and Offer Price Toggles -->
+                <!-- Sq.Ft & Rate Toggle -->
                 <div class="no-print"
-                    style="display: flex; align-items: center; gap: 18px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content; flex-wrap: wrap;">
-                    <!-- Show Sq.Ft & Rate Toggle -->
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span
-                            style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
-                            Sq.Ft &amp; Rate</span>
-                        <label class="sqft-toggle-wrap"
-                            style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
-                            <input type="checkbox" id="sqftRateToggle" onchange="toggleSqftRate(this.checked)"
-                                style="opacity:0; width:0; height:0; position:absolute;">
-                            <span id="sqftToggleTrack"
-                                style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--border); border-radius:24px; transition:background 0.2s;">
-                                <span id="sqftToggleThumb"
-                                    style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-                            </span>
-                        </label>
-                    </div>
-
-                    <div style="width: 1px; height: 20px; background: var(--border);"></div>
-
-                    <!-- Show Offer Price Toggle -->
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span
-                            style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
-                            Offer Price</span>
-                        <label class="offer-toggle-wrap"
-                            style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
-                            <input type="checkbox" id="offerPriceToggle" checked onchange="toggleOfferPrice(this.checked)"
-                                style="opacity:0; width:0; height:0; position:absolute;">
-                            <span id="offerToggleTrack"
-                                style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--accent); border-radius:24px; transition:background 0.2s;">
-                                <span id="offerToggleThumb"
-                                    style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); transform:translateX(20px);"></span>
-                            </span>
-                        </label>
-                    </div>
-
-                    <div style="width: 1px; height: 20px; background: var(--border);"></div>
-
-                    <!-- Price Increase Buttons -->
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">Price:</span>
-                        <button type="button" onclick="applyBulkOfferPct(5, this)"
-                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
-                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+5%</button>
-                        <button type="button" onclick="applyBulkOfferPct(10, this)"
-                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
-                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+10%</button>
-                        <button type="button" onclick="applyBulkOfferPct(20, this)"
-                            style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; border: 1px solid rgba(39,174,96,0.35); background: rgba(39,174,96,0.1); color: #27ae60; cursor: pointer; font-family: var(--mono); transition: all 0.15s;"
-                            onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">+20%</button>
-                    </div>
+                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content;">
+                    <span
+                        style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show
+                        Sq.Ft &amp; Rate</span>
+                    <label class="sqft-toggle-wrap"
+                        style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
+                        <input type="checkbox" id="sqftRateToggle" onchange="toggleSqftRate(this.checked)"
+                            style="opacity:0; width:0; height:0; position:absolute;">
+                        <span id="sqftToggleTrack"
+                            style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--border); border-radius:24px; transition:background 0.2s;">
+                            <span id="sqftToggleThumb"
+                                style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
+                        </span>
+                    </label>
                 </div>
                 <table class="quote-table">
                     <thead>
@@ -1081,7 +1040,7 @@
                             <th class="num" id="sqftHeader" style="display:none;">Sq.Ft</th>
                             <th class="num" id="rateHeader" style="display:none;">Rate</th>
                             <th class="num">Price</th>
-                            <th class="num" id="offerHeader" style="color:#b07d2e;">Offer Price</th>
+                            <th class="num" style="color:#b07d2e;">Offer Price</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -1164,7 +1123,7 @@
                 <div id="requirementsBoxContainer"
                     style="margin-top: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 10px;">
                     <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
-                        NOTES</div>
+                        Any Requirements</div>
                     <textarea id="anyRequirements" placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
                         rows="3"
                         style="width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--text); outline: none; font-family: inherit; resize: vertical; box-sizing: border-box; line-height: 1.5;"></textarea>
@@ -1196,7 +1155,7 @@
                 <div id="printRequirementsBox" class="print-only-specs-terms"
                     style="display: none; margin-top: 12px; page-break-inside: avoid; break-inside: avoid;">
                     <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">NOTES:</strong>
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any Requirements:</strong>
                         <div id="printRequirementsText" style="white-space: pre-wrap; color: #333;"></div>
                     </div>
                 </div>
@@ -1273,7 +1232,7 @@
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
-        let isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
+        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
         // Force reload default rates if rate version is older (Phase 2, Profile Glass Door & Accessories updates)
         const CURRENT_RATE_VERSION = 4;
@@ -1309,7 +1268,6 @@
                 { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
                 { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
                 { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
-                { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true },
                 { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
                 { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
                 { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
@@ -1325,16 +1283,6 @@
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         let updated = false;
-                        if (!parsed.some(r => r.id === 'teak_wood')) {
-                            const dinIdx = parsed.findIndex(r => r.id === 'dining_room');
-                            const newRoom = { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true };
-                            if (dinIdx !== -1) {
-                                parsed.splice(dinIdx + 1, 0, newRoom);
-                            } else {
-                                parsed.push(newRoom);
-                            }
-                            updated = true;
-                        }
                         if (!parsed.some(r => r.id === 'false_celling')) {
                             const accIdx = parsed.findIndex(r => r.id === 'accessories');
                             const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
@@ -1413,21 +1361,6 @@
             { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Wall Panel Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-        ];
-        const PRAYER_UNIT_OPTS = [
-            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Wall Panel Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
         const BREAKFAST_WALL_PANEL = [
             {
@@ -1522,39 +1455,6 @@
 
 
         /* ---------- Shared Materials Groups ---------- */
-        const TEAK_WOOD_OPTS = [
-            {
-                label: "Full Teak Wood - Box Type",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
-            },
-            {
-                label: "Full Teak Wood - Partition Type",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
-            },
-            {
-                label: "Full Teak Wood - Door Only",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Frame: Kerala Teak Wood | Door: Kerala Teak Wood"
-            },
-            {
-                label: "Semi-Teak Wood - Marine Ply - Box Type",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Kerala Teak Wood outside and door only | Marine Ply 710 Grade | Brand: Saburi / Fineply | Door: Teak Wood"
-            },
-            {
-                label: "Semi-Teak Wood - Marine Ply - Partition Type",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Kerala Teak Wood outside and door only | Marine Ply 710 Grade | Brand: Saburi / Fineply | Door: Teak Wood"
-            },
-            {
-                label: "Semi-Teak Wood - Marine Ply - Door Only",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Kerala Teak Wood outside and door only | Frame and door teak wood"
-            }
-        ];
-
         const MP_LAM_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
@@ -2112,22 +2012,12 @@
             "61::Marine Ply – Acrylic": 0,
             "61::Engineering Wood": 900,
 
-            // Prayer Unit (ID 74)
-            "74::Marine Ply – Lamination (Box Type)": 1300,
-            "74::Marine Ply – Lamination (Door Only)": 800,
-            "74::Marine Ply – Acrylic (Box Type)": 2600,
-            "74::Marine Ply – Acrylic (Door Only)": 1800,
-            "74::WPC (Box Type)": 1300,
-            "74::WPC (Door Only)": 800,
-            "74::WPC – Lamination (Box Type)": 1400,
-            "74::WPC – Lamination (Door Only)": 900,
-            "74::Engineering Wood (Box Type)": 900,
-            "74::Engineering Wood (Door Only)": 500,
+            // Prayer Unit Wall Panel (ID 74)
             "74::Wall Panel PVC": 400,
             "74::Wall Panel Lamination": 550,
             "74::Wall Panel Charcoal": 800,
 
-            // Pooja Unit (ID 75)
+            // Prayer Unit Bottom Cabinet (ID 75)
             "75::Marine Ply – Lamination (Box Type)": 1300,
             "75::Marine Ply – Lamination (Door Only)": 800,
             "75::Marine Ply – Acrylic (Box Type)": 2600,
@@ -2136,11 +2026,6 @@
             "75::WPC (Door Only)": 800,
             "75::WPC – Lamination (Box Type)": 1400,
             "75::WPC – Lamination (Door Only)": 900,
-            "75::Engineering Wood (Box Type)": 900,
-            "75::Engineering Wood (Door Only)": 500,
-            "75::Wall Panel PVC": 400,
-            "75::Wall Panel Lamination": 550,
-            "75::Wall Panel Charcoal": 800,
 
             // Bedroom Wardrobe (ID 25)
             "25::Marine Ply – Lamination (Box Type)": 1300,
@@ -2277,16 +2162,6 @@
             "70::Wall Panel Charcoal": 800,
 
             // Wall Panelling with Hidden Door (ID 71)
-            "71::Marine Ply – Lamination (Box Type)": 1300,
-            "71::Marine Ply – Lamination (Door Only)": 800,
-            "71::Marine Ply – Acrylic (Box Type)": 2600,
-            "71::Marine Ply – Acrylic (Door Only)": 1800,
-            "71::WPC (Box Type)": 1300,
-            "71::WPC (Door Only)": 800,
-            "71::WPC – Lamination (Box Type)": 1400,
-            "71::WPC – Lamination (Door Only)": 900,
-            "71::Engineering Wood (Box Type)": 900,
-            "71::Engineering Wood (Door Only)": 500,
             "71::Wall Panel PVC": 400,
             "71::Wall Panel Lamination": 550,
             "71::Wall Panel Charcoal": 800,
@@ -2416,23 +2291,7 @@
             "44::WPC – Lamination (Box Type)": 1400,
             "44::WPC – Lamination (Door Only)": 900,
             "44::Engineering Wood (Box Type)": 900,
-            "44::Engineering Wood (Door Only)": 500,
-
-            // Teak Wood Kitchen (ID 110)
-            "110::Full Teak Wood - Box Type": 3600,
-            "110::Full Teak Wood - Partition Type": 3200,
-            "110::Full Teak Wood - Door Only": 1600,
-            "110::Semi-Teak Wood - Marine Ply - Box Type": 2800,
-            "110::Semi-Teak Wood - Marine Ply - Partition Type": 2400,
-            "110::Semi-Teak Wood - Marine Ply - Door Only": 1400,
-
-            // Teak Wood Room Fallback Rates
-            "Full Teak Wood - Box Type": 3600,
-            "Full Teak Wood - Partition Type": 3200,
-            "Full Teak Wood - Door Only": 1600,
-            "Semi-Teak Wood - Marine Ply - Box Type": 2800,
-            "Semi-Teak Wood - Marine Ply - Partition Type": 2400,
-            "Semi-Teak Wood - Marine Ply - Door Only": 1400
+            "44::Engineering Wood (Door Only)": 500
         };
 
         const ACCESSORY_OPTS = [
@@ -2461,9 +2320,7 @@
             { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Profile Handle", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Soft Closing Handles", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Sliding Door Fitting (Brand)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Sliding Door Fitting (Unbrand)", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+            { label: "Soft Closing Handles", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
         ];
 
         function getKitchenTotalExcludingAccessories() {
@@ -2648,13 +2505,6 @@
             if (stored) {
                 try {
                     cachedRates = JSON.parse(stored);
-                    let updated = false;
-                    Object.keys(DEFAULT_RATES).forEach(key => {
-                        if (cachedRates[key] === undefined) {
-                            cachedRates[key] = DEFAULT_RATES[key];
-                            updated = true;
-                        }
-                    });
                     if (cachedRates["WPC"] === 0 || cachedRates["Marine Ply – Lamination"] === 0) {
                         cachedRates = { ...DEFAULT_RATES, ...cachedRates };
                         Object.keys(DEFAULT_RATES).forEach(key => {
@@ -2662,9 +2512,6 @@
                                 cachedRates[key] = DEFAULT_RATES[key];
                             }
                         });
-                        updated = true;
-                    }
-                    if (updated) {
                         localStorage.setItem('pks_rates', JSON.stringify(cachedRates));
                     }
                     return cachedRates;
@@ -2719,9 +2566,6 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
-                { id: 110, name: "TEAK WOOD", options: TEAK_WOOD_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -2730,14 +2574,13 @@
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION },
                 { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
-                { id: 74, name: "PRAYER UNIT", options: PRAYER_UNIT_OPTS },
-                { id: 75, name: "POOJA UNIT", options: PRAYER_UNIT_OPTS }
+                { id: 74, name: "PRAYER UNIT WALL PANEL", options: WALL_PANEL },
+                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -2757,8 +2600,6 @@
                 { id: 69, name: "LOFT 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
                 { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
@@ -2767,23 +2608,6 @@
                 { id: 39, name: "Dining room crockery unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 370, name: "Beam Covering", options: BEAM },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS },
-            ],
-            teak_wood: [
-                { id: 1, name: "Bottom", options: TEAK_WOOD_OPTS },
-                { id: 2, name: "Overhead Cabinets", options: TEAK_WOOD_OPTS },
-                { id: 3, name: "Loft", options: TEAK_WOOD_OPTS },
-                { id: 4, name: "Island Cabin", options: TEAK_WOOD_OPTS },
-                { id: 5, name: "Breakfast Table", options: TEAK_WOOD_OPTS },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: TEAK_WOOD_OPTS },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: TEAK_WOOD_OPTS },
-                { id: 8, name: "Breakfast Table – Open Box", options: TEAK_WOOD_OPTS },
-                { id: 9, name: "Spice Rack", options: TEAK_WOOD_OPTS },
-                { id: 10, name: "Ledge", options: TEAK_WOOD_OPTS },
-                { id: 11, name: "Side Storage Cabinet", options: TEAK_WOOD_OPTS },
-                { id: 12, name: "Dining Partition", options: TEAK_WOOD_OPTS },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: TEAK_WOOD_OPTS },
-                { id: 38, name: "Wash basin unit wall paneling", options: TEAK_WOOD_OPTS },
-                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
                 { id: 80, name: "WALL PANEL", options: WALL_PANEL },
@@ -2842,9 +2666,6 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
                 { id: 12, name: "Dining Partition", options: PARTITION },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
-                { id: 110, name: "TEAK WOOD", options: TEAK_WOOD_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             living_room: [
@@ -2853,26 +2674,25 @@
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: ENG_WOOD_PARTITION },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
-                { id: 71, name: "Wall Panelling with Hidden Door", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ENG_WOOD_PARTITION },
                 { id: 22, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             prayer_unit: [
-                { id: 74, name: "Prayer Unit", options: PRAYER_UNIT_OPTS },
-                { id: 75, name: "Pooja Unit", options: PRAYER_UNIT_OPTS }
+                { id: 74, name: "Prayer Unit Wall Panel", options: WALL_PANEL },
+                { id: 75, name: "Prayer Unit Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             bedroom: [
-                { id: 25, name: "Wardrobe", options: ENG_WOOD_BOX_DOOR },
+                { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
                 { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
                 { id: 28, name: "King Size Bed", options: ENG_WOOD_KING_BED },
                 { id: 280, name: "Queen Size Bed", options: ENG_WOOD_QUEEN_BED },
                 { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
-                { id: 30, name: "Dressing Unit Wall Paneling", options: WALL_PANEL },
-                { id: 31, name: "Dressing Unit Bottom Cabinet", options: ENG_WOOD_BOX_ONLY },
-                { id: 32, name: "Tv Unit-Wall Paneling", options: WALL_PANEL },
-                { id: 33, name: "Tv Unit-Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 34, name: "Tv Unit-Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_ONLY },
+                { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
+                { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 65, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
                 { id: 66, name: "Cupboard 1", options: ENG_WOOD_BOX_DOOR },
                 { id: 67, name: "Cupboard 2", options: ENG_WOOD_BOX_DOOR },
@@ -2880,8 +2700,6 @@
                 { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
                 { id: 70, name: "Wall Panneling", options: WALL_PANEL },
                 { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
@@ -2890,23 +2708,6 @@
                 { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
                 { id: 370, name: "Beam Covering", options: BEAM },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
-            ],
-            teak_wood: [
-                { id: 1, name: "Bottom", options: TEAK_WOOD_OPTS },
-                { id: 2, name: "Overhead Cabinets", options: TEAK_WOOD_OPTS },
-                { id: 3, name: "Loft", options: TEAK_WOOD_OPTS },
-                { id: 4, name: "Island Cabin", options: TEAK_WOOD_OPTS },
-                { id: 5, name: "Breakfast Table", options: TEAK_WOOD_OPTS },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: TEAK_WOOD_OPTS },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: TEAK_WOOD_OPTS },
-                { id: 8, name: "Breakfast Table – Open Box", options: TEAK_WOOD_OPTS },
-                { id: 9, name: "Spice Rack", options: TEAK_WOOD_OPTS },
-                { id: 10, name: "Ledge", options: TEAK_WOOD_OPTS },
-                { id: 11, name: "Side Storage Cabinet", options: TEAK_WOOD_OPTS },
-                { id: 12, name: "Dining Partition", options: TEAK_WOOD_OPTS },
-                { id: 37, name: "Wash basin unit bottom cabinet", options: TEAK_WOOD_OPTS },
-                { id: 38, name: "Wash basin unit wall paneling", options: TEAK_WOOD_OPTS },
-                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
                 { id: 80, name: "Wall Panel", options: WALL_PANEL },
@@ -2978,6 +2779,11 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
+        const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
+        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
+        const initialDeleted = getDeletedStandardItems() || [];
+        let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
+
         function getDeletedStandardMaterials() {
             if (cachedDeletedStandardMaterials !== null) return cachedDeletedStandardMaterials;
             const stored = localStorage.getItem('pks_deleted_standard_materials');
@@ -2994,13 +2800,10 @@
             return cachedDeletedStandardMaterials;
         }
 
+
+
         // Combine base items with admin customizations
         function getFullItemsList() {
-            const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
-            const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : [];
-            const initialDeleted = getDeletedStandardItems() || [];
-            const BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
-
             const deletedMats = getDeletedStandardMaterials();
             const list = (BASE_ITEMS || []).map(item => {
                 if (!item) return null;
@@ -3132,6 +2935,34 @@
             }
         }
 
+        let customItemNames = {};
+        try {
+            customItemNames = JSON.parse(localStorage.getItem('pks_custom_item_names')) || {};
+        } catch (e) { customItemNames = {}; }
+
+        function getItemDisplayName(item) {
+            if (!item) return '';
+            const key = `${selectedRoom}_${item.id}`;
+            return customItemNames[key] || customItemNames[item.id] || item.name || '';
+        }
+
+        function renameItem(itemId, event) {
+            if (event) event.stopPropagation();
+            const item = ITEMS.find(i => i.id === itemId);
+            if (!item) return;
+            const currentName = getItemDisplayName(item);
+            const newName = prompt("Rename item:", currentName);
+            if (newName !== null && newName.trim() !== "") {
+                const key = `${selectedRoom}_${itemId}`;
+                customItemNames[key] = newName.trim();
+                localStorage.setItem('pks_custom_item_names', JSON.stringify(customItemNames));
+                const nameEl = document.getElementById(`item-name-${itemId}`);
+                if (nameEl) {
+                    nameEl.textContent = newName.trim();
+                }
+            }
+        }
+
         /* ---------- render item cards ---------- */
         function renderItemsGrid() {
             const grid = document.getElementById('itemsGrid');
@@ -3146,10 +2977,12 @@
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 card.id = `card-${item.id}`;
+                const displayName = getItemDisplayName(item);
                 card.innerHTML = `
                     <div class="item-head">
                       <span class="item-num">${item.id}</span>
-                      <span class="item-name">${item.name || ''}</span>
+                      <span class="item-name" id="item-name-${item.id}">${displayName}</span>
+                      <button class="rename-item-btn" onclick="renameItem(${item.id}, event)" title="Rename item">✏️</button>
                     </div>
                     <button class="add-btn" onclick="openBuilder(${item.id})">Click ${item.custom ? 'Custom Line' : 'Me'}</button>
                     <div class="builders" id="builders-${item.id}"></div>
@@ -3191,7 +3024,6 @@
         function _doInit() {
             if (window._appInitialized) return;
             window._appInitialized = true;
-            try { updateEconomyModeToggleUI(); } catch (e) { }
             try { updateRoomState(selectedRoom, selectedRoomName); } catch (e) {
                 try { renderRoomTabs(); } catch (_) { }
                 try { renderItemsGrid(); } catch (_) { }
@@ -3586,24 +3418,13 @@
                 }
             });
 
-            if (optSpecs) {
-                if (typeof optSpecs === 'string') {
-                    optSpecs.split('|').forEach(sub => {
-                        const tsub = sub.trim();
-                        if (tsub && !allSpecsArray.includes(tsub)) {
-                            allSpecsArray.push(tsub);
-                        }
-                    });
-                } else if (Array.isArray(optSpecs)) {
-                    optSpecs.forEach(sub => {
-                        if (sub && typeof sub === 'string') {
-                            const tsub = sub.trim();
-                            if (tsub && !allSpecsArray.includes(tsub)) {
-                                allSpecsArray.push(tsub);
-                            }
-                        }
-                    });
-                }
+            if (optSpecs && typeof optSpecs === 'string') {
+                optSpecs.split('|').forEach(sub => {
+                    const tsub = sub.trim();
+                    if (tsub && !allSpecsArray.includes(tsub)) {
+                        allSpecsArray.push(tsub);
+                    }
+                });
             }
 
             // Fallback matching if empty
@@ -3812,19 +3633,19 @@
                 }
             }
 
-            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
+            const itemDisplayName = getItemDisplayName(item);
+            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, itemDisplayName, opt.specs);
 
             quoteLines.push({
                 id: lineIdCounter++,
                 roomId: selectedRoom,
                 roomName: getFullRoomLabel(),
-                itemName: item.name,
+                itemName: itemDisplayName,
                 material: opt.label,
                 specs: allSpecsArray.join(' | '),
                 size: sizeDesc,
                 sqft, rate, amount,
-                offerPrice: null,
-                isEconomy: isEconomyMode
+                offerPrice: null
             });
             renderQuote();
             closeBuilder(buildId);
@@ -3861,13 +3682,12 @@
                 id: lineIdCounter++,
                 roomId: selectedRoom,
                 roomName: getFullRoomLabel(),
-                itemName: item.name,
+                itemName: getItemDisplayName(item),
                 material: desc,
                 specs: allSpecsArray.join(' | '),
                 size: '—',
                 sqft, rate, amount,
-                offerPrice: null,
-                isEconomy: isEconomyMode
+                offerPrice: null
             });
             renderQuote();
             closeBuilder(buildId);
@@ -3886,18 +3706,6 @@
             showSqftRate = on;
             const track = document.getElementById('sqftToggleTrack');
             const thumb = document.getElementById('sqftToggleThumb');
-            if (track) track.style.background = on ? 'var(--accent)' : 'var(--border)';
-            if (thumb) thumb.style.transform = on ? 'translateX(20px)' : 'translateX(0)';
-            renderQuote();
-        }
-
-        // ── Offer Price toggle state ──────────────────────
-        let showOfferPrice = true;
-
-        function toggleOfferPrice(on) {
-            showOfferPrice = on;
-            const track = document.getElementById('offerToggleTrack');
-            const thumb = document.getElementById('offerToggleThumb');
             if (track) track.style.background = on ? 'var(--accent)' : 'var(--border)';
             if (thumb) thumb.style.transform = on ? 'translateX(20px)' : 'translateX(0)';
             renderQuote();
@@ -4050,29 +3858,17 @@
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
             const showSqFt = showSqftRate;
-            const showOffer = showOfferPrice;
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
-            const noPrintClass = hasAnyOfferPrice ? '' : 'no-print';
 
-            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | [Offer Price] | Delete
+            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | Offer Price | Delete
             const baseColCount = 4;
             const extraCols = (showSqFt ? 1 : 0) + (showSqFt && showRate ? 1 : 0);
-            const totalCols = baseColCount + extraCols + 2 + (showOffer ? 1 : 0); // +Amount + [OfferPrice] +Delete
+            const totalCols = baseColCount + extraCols + 3; // +Amount +OfferPrice +Delete
 
             // Header column visibility
             const sqftHeader = document.getElementById('sqftHeader');
             const rateHeader = document.getElementById('rateHeader');
-            const offerHeader = document.getElementById('offerHeader');
             if (sqftHeader) sqftHeader.style.display = showSqFt ? '' : 'none';
             if (rateHeader) rateHeader.style.display = (showSqFt && showRate) ? '' : 'none';
-            if (offerHeader) {
-                offerHeader.style.display = showOffer ? '' : 'none';
-                if (!hasAnyOfferPrice) {
-                    offerHeader.classList.add('no-print');
-                } else {
-                    offerHeader.classList.remove('no-print');
-                }
-            }
 
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
@@ -4114,37 +3910,20 @@
 
             // Helper: offer price cell for a line
             function offerCell(l) {
-                if (!showOffer) return '';
                 const val = (l.offerPrice !== null && l.offerPrice !== '') ? l.offerPrice : '';
-                const cellClass = hasAnyOfferPrice ? '' : 'no-print';
-                return `<td class="num ${cellClass}" style="vertical-align:top; padding-top:8px;">
-                    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:4px;">
-                        <div style="display:flex; align-items:center; gap:2px;">
-                            <span style="color:var(--accent-dark); font-size:0.82rem;" class="no-print">₹</span>
-                            <input type="number" min="0" id="offerInput-${l.id}" class="no-print"
-                                placeholder="${l.amount.toFixed(0)}"
-                                value="${val}"
-                                oninput="updateOfferPrice(${l.id}, this.value)"
-                                style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
-                                onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
-                                onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
-                            ${val !== '' ? `<span class="print-only" style="color:#b07d2e; font-size:0.82rem; font-weight:600; font-family:var(--mono);">₹${parseFloat(val).toFixed(2)}</span>` : `<span class="print-only">—</span>`}
-                        </div>
-                        <div class="no-print" style="display:flex; gap:3px; flex-wrap:wrap; margin-top:2px;">
-                            ${[+5, +10, +20, -5, -10].map(pct => {
-                                const label = pct > 0 ? `+${pct}%` : `${pct}%`;
-                                const color = pct > 0 ? '#27ae60' : '#c0392b';
-                                const bg = pct > 0 ? 'rgba(39,174,96,0.06)' : 'rgba(192,57,43,0.06)';
-                                const br = pct > 0 ? 'rgba(39,174,96,0.2)' : 'rgba(192,57,43,0.2)';
-                                return `<button type="button" onclick="applyOfferPct(${l.id}, ${pct}, ${l.amount}, this)"
-                                    style="padding:1px 4px; font-size:0.6rem; font-weight:700; border-radius:3px; border:1px solid ${br}; background:${bg}; color:${color}; cursor:pointer; font-family:var(--sans); line-height:1;"
-                                    title="Adjust price by ${label}">${label}</button>`;
-                            }).join('')}
-                        </div>
+                return `<td class="num" style="vertical-align:top; padding-top:8px;">
+                    <div style="display:flex; align-items:center; gap:2px;">
+                        <span style="color:var(--accent-dark); font-size:0.82rem;">₹</span>
+                        <input type="number" min="0"
+                            placeholder="${l.amount.toFixed(0)}"
+                            value="${val}"
+                            oninput="updateOfferPrice(${l.id}, this.value)"
+                            style="width:90px; background:rgba(176,125,46,0.08); border:1px solid rgba(176,125,46,0.35); border-radius:5px; padding:4px 6px; color:#b07d2e; font-size:0.82rem; font-weight:600; outline:none; font-family:var(--mono);"
+                            onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
+                            onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
                     </div>
                 </td>`;
             }
-
 
             // ── Group room lines by roomName ──
             if (roomLines.length > 0) {
@@ -4160,6 +3939,8 @@
 
                 roomOrder.forEach(roomName => {
                     const lines = roomMap[roomName];
+                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
 
                     // Room group header row
                     html += `
@@ -4188,17 +3969,12 @@
                                     ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
                                 </div>` : ''}`;
 
-                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                        const modeLabel = isEcoLine
-                            ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
-                            : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
-
                         html += `
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
-                                  <strong>${shortName}</strong>${modeLabel}
+                                  <strong>${shortName}</strong>
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   ${materialCellContent}
@@ -4209,7 +3985,6 @@
                               <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
                               ${offerCell(l)}
                               <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
-                              <td style="vertical-align:top; padding-top:10px;"></td>
                             </tr>
                         `;
                     });
@@ -4244,17 +4019,12 @@
 
                     accMaterialCellContent += getAccessoryImagesHTML(l.material, 'var(--border)');
 
-                    const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                    const modeLabel = isEcoLine
-                        ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
-                        : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
-
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
                               <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
-                              <strong>${l.material}</strong>${modeLabel}
+                              <strong>${l.material}</strong>
                           </td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
@@ -4271,23 +4041,19 @@
 
                 // Auto kitchen accessories (Profile Handle + Hinges) — Clean rendering without "Auto" text/icon
                 kitchenAutoAcc.forEach(a => {
-                    const modeLabel = isEconomyMode
-                        ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
-                        : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
-
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
                               <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Accessories</div>
-                              <strong>${a.label}</strong>${modeLabel}
+                              <strong>${a.label}</strong>
                           </td>
                           <td style="vertical-align:top; padding-top:10px; font-size:0.75rem; color:var(--muted);">Included with Kitchen</td>
                           <td style="vertical-align:top; padding-top:10px;">—</td>
                           ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
                           ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
                           <td class="num" style="vertical-align:top; padding-top:10px;">₹${a.amount.toFixed(2)}</td>
-                          ${showOffer ? `<td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted);">—</td>` : ''}
+                          <td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted);">—</td>
                           <td style="vertical-align:top; padding-top:10px;"></td>
                         </tr>
                     `;
@@ -4309,6 +4075,8 @@
 
                 roomOrder.forEach(roomName => {
                     const lines = roomMap[roomName];
+                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+                    const roomOfferTotal = lines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
 
                     // Room group header row
                     html += `
@@ -4337,17 +4105,12 @@
                                     ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
                                 </div>` : ''}`;
 
-                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                        const modeLabel = isEcoLine
-                            ? `<span style="font-size:0.65rem; font-weight:700; color:#e67e22; background:rgba(230,126,34,0.12); border:1px solid rgba(230,126,34,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Economy</span>`
-                            : `<span style="font-size:0.65rem; font-weight:700; color:#b07d2e; background:rgba(176,125,46,0.12); border:1px solid rgba(176,125,46,0.25); border-radius:3px; padding:1px 4px; margin-left:6px; display:inline-block; vertical-align:middle; text-transform:uppercase;">Premium</span>`;
-
                         html += `
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
-                                  <strong>${shortName}</strong>${modeLabel}
+                                  <strong>${shortName}</strong>
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   ${materialCellContent}
@@ -4364,16 +4127,13 @@
                 });
             }
 
-            const showOfferColInTotal = showOffer && hasAnyOfferPrice;
-            const labelColspan = totalCols - (showOfferColInTotal ? 3 : 2);
-
             // ── Accessories Subtotal ──
             if (accessoryLines.length > 0) {
                 html += `
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
-                        <td colspan="${labelColspan}" style="text-align:right;">Accessories Total</td>
+                        <td colspan="${totalCols - 3}" style="text-align:right;">Accessories Total</td>
                         <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
-                        ${showOfferColInTotal ? `<td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>` : ''}
+                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -4383,9 +4143,9 @@
             if (falseCellingLines.length > 0) {
                 html += `
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
-                        <td colspan="${labelColspan}" style="text-align:right;">False Ceiling Total</td>
+                        <td colspan="${totalCols - 3}" style="text-align:right;">False Ceiling Total</td>
                         <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
-                        ${showOfferColInTotal ? `<td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>` : ''}
+                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -4394,76 +4154,40 @@
             // ── Grand Total ──
             html += `
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
-                    <td colspan="${labelColspan}" style="text-align:right;">Grand Total</td>
+                    <td colspan="${totalCols - 3}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                    ${showOfferColInTotal ? `<td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>` : ''}
+                    <td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>
                     <td></td>
                 </tr>
             `;
 
-            if (showOffer) {
-                // ── Bulk % Adjustment Row (below Grand Total, above Offer Price Total) ──
-                html += `
-                    <tr class="no-print" style="background: rgba(176,125,46,0.04); border-top: 1px dashed rgba(176,125,46,0.25);">
-                        <td colspan="${totalCols - 3}" style="text-align:right; font-size:0.75rem; color:var(--muted); padding:6px 8px; font-family:var(--sans);">
-                            Bulk adjust Offer Price:
-                        </td>
-                        <td colspan="3" style="padding:5px 8px;">
-                            <div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:flex-end;">
-                                ${[
-                                    { label:'-5%',  pct: -5,  c:'#c0392b', bg:'rgba(192,57,43,0.08)', br:'rgba(192,57,43,0.3)'   },
-                                    { label:'-10%', pct: -10, c:'#c0392b', bg:'rgba(192,57,43,0.08)', br:'rgba(192,57,43,0.3)'   }
-                                ].map(b => `<button type="button"
-                                    onclick="applyBulkOfferPct(${b.pct}, this)"
-                                    title="Reduce Offer Price by ${b.label}"
-                                    style="padding:3px 9px; font-size:0.72rem; font-weight:700; border-radius:20px;
-                                           border:1px solid ${b.br}; background:${b.bg}; color:${b.c};
-                                           cursor:pointer; font-family:var(--mono); transition:all 0.15s;"
-                                    onmouseover="this.style.opacity='0.7'"
-                                    onmouseout="this.style.opacity='1'">${b.label}</button>`).join('')}
-                                <button type="button"
-                                    onclick="resetAllOfferPrices(this)"
-                                    title="Clear all offer prices"
-                                    style="padding:3px 9px; font-size:0.72rem; font-weight:700; border-radius:20px;
-                                           border:1px solid rgba(122,110,97,0.35); background:rgba(122,110,97,0.08); color:var(--muted);
-                                           cursor:pointer; font-family:var(--mono); transition:all 0.15s;"
-                                    onmouseover="this.style.opacity='0.7'"
-                                    onmouseout="this.style.opacity='1'">Reset</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
+            // ── Offer Price Total Row (Below Grand Total) ──
+            html += `
+                <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
+                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
+                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
+            `;
 
-            if (showOffer) {
-                // ── Offer Price Total Row (Below Grand Total) ──
-                html += `
-                    <tr class="${noPrintClass}" style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
-                        <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
-                        <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
-                        <td></td>
-                    </tr>
-                `;
-
-                // ── Final Amount Row (Below Offer Price Total - Editable) ──
-                html += `
-                    <tr class="${noPrintClass}" style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
-                        <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
-                        <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
-                            <div style="display:inline-flex; align-items:center; gap:4px;">
-                                <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;" class="no-print">₹</span>
-                                <input type="number" min="0" id="finalAmountInput" class="no-print"
-                                    placeholder="${grandOfferTotal.toFixed(2)}"
-                                    value="${customFinalAmount !== null ? customFinalAmount : ''}"
-                                    oninput="updateFinalAmount(this.value)"
-                                    style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
-                                <span class="print-only" style="color:#8f6320; font-size:0.95rem; font-weight:700; font-family:var(--mono);">₹${getEffectiveFinalAmount().toFixed(2)}</span>
-                            </div>
-                        </td>
-                        <td></td>
-                    </tr>
-                `;
-            }
+            // ── Final Amount Row (Below Offer Price Total - Editable) ──
+            const finalAmount = getEffectiveFinalAmount();
+            html += `
+                <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
+                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
+                    <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
+                        <div style="display:inline-flex; align-items:center; gap:4px;">
+                            <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
+                            <input type="number" min="0" id="finalAmountInput"
+                                placeholder="${grandOfferTotal.toFixed(2)}"
+                                value="${customFinalAmount !== null ? customFinalAmount : ''}"
+                                oninput="updateFinalAmount(this.value)"
+                                style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+            `;
 
             body.innerHTML = html;
             updatePaymentSplits();
@@ -4507,20 +4231,7 @@
             isQuoteDirty = true;
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
-
-            const hadOffer = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
             line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
-            const hasOfferNow = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
-
-            if (hadOffer !== hasOfferNow) {
-                renderQuote();
-                const inp = document.getElementById('offerInput-' + lineId);
-                if (inp) {
-                    inp.focus();
-                    inp.selectionStart = inp.selectionEnd = inp.value.length;
-                }
-                return;
-            }
 
             const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
@@ -4543,9 +4254,9 @@
             if (fcOfferSubEl) fcOfferSubEl.textContent = '₹' + falseCellingOfferTotal.toFixed(2);
 
             const gtEl = document.getElementById('grandTotal');
-            if (gtEl && gtEl.parentElement && hasOfferNow) {
+            if (gtEl && gtEl.parentElement) {
                 const offerCell = gtEl.nextElementSibling;
-                if (offerCell && offerCell.classList.contains('num')) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
+                if (offerCell) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
             }
 
             const gotRowEl = document.getElementById('grandOfferTotalRow');
@@ -4555,69 +4266,6 @@
             if (finalInput) finalInput.placeholder = grandOfferTotal.toFixed(2);
 
             updatePaymentSplits();
-        }
-
-        function applyOfferPct(lineId, pct, baseAmount, btnEl) {
-            const newPrice = Math.round(baseAmount * (1 + pct / 100));
-            updateOfferPrice(lineId, newPrice);
-            // Update the input field directly without a full re-render
-            const inp = document.getElementById('offerInput-' + lineId);
-            if (inp) {
-                inp.value = newPrice;
-                inp.style.borderColor = '#b07d2e';
-                inp.style.boxShadow = '0 0 6px rgba(176,125,46,0.5)';
-                setTimeout(() => {
-                    inp.style.boxShadow = 'none';
-                    inp.style.borderColor = 'rgba(176,125,46,0.35)';
-                }, 700);
-            }
-            // Briefly highlight the pressed button
-            if (btnEl) {
-                const orig = btnEl.style.opacity;
-                btnEl.style.opacity = '0.4';
-                setTimeout(() => { btnEl.style.opacity = orig || '1'; }, 300);
-            }
-        }
-
-        function applyBulkOfferPct(pct, btnEl) {
-            if (!quoteLines || quoteLines.length === 0) return;
-            isQuoteDirty = true;
-
-            if (pct > 0) {
-                // PLUS: Only Price (amount/rate) goes UP — Offer Price is NOT changed
-                const factor = 1 + pct / 100;
-                quoteLines.forEach(l => {
-                    l.amount = Math.round(l.amount * factor);
-                    if (l.rate) l.rate = Math.round(l.rate * factor);
-                    // Do NOT touch offerPrice — leave it as-is
-                });
-            } else {
-                // MINUS: Both Price (amount/rate) AND Offer Price reduce by the percentage
-                const factor = 1 + pct / 100; // e.g. 0.95 for -5%
-                quoteLines.forEach(l => {
-                    l.amount = Math.round(l.amount * factor);
-                    if (l.rate) l.rate = Math.round(l.rate * factor);
-                    l.offerPrice = l.amount; // Offer Price matches reduced Price
-                });
-            }
-
-            // Briefly animate the button
-            if (btnEl) {
-                btnEl.style.opacity = '0.3';
-                setTimeout(() => { btnEl.style.opacity = '1'; }, 300);
-            }
-            renderQuote();
-        }
-
-        function resetAllOfferPrices(btnEl) {
-            if (!quoteLines || quoteLines.length === 0) return;
-            isQuoteDirty = true;
-            quoteLines.forEach(l => { l.offerPrice = null; });
-            if (btnEl) {
-                btnEl.style.opacity = '0.3';
-                setTimeout(() => { btnEl.style.opacity = '1'; }, 300);
-            }
-            renderQuote();
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
@@ -4741,7 +4389,7 @@
 
         function populatePrintDOM() {
             const docType = document.getElementById('docType').value;
-            document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' (' + (isEconomyMode ? 'Economy' : 'Premium') + ') ' + docType).toUpperCase();
+            document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' ' + docType).toUpperCase();
             document.getElementById('printQuoteNoLabel').textContent = docType + ' No:';
             document.getElementById('printQuoteNo').textContent = document.getElementById('quoteNo').value || '—';
 
@@ -4756,7 +4404,7 @@
                 }
             }
 
-            document.getElementById('printDivisionName').textContent = (selectedDivisionName || '—') + (isEconomyMode ? ' (Economy)' : ' (Premium)');
+            document.getElementById('printDivisionName').textContent = selectedDivisionName || '—';
             document.getElementById('printQuoteDate').textContent = document.getElementById('quoteDate').value || '—';
             document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
@@ -4827,7 +4475,7 @@
                 const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0) + kitchenAutoAccTotalForPdf;
                 const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
                 const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
-                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
+                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
 
                 const showSqFt = (typeof showSqftRate !== 'undefined') ? showSqftRate : true;
                 const cols = 4 + (showSqFt ? 1 : 0) + (showRate ? 1 : 0) + 1; // S.NO + Item + Material + Size + Amount (+SqFt, +Rate)
@@ -4869,18 +4517,12 @@
                                         ${pdfMaterialSpecs.map(s => `<div>• ${renderSpecText(s, '#e8ddd0')}</div>`).join('')}
                                     </div>` : ''}
                             `;
-
-                            const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                            const modeLabel = isEcoLine
-                                ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
-                                : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
-
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
-                                        ${l.itemName} ${modeLabel}
+                                        ${l.itemName}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${pdfMatContent}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
@@ -4901,16 +4543,11 @@
                         </tr>`;
 
                     accessoryLines.forEach(l => {
-                        const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                        const modeLabel = isEcoLine
-                            ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
-                            : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
-
                         rowsHTML += `
                             <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    ${l.material} ${modeLabel}
+                                    ${l.material}
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">
@@ -4926,15 +4563,11 @@
 
                     // Auto kitchen accessories in PDF - Clean display without "Auto" text/subtitles
                     kitchenAutoAccForPdf.forEach(a => {
-                        const modeLabel = isEconomyMode
-                            ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
-                            : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
-
                         rowsHTML += `
                             <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    ${a.label} ${modeLabel}
+                                    ${a.label}
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
                                 <td style="padding:6px 7px;font-size:10.5px;color:#666;">Included with Kitchen</td>
@@ -4967,17 +4600,12 @@
                             </tr>`;
 
                         lines.forEach(l => {
-                            const isEcoLine = (l.isEconomy !== undefined) ? l.isEconomy : isEconomyMode;
-                            const modeLabel = isEcoLine
-                                ? `<span style="font-size:8px;font-weight:700;color:#e67e22;background:rgba(230,126,34,0.1);border:1px solid rgba(230,126,34,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Economy</span>`
-                                : `<span style="font-size:8px;font-weight:700;color:#b07d2e;background:rgba(176,125,46,0.1);border:1px solid rgba(176,125,46,0.25);border-radius:3px;padding:1px 4px;margin-left:4px;display:inline-block;vertical-align:middle;text-transform:uppercase;">Premium</span>`;
-
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
-                                        ${l.itemName} ${modeLabel}
+                                        ${l.itemName}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
@@ -5048,10 +4676,10 @@
                             </div>
                         </div>
                         <div style="width:44%;text-align:right;">
-                            <div style="font-size:20px;font-weight:700;color:#1c2820;border-bottom:2px solid #b07d2e;padding-bottom:3px;display:inline-block;margin-bottom:8px;">${(selectedDivisionName + ' (' + (isEconomyMode ? 'Economy' : 'Premium') + ') ' + docType).toUpperCase()}</div>
+                            <div style="font-size:20px;font-weight:700;color:#1c2820;border-bottom:2px solid #b07d2e;padding-bottom:3px;display:inline-block;margin-bottom:8px;">${(selectedDivisionName + ' ' + docType).toUpperCase()}</div>
                             <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;width:50%;">${docType} No:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${quoteNo}</td></tr>
-                                <tr><td style="padding:2px 0;font-weight:700;color:#777;">Division:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${selectedDivisionName} (${isEconomyMode ? 'Economy' : 'Premium'})</td></tr>
+                                <tr><td style="padding:2px 0;font-weight:700;color:#777;">Division:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${selectedDivisionName}</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;">Date:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${quoteDate}</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;">Customer:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${custName}</td></tr>
                                 <tr><td style="padding:2px 0;font-weight:700;color:#777;vertical-align:top;">Place:</td><td style="padding:2px 0;font-weight:600;text-align:right;">${custAddress}</td></tr>
@@ -5089,7 +4717,6 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
-                            ${hasAnyOfferPrice ? `
                             <tr style="background:#fffdf8;border-top:1px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">Offer Price Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getCalculatedOfferTotal().toFixed(2)}</td>
@@ -5098,7 +4725,6 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#8f6320;">Final Amount</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getEffectiveFinalAmount().toFixed(2)}</td>
                             </tr>
-                            ` : ''}
                         </tbody>
                     </table>
                     ${specsText || payItems || anyReqVal ? `
@@ -5109,7 +4735,7 @@
                         </div>
                         ${anyReqVal ? `
                         <div style="padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;">
-                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">NOTES</strong>
+                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">Any Requirements</strong>
                             <div style="white-space:pre-wrap;color:#333;line-height:1.45;">${anyReqVal}</div>
                         </div>` : ''}
                     </div>` : ''}
@@ -5207,15 +4833,8 @@
 
                 const calculatedOfferTotal = getCalculatedOfferTotal();
                 const effectiveFinal = getEffectiveFinalAmount();
-                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) || (customFinalAmount !== null && customFinalAmount !== '');
 
                 const reqText = document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '';
-
-                let offerText = '';
-                if (hasAnyOfferPrice) {
-                    offerText = `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                                `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n`;
-                }
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
@@ -5223,7 +4842,8 @@
                     `• Customer: ${custName}\n` +
                     `• Place: ${custAddress}\n` +
                     `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
-                    offerText +
+                    `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
                     (reqText ? `• Requirements: ${reqText}\n` : '') +
                     `\nAttached is your quotation PDF. Thank you!`;
 
@@ -5735,7 +5355,7 @@
         let pendingNavigationUrl = null;
 
         function handleBackNavigation(url) {
-            if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
                 pendingNavigationUrl = url;
                 document.getElementById('navConfirmModal').style.display = 'flex';
             } else {
@@ -5769,7 +5389,7 @@
         }
 
         function handleBeforeUnload(e) {
-            if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
                 e.preventDefault();
                 e.returnValue = '';
                 return '';
@@ -5777,64 +5397,9 @@
         }
         window.addEventListener('beforeunload', handleBeforeUnload);
 
-        // Intercept browser back button
-        try {
-            history.pushState({ page: 'employee' }, null, window.location.href);
-            window.addEventListener('popstate', function(event) {
-                if (isQuoteDirty || (quoteLines && quoteLines.length > 0)) {
-                    history.pushState({ page: 'employee' }, null, window.location.href);
-                    pendingNavigationUrl = 'rooms.html';
-                    document.getElementById('navConfirmModal').style.display = 'flex';
-                } else {
-                    window.removeEventListener('beforeunload', handleBeforeUnload);
-                    location.href = 'rooms.html';
-                }
-            });
-        } catch (e) {
-            console.error('History pushState error:', e);
-        }
-
         // Listen for input changes to set dirty status
         window.addEventListener('input', () => { isQuoteDirty = true; });
         window.addEventListener('change', () => { isQuoteDirty = true; });
-
-        // --- Premium/Economy Switcher Logic ---
-        function setEconomyMode(val) {
-            if (isEconomyMode === val) return;
-            isEconomyMode = val;
-            sessionStorage.setItem('pks_economy_mode', val ? 'true' : 'false');
-            localStorage.setItem('pks_economy_mode', val ? 'true' : 'false');
-            updateEconomyModeToggleUI();
-            updateRoomState(selectedRoom, selectedRoomName);
-        }
-
-        function updateEconomyModeToggleUI() {
-            const pBtn = document.getElementById('togglePremiumBtn');
-            const eBtn = document.getElementById('toggleEconomyBtn');
-            const modeDetailsTitle = document.getElementById('modeDetailsTitle');
-            const modeDetailsText = document.getElementById('modeDetailsText');
-            if (pBtn && eBtn) {
-                if (isEconomyMode) {
-                    eBtn.style.background = 'var(--accent)';
-                    eBtn.style.color = '#ffffff';
-                    pBtn.style.background = 'transparent';
-                    pBtn.style.color = '#9a9186';
-                    if (modeDetailsTitle) modeDetailsTitle.textContent = "Economy Mode Details";
-                    if (modeDetailsText) modeDetailsText.innerHTML = "Engineering Wood (18mm) | Pre-laminated Finish | Non Soft-closing Hinges for Rooms | Standard Budget Materials.";
-                } else {
-                    pBtn.style.background = 'var(--accent)';
-                    pBtn.style.color = '#ffffff';
-                    eBtn.style.background = 'transparent';
-                    eBtn.style.color = '#9a9186';
-                    if (modeDetailsTitle) modeDetailsTitle.textContent = "Premium Mode Details";
-                    if (modeDetailsText) modeDetailsText.innerHTML = "710 Grade Marine Ply (16mm) | WPC 8mm Back Panel | Fabric/Off-White Inner Finish | German Acrylic / Laminates Outer Finish | Sleek/Hettich Soft-closing Hinges.";
-                }
-            }
-            const divBadgeEl = document.getElementById('divisionBadge');
-            if (divBadgeEl) {
-                divBadgeEl.textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
-            }
-        }
     </script>
 
     <!-- Share Modal -->
@@ -5864,40 +5429,6 @@
 
             <button onclick="closeShareModal()"
                 style="margin-top:20px; background:transparent; border:none; color:var(--muted, #888); font-size:0.85rem; cursor:pointer; text-decoration:underline;">Close</button>
-        </div>
-    </div>
-
-    <!-- Navigation Confirmation Modal -->
-    <div class="modal-overlay" id="navConfirmModal"
-        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 90%; max-width: 440px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 20px; text-align: center; color: var(--text);">
-            <div>
-                <span style="font-size: 3rem; display: block; margin-bottom: 12px;">💾</span>
-                <h3 style="color: var(--accent); margin: 0 0 10px 0; font-size: 1.4rem; font-family: var(--sans); font-weight: 700;">Save your changes?</h3>
-                <p style="color: var(--muted); margin: 0; font-size: 0.92rem; line-height: 1.5; font-family: var(--sans);">
-                    You have added materials/items to this quote. Leaving this page will discard any unsaved progress.
-                </p>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                <button onclick="confirmNavSave()"
-                    style="background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; font-family: var(--sans); transition: background 0.15s;"
-                    onmouseover="this.style.background='var(--accent-dark)'"
-                    onmouseout="this.style.background='var(--accent)'">
-                    Yes, Save &amp; Exit
-                </button>
-                <button onclick="confirmNavDiscard()"
-                    style="background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; font-family: var(--sans); transition: all 0.15s;"
-                    onmouseover="this.style.background='rgba(192,57,43,0.08)'"
-                    onmouseout="this.style.background='transparent'">
-                    Discard Changes &amp; Exit
-                </button>
-                <button onclick="closeNavConfirmModal()"
-                    style="background: var(--surface2); color: var(--text); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; font-family: var(--sans); transition: background 0.15s;"
-                    onmouseover="this.style.background='var(--border)'"
-                    onmouseout="this.style.background='var(--surface2)'">
-                    Cancel (Stay here)
-                </button>
-            </div>
         </div>
     </div>
 </body>
