@@ -1016,8 +1016,28 @@
             <div id="rates" class="tab-panel active">
                 <h2>Rates Management — All Rooms</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 18px;">
-                    Set pricing per square foot for each room separately. Expand a room section to edit its rates.
+                    Set pricing per square foot for each room separately. Select division and mode to edit rates for Premium, Medium, or Economy tiers.
                 </p>
+
+                <!-- Division and Mode Selector Bar -->
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(18, 36, 23, 0.4); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Division:</label>
+                        <select id="adminDivisionSelect" onchange="setAdminDivision(this.value)" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Pricing Mode:</label>
+                        <div style="display: flex; gap: 8px; background: rgba(5, 11, 7, 0.6); padding: 4px; border-radius: 30px; border: 1px solid var(--border);">
+                            <button id="modeBtnPremium" onclick="setAdminRateMode('premium')" class="admin-mode-btn active" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: var(--accent); color: var(--bg);">🌟 Premium</button>
+                            <button id="modeBtnMedium" onclick="setAdminRateMode('medium')" class="admin-mode-btn" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">⚖️ Medium</button>
+                            <button id="modeBtnEconomy" onclick="setAdminRateMode('economy')" class="admin-mode-btn" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">💰 Economy</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="allRoomsRatesContainer" style="display: flex; flex-direction: column; gap: 14px;">
                     <!-- populated by JS per-room -->
                 </div>
@@ -2120,35 +2140,33 @@
 
         const ECO_WALL_PANEL = ["Wall Panel PVC", "Wall Panel Lamination"];
         const ECO_CABINET_OPTS = [
-            "Marine Ply – Lamination (Box Type)",
-            "Marine Ply – Lamination (Door Only)",
-            "Marine Ply – Lamination (Partition Type)",
-            "Marine Ply – Acrylic (Box Type)",
-            "Marine Ply – Acrylic (Door Only)",
-            "Marine Ply – Acrylic (Partition Type)",
-            "WPC (Box Type)",
-            "WPC (Door Only)",
-            "WPC (Partition Type)",
-            "WPC – Lamination (Box Type)",
-            "WPC – Lamination (Door Only)",
-            "WPC – Lamination (Partition Type)",
             "Engineering Wood (Box Type)",
             "Engineering Wood (Door Only)",
             "Engineering Wood (Partition Type)"
         ];
         const ECO_TV_BOTTOM_CABINET = [
-            "Marine Ply – Lamination (Box Type)",
-            "Marine Ply – Lamination (Door Only)",
-            "Marine Ply – Lamination (Partition Type)",
-            "WPC (Box Type)",
-            "WPC (Door Only)",
-            "WPC (Partition Type)",
-            "WPC – Lamination (Box Type)",
-            "WPC – Lamination (Door Only)",
-            "WPC – Lamination (Partition Type)",
             "Engineering Wood (Box Type)",
             "Engineering Wood (Door Only)",
             "Engineering Wood (Partition Type)"
+        ];
+
+        const MED_CABINET_OPTS = [
+            "Marine Ply – Lamination (Box Type)",
+            "Marine Ply – Lamination (Door Only)",
+            "Marine Ply – Lamination (Partition Type)"
+        ];
+        const MED_CABINET_BOX_ONLY = [
+            "Marine Ply – Lamination (Box Type)"
+        ];
+        const MED_DRESSING_BOTTOM_OPTS = [
+            "Marine Ply – Lamination (Box)",
+            "Engineering Wood (Box)"
+        ];
+        const MED_PARTITION = [
+            "Marine Ply – Lamination"
+        ];
+        const MED_BED_OPTS = [
+            "Marine Ply – Lamination"
         ];
 
         const ROOM_ITEMS_ECONOMY = {
@@ -2164,20 +2182,20 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: ECO_WALL_PANEL },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ECO_TV_BOTTOM_CABINET },
+                { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ECO_CABINET_OPTS },
-                { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 20, name: "Living Room Wall Panelling", options: ECO_WALL_PANEL },
                 { id: 71, name: "Wall Panelling with Hidden Door", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ECO_CABINET_OPTS },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
@@ -2187,8 +2205,8 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ECO_CABINET_OPTS },
                 { id: 27, name: "Bed back wall paneling", options: ECO_WALL_PANEL },
-                { id: 28, name: "King Size Bed", options: ["Engineering Wood"] },
-                { id: 280, name: "Queen Size Bed", options: ["Engineering Wood"] },
+                { id: 28, name: "King Size Bed", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
+                { id: 280, name: "Queen Size Bed", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 29, name: "Bay window", options: ECO_CABINET_OPTS },
                 { id: 30, name: "Dressing unit wall paneling", options: ECO_WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: ECO_CABINET_OPTS },
@@ -2205,7 +2223,7 @@
                 { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ECO_CABINET_OPTS },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ECO_WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ECO_CABINET_OPTS },
                 { id: 370, name: "Beam Covering", options: ["Marine Ply – Lamination", "Wall Panel Lamination"] },
@@ -2222,7 +2240,7 @@
                 { id: 88, name: "COMPUTER TABLE", options: ECO_CABINET_OPTS }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet area washbasin cabinet", options: ECO_CABINET_OPTS },
+                { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
             ],
             store_room: [
                 { id: 44, name: "Store room cupboard", options: ECO_CABINET_OPTS }
@@ -2254,8 +2272,115 @@
             ]
         };
 
+        const ROOM_ITEMS_MEDIUM = {
+            kitchen: [
+                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Framed)", "WPC – Lamination (Door Only)"] },
+                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination"] },
+                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 13, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            living_room: [
+                { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: MED_CABINET_OPTS },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MED_CABINET_OPTS },
+                { id: 19, name: "Living & Dining Room Partition", options: MED_PARTITION },
+                { id: 20, name: "Living Room Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 71, name: "Wall Panelling with Hidden Door", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 21, name: "Staircase Bottom", options: MED_CABINET_OPTS },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: MED_PARTITION },
+                { id: 22, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            prayer_unit: [
+                { id: 74, name: "Prayer Unit Wall Panel", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 75, name: "Prayer Unit Bottom Cabinet", options: MED_CABINET_OPTS }
+            ],
+            bedroom: [
+                { id: 25, name: "Wardrobe", options: MED_CABINET_OPTS },
+                { id: 27, name: "Bed back wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 28, name: "King Size Bed", options: MED_BED_OPTS },
+                { id: 280, name: "Queen Size Bed", options: MED_BED_OPTS },
+                { id: 29, name: "Bay window", options: MED_CABINET_OPTS },
+                { id: 30, name: "Dressing unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 31, name: "Dressing unit bottom cabinet", options: MED_DRESSING_BOTTOM_OPTS },
+                { id: 32, name: "Tv unit-wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 33, name: "Tv unit-bottom cabinet", options: MED_CABINET_OPTS },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MED_CABINET_OPTS },
+                { id: 65, name: "SIDE CABINET", options: MED_CABINET_OPTS },
+                { id: 66, name: "CUPBOARD 1", options: MED_CABINET_OPTS },
+                { id: 67, name: "CUPBOARD 2", options: MED_CABINET_OPTS },
+                { id: 68, name: "LOFT 1", options: MED_CABINET_OPTS },
+                { id: 69, name: "LOFT 2", options: MED_CABINET_OPTS },
+                { id: 70, name: "WALL PANNELING", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 72, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            dining_room: [
+                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
+                { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 39, name: "Dining room crockery unit", options: MED_CABINET_OPTS },
+                { id: 370, name: "Beam Covering", options: ["Marine Ply – Lamination", "Wall Panel Lamination"] },
+                { id: 40, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            musical_room: [
+                { id: 80, name: "WALL PANEL", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
+                { id: 81, name: "MUSICAL TABLE", options: MED_CABINET_BOX_ONLY }
+            ],
+            study_room: [
+                { id: 85, name: "BOOK SHELF", options: MED_CABINET_OPTS },
+                { id: 86, name: "STUDY TABLE", options: MED_CABINET_BOX_ONLY },
+                { id: 87, name: "STUDY TABLE TOP BOX", options: MED_CABINET_OPTS },
+                { id: 88, name: "COMPUTER TABLE", options: MED_CABINET_BOX_ONLY }
+            ],
+            toilet_area: [
+                { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] }
+            ],
+            store_room: [
+                { id: 44, name: "Store room cupboard", options: MED_CABINET_OPTS }
+            ],
+            sitout: [
+                { id: 46, name: "Chappal stand", options: MED_CABINET_OPTS },
+                { id: 47, name: "Sit out area wall panelling", options: MED_CABINET_OPTS }
+            ],
+            false_celling: [
+                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            profile_glass_door: [
+                { id: 101, name: "Kitchen glass profile door", options: ["Profile Glass Door"] },
+                { id: 102, name: "Bedroom glass profile door", options: ["Profile Glass Door"] },
+                { id: 103, name: "Tv-unit glass profile door", options: ["Profile Glass Door"] },
+                { id: 104, name: "Crockery unit glass profile door", options: ["Profile Glass Door"] }
+            ]
+        };
+
         for (const room in ROOM_ITEMS) {
             ROOM_ITEMS[room].forEach(item => {
+                if (item.name) item.name = item.name.toUpperCase();
+            });
+        }
+
+        for (const room in ROOM_ITEMS_MEDIUM) {
+            ROOM_ITEMS_MEDIUM[room].forEach(item => {
                 if (item.name) item.name = item.name.toUpperCase();
             });
         }
@@ -2266,8 +2391,11 @@
             });
         }
 
-        const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
-        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || [];
+        const quoteMode = sessionStorage.getItem('pks_quote_mode') || localStorage.getItem('pks_quote_mode') ||
+            ((sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true' ? 'economy' : 'premium');
+        const isEconomyMode = quoteMode === 'economy';
+        const isMediumMode = quoteMode === 'medium';
+        let BASE_ITEMS = (isMediumMode ? ROOM_ITEMS_MEDIUM[selectedRoom] : (isEconomyMode ? ROOM_ITEMS_ECONOMY[selectedRoom] : ROOM_ITEMS[selectedRoom])) || [];
 
         /* ---------- Data Loaders ---------- */
         function getStoredRoomRates() {
@@ -2287,7 +2415,11 @@
         }
 
         function getRoomRatesKey(divId, isEco, roomId) {
-            const mode = isEco ? 'economy' : 'premium';
+            let mode = 'premium';
+            if (isEco === true || isEco === 'economy') mode = 'economy';
+            else if (isEco === 'medium') mode = 'medium';
+            else if (typeof isEco === 'string') mode = isEco;
+            else mode = quoteMode;
             const cleanDivId = (divId || 'marketing').toLowerCase();
             return `${cleanDivId}_${mode}_${roomId}`;
         }
@@ -2334,18 +2466,22 @@
 
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
             const divId = (divisionId || selectedDivision || 'marketing').toLowerCase();
-            const eco = (isEco !== undefined ? isEco : isEconomyMode);
+            let activeMode = 'premium';
+            if (isEco === true || isEco === 'economy') activeMode = 'economy';
+            else if (isEco === 'medium') activeMode = 'medium';
+            else if (typeof isEco === 'string') activeMode = isEco;
+            else activeMode = quoteMode;
             const room = (roomId || selectedRoom || 'kitchen').toLowerCase();
 
             const allRoomRates = getStoredRoomRates();
-            const modeStr = eco ? 'economy' : 'premium';
-            const otherModeStr = eco ? 'premium' : 'economy';
 
             const candidateKeys = [
-                `${divId}_${modeStr}_${room}`,
-                `${divId}_${otherModeStr}_${room}`,
-                `marketing_${modeStr}_${room}`,
-                `marketing_${otherModeStr}_${room}`
+                `${divId}_${activeMode}_${room}`,
+                `${divId}_premium_${room}`,
+                `${divId}_medium_${room}`,
+                `${divId}_economy_${room}`,
+                `marketing_${activeMode}_${room}`,
+                `marketing_premium_${room}`
             ];
 
             const aliases = [room];
@@ -2403,8 +2539,9 @@
 
         function getRoomMaterials(roomId) {
             const premItems = ROOM_ITEMS[roomId] || [];
+            const medItems = ROOM_ITEMS_MEDIUM[roomId] || [];
             const ecoItems = ROOM_ITEMS_ECONOMY[roomId] || [];
-            const allRoomItems = [...premItems, ...ecoItems];
+            const allRoomItems = [...premItems, ...medItems, ...ecoItems];
             const deletedItems = getDeletedStandardItems();
             const deletedMats = getDeletedStandardMaterials();
 
@@ -2493,6 +2630,47 @@
         let currentRates = getRates();
         let customMaterials = getCustomMaterials();
         let customItems = getCustomItems();
+        let adminDivision = 'marketing';
+        let adminRateMode = 'premium';
+
+        function updateAdminDivisionDropdown() {
+            const select = document.getElementById('adminDivisionSelect');
+            if (!select) return;
+            select.innerHTML = '';
+            DIVISIONS.forEach(div => {
+                const opt = document.createElement('option');
+                opt.value = div.id;
+                opt.textContent = `${div.icon || '🏢'} ${div.name}`;
+                if (div.id === adminDivision) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function setAdminDivision(divId) {
+            adminDivision = divId;
+            const divObj = DIVISIONS.find(d => d.id === divId);
+            const divName = divObj ? divObj.name : (divId.charAt(0).toUpperCase() + divId.slice(1));
+            const badge = document.getElementById('divisionBadge');
+            if (badge) badge.textContent = divName;
+            renderRatesTable();
+        }
+
+        function setAdminRateMode(mode) {
+            adminRateMode = mode;
+            ['premium', 'medium', 'economy'].forEach(m => {
+                const btn = document.getElementById(`modeBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.style.background = 'var(--accent)';
+                        btn.style.color = 'var(--bg)';
+                    } else {
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--text)';
+                    }
+                }
+            });
+            renderRatesTable();
+        }
 
         /* ---------- UI Actions ---------- */
         function switchTab(tabId, btnEl) {
@@ -2535,18 +2713,19 @@
         }
 
         function getRoomItemsForRates(roomId) {
-            // Merge premium and economy items, deduplicate by id
+            // Merge premium, medium, and economy items, deduplicate by id
             const premItems = ROOM_ITEMS[roomId] || [];
+            const medItems = ROOM_ITEMS_MEDIUM[roomId] || [];
             const ecoItems = ROOM_ITEMS_ECONOMY[roomId] || [];
             const seen = new Set();
             const merged = [];
-            [...premItems, ...ecoItems].forEach(item => {
+            [...premItems, ...medItems, ...ecoItems].forEach(item => {
                 if (!seen.has(item.id)) {
                     seen.add(item.id);
-                    // Merge options from both premium and economy
                     const premOpts = (ROOM_ITEMS[roomId] || []).find(i => i.id === item.id)?.options || [];
+                    const medOpts = (ROOM_ITEMS_MEDIUM[roomId] || []).find(i => i.id === item.id)?.options || [];
                     const ecoOpts = (ROOM_ITEMS_ECONOMY[roomId] || []).find(i => i.id === item.id)?.options || [];
-                    const allOpts = [...new Set([...premOpts, ...ecoOpts])];
+                    const allOpts = [...new Set([...premOpts, ...medOpts, ...ecoOpts])];
                     merged.push({ id: item.id, name: item.name, options: allOpts });
                 }
             });
@@ -2558,6 +2737,8 @@
             if (!container) return;
             container.innerHTML = '';
 
+            updateAdminDivisionDropdown();
+
             const allRoomRates = getStoredRoomRates();
             const deletedItems = getDeletedStandardItems();
             const deletedMats = getDeletedStandardMaterials();
@@ -2565,7 +2746,7 @@
             ROOMS.forEach(room => {
                 const roomId = room.id;
                 const roomName = room.name;
-                const roomKey = getRoomRatesKey(selectedDivision, isEconomyMode, roomId);
+                const roomKey = getRoomRatesKey(adminDivision, adminRateMode, roomId);
                 const storedRates = allRoomRates[roomKey] || {};
 
                 const roomItems = getRoomItemsForRates(roomId).filter(item => !deletedItems.includes(item.id));
@@ -2598,7 +2779,7 @@
                                 // Priority: item-specific stored → room-level stored → default
                                 const rateVal = storedRates[itemKey] !== undefined
                                     ? storedRates[itemKey]
-                                    : getRateForMaterial(label, roomId, selectedDivision, isEconomyMode, itemId);
+                                    : getRateForMaterial(label, roomId, adminDivision, adminRateMode, itemId);
                                 const esc = label.replace(/"/g, '&quot;');
                                 rowsHtml += `
                                     <tr>
@@ -2666,7 +2847,7 @@
                 const itemId = input.dataset.itemId;
                 const mat = input.dataset.material;
                 const val = parseFloat(input.value) || 0;
-                const roomKey = getRoomRatesKey(selectedDivision, isEconomyMode, roomId);
+                const roomKey = getRoomRatesKey(adminDivision, adminRateMode, roomId);
                 if (!allRoomRates[roomKey]) allRoomRates[roomKey] = {};
                 // Store as itemId::material for item-specific lookup
                 allRoomRates[roomKey][`${itemId}::${mat}`] = val;
@@ -2674,7 +2855,7 @@
 
             localStorage.setItem('pks_room_rates', JSON.stringify(allRoomRates));
             currentRates = getRates();
-            showToast('All rates saved successfully!');
+            showToast(`All rates for ${adminDivision.toUpperCase()} - ${adminRateMode.toUpperCase()} saved successfully!`);
         }
 
         // Auto-save a single rate input silently (called on every input change)
@@ -2686,7 +2867,7 @@
             if (!roomId || !itemId || !mat) return;
 
             const allRoomRates = getStoredRoomRates();
-            const roomKey = getRoomRatesKey(selectedDivision, isEconomyMode, roomId);
+            const roomKey = getRoomRatesKey(adminDivision, adminRateMode, roomId);
             if (!allRoomRates[roomKey]) allRoomRates[roomKey] = {};
             allRoomRates[roomKey][`${itemId}::${mat}`] = val;
             localStorage.setItem('pks_room_rates', JSON.stringify(allRoomRates));
