@@ -484,7 +484,7 @@
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) return parsed;
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
                 } catch (e) {
                     console.error("Error parsing divisions, using defaults", e);
                 }
@@ -495,12 +495,11 @@
 
         const DIVISIONS = getDivisions();
 
-        // Determine role from sessionStorage
-        const role = sessionStorage.getItem('pks_role');
-
-        // If no role set, go back to login
+        // Determine role from sessionStorage or localStorage
+        let role = sessionStorage.getItem('pks_role') || localStorage.getItem('pks_role');
         if (!role) {
-            location.href = 'index.html';
+            role = 'employee';
+            sessionStorage.setItem('pks_role', 'employee');
         }
 
         // If admin, they bypass rooms.html completely now, redirect them to admin.html
