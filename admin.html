@@ -951,7 +951,7 @@
                     <span class="role-badge" id="divisionBadge"
                         style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
                     <span class="role-badge" id="roomBadge"
-                        style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
+                        style="background:var(--accent);color:#030805;border-color:var(--accent);display:inline-block;">ALL ROOMS</span>
                 </h1>
             </div>
         </div>
@@ -963,6 +963,15 @@
     </header>
 
 
+
+    <!-- Room Selector Tabs -->
+    <div class="room-tabs-container-wrapper"
+        style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
+        <div class="room-tabs-container">
+            <div class="room-tabs-title">Select Room</div>
+            <div class="room-tabs" id="roomTabs"></div>
+        </div>
+    </div>
 
     <div class="layout">
         <div class="sidebar">
@@ -2649,10 +2658,9 @@
 
             const roomBadgeEl = document.getElementById('roomBadge');
             if (roomBadgeEl) {
-                if (tabId === 'rates' || tabId === 'add-div' || tabId === 'add-room' || tabId === 'settings' || tabId === 'quotes-folder') {
-                    roomBadgeEl.style.display = 'none';
-                } else {
-                    roomBadgeEl.style.display = 'inline-block';
+                roomBadgeEl.style.display = 'inline-block';
+                if (tabId === 'rates') {
+                    roomBadgeEl.textContent = 'ALL ROOMS';
                 }
             }
 
@@ -3307,19 +3315,16 @@
             localStorage.setItem('pks_selected_room', roomId);
             localStorage.setItem('pks_selected_room_name', roomName);
 
+            const roomBadge = document.getElementById('roomBadge');
+            if (roomBadge) {
+                roomBadge.textContent = roomName.toUpperCase();
+            }
+
             const rawItems = ROOM_ITEMS[selectedRoom] || [];
             BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
             currentRates = getRates();
             customMaterials = getCustomMaterials();
             customItems = getCustomItems();
-
-            document.getElementById('roomBadge').textContent = selectedRoomName;
-
-            // Toggle Floor and Room selectors for all rooms
-            const selectorsWrap = document.getElementById('floorSelectorsWrap');
-            if (selectorsWrap) {
-                selectorsWrap.style.display = 'flex';
-            }
 
             renderRoomTabs();
 
@@ -4148,6 +4153,7 @@
 
         // Setup dynamic tabs and panels safely
         try {
+            renderRoomTabs();
             renderRatesTable();
             initializeDefaultSpecsIfNeeded();
         } catch (err) {
