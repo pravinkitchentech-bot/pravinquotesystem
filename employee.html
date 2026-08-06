@@ -1058,8 +1058,25 @@
                             <th>Size</th>
                             <th class="num" id="sqftHeader" style="display:none;">Sq.Ft</th>
                             <th class="num" id="rateHeader" style="display:none;">Rate</th>
-                            <th class="num">Price</th>
-                            <th class="num" style="color:#b07d2e;">Offer Price</th>
+                            <th class="num" style="position:relative;">
+                                <span>Price</span>
+                                <button type="button" class="header-price-btn no-print" onclick="toggleHeaderPriceMenu(event)" title="Increase Total Price (+5%, +10%, +20%)" style="background:rgba(40,167,69,0.25); border:1px solid #28a745; color:#28a745; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬆️</button>
+                                <div id="headerPriceMenu" class="no-print" style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #28a745; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
+                                    <div style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">Increase Total</div>
+                                    <button type="button" onclick="applyGlobalOfferPct(5)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+5%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(10)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+10%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(20)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+20%</button>
+                                </div>
+                            </th>
+                            <th class="num" style="color:#b07d2e; position:relative;">
+                                <span>Offer Price</span>
+                                <button type="button" class="header-offer-btn no-print" onclick="toggleHeaderOfferMenu(event)" title="Discount Total Price (-5%, -10%)" style="background:rgba(220,53,69,0.25); border:1px solid #dc3545; color:#dc3545; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬇️</button>
+                                <div id="headerOfferMenu" class="no-print" style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #dc3545; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
+                                    <div style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">Discount Total</div>
+                                    <button type="button" onclick="applyGlobalOfferPct(-5)" style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-5%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(-10)" style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-10%</button>
+                                </div>
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -1311,6 +1328,7 @@
                 { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
                 { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
                 { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
+                { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true },
                 { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
                 { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
             ];
@@ -1325,6 +1343,16 @@
                             const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
                             if (accIdx !== -1) {
                                 parsed.splice(accIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            updated = true;
+                        }
+                        if (!parsed.some(r => r.id === 'passage_celling')) {
+                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
+                            const newRoom = { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true };
+                            if (fcIdx !== -1) {
+                                parsed.splice(fcIdx + 1, 0, newRoom);
                             } else {
                                 parsed.push(newRoom);
                             }
@@ -2561,7 +2589,7 @@
             const aliases = [room];
             if (room === 'dining_room' || room === 'dinning_room') aliases.push('dining_room', 'dinning_room', 'dining', 'dinning');
             if (room === 'profile_glass_door') aliases.push('profile_glass_door', 'profile_glass', 'profile_door');
-            if (room === 'false_celling') aliases.push('false_celling', 'false_ceiling', 'celling', 'ceiling');
+            if (room === 'false_celling' || room === 'passage_celling') aliases.push('false_celling', 'passage_celling', 'false_ceiling', 'passage_ceiling', 'celling', 'ceiling');
 
             aliases.forEach(rAlias => {
                 if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
@@ -2752,7 +2780,21 @@
                 { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
                 { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
                 { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
-                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
+            ],
+            passage_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -2954,7 +2996,21 @@
                 { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
                 { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
                 { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
-                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
+            ],
+            passage_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -3050,7 +3106,7 @@
                         let formula;
                         let fields = m.fields || [];
                         let note = m.note || '';
-                        const isFalseCelling = selectedRoom === 'false_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(item.id);
+                        const isFalseCelling = selectedRoom === 'false_celling' || selectedRoom === 'passage_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100].includes(item.id);
 
                         if (m.formulaType === "L*H") { formula = v => (v.L * v.H) / 144; }
                         else if (m.formulaType === "L*W" || isFalseCelling) { formula = v => (v.L * v.W) / 144; if (isFalseCelling && (!fields || fields.length === 0)) { fields = ["L", "W"]; note = "L×W/144"; } }
@@ -4180,9 +4236,9 @@
             }
 
             // Separate room lines from accessory lines
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
-            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling'));
 
             // ── Kitchen auto-accessories (Profile Handle + Hinges per lakh) ──
             const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
@@ -4220,10 +4276,9 @@
                                 onfocus="this.style.borderColor='#b07d2e'; this.style.boxShadow='0 0 6px rgba(176,125,46,0.3)'"
                                 onblur="this.style.borderColor='rgba(176,125,46,0.35)'; this.style.boxShadow='none'">
                         </div>
-                        <div style="display:flex; gap:2px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
-                            <button onclick="applyOfferPct(${l.id}, 5)" title="+5% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+5%</button>
-                            <button onclick="applyOfferPct(${l.id}, 10)" title="+10% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+10%</button>
-                            <button onclick="applyOfferPct(${l.id}, 20)" title="+20% markup" style="padding:1px 4px; font-size:0.63rem; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.35); color:#28a745; border-radius:3px; cursor:pointer; font-weight:700;">+20%</button>
+                        <div style="display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end;" class="no-print">
+                            <button type="button" onclick="applyOfferPct(${l.id}, -5)" title="-5% discount" style="padding:1px 5px; font-size:0.65rem; background:rgba(220,53,69,0.12); border:1px solid rgba(220,53,69,0.35); color:#dc3545; border-radius:3px; cursor:pointer; font-weight:700;">-5%</button>
+                            <button type="button" onclick="applyOfferPct(${l.id}, -10)" title="-10% discount" style="padding:1px 5px; font-size:0.65rem; background:rgba(220,53,69,0.12); border:1px solid rgba(220,53,69,0.35); color:#dc3545; border-radius:3px; cursor:pointer; font-weight:700;">-10%</button>
                         </div>
                     </div>
                 </td>`;
@@ -4250,7 +4305,12 @@
                     html += `
                         <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                             <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
-                                🏠 ${roomName}
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>🏠 ${roomName}</span>
+                                    <button type="button" class="no-print" onclick="goToRoomForLine('${lines[0].roomId}', '${roomName}')" style="background: rgba(176,125,46,0.25); border: 1px solid #b07d2e; color: #e5b869; padding: 2px 10px; border-radius: 4px; font-size: 0.73rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-transform: none; letter-spacing: 0;">
+                                        ➕ Add More
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -4292,6 +4352,17 @@
                             </tr>
                         `;
                     });
+
+                    // Room group bottom action row
+                    html += `
+                        <tr class="room-bottom-row no-print" style="background: rgba(176, 125, 46, 0.04); border-bottom: 1px dashed rgba(176, 125, 46, 0.3);">
+                            <td colspan="${totalCols}" style="padding: 6px 14px; text-align: right;">
+                                <button type="button" onclick="goToRoomForLine('${lines[0].roomId}', '${roomName}')" style="background: rgba(176,125,46,0.18); border: 1px solid #b07d2e; color: #e5b869; padding: 4px 14px; border-radius: 4px; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;" onmouseover="this.style.background='rgba(176,125,46,0.35)'" onmouseout="this.style.background='rgba(176,125,46,0.18)'">
+                                    ➕ Add More items to ${roomName}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 });
             }
 
@@ -4504,6 +4575,83 @@
             body.innerHTML = html;
             updatePaymentSplits();
         }
+
+        function goToRoomForLine(roomId, roomName) {
+            let targetRoom = ROOMS.find(r => r.id === roomId);
+            if (!targetRoom && roomName) {
+                const cleanName = roomName.replace(/^(GROUND|FIRST|SECOND)\s+FLOOR\s*-\s*/i, '').trim();
+                targetRoom = ROOMS.find(r => cleanName.toLowerCase().includes(r.id.toLowerCase()) || r.name.toLowerCase().includes(cleanName.toLowerCase()));
+            }
+            const rId = targetRoom ? targetRoom.id : (roomId || 'kitchen');
+            const rName = targetRoom ? getRoomDisplayName(targetRoom) : (roomName || 'Kitchen');
+
+            if (roomName) {
+                const floorMatch = roomName.match(/(Ground|First|Second)\s+Floor/i);
+                if (floorMatch) {
+                    const floorSel = document.getElementById('floorSelector');
+                    if (floorSel) {
+                        const floorVal = floorMatch[1].charAt(0).toUpperCase() + floorMatch[1].slice(1).toLowerCase() + ' Floor';
+                        floorSel.value = floorVal;
+                    }
+                }
+                const numMatch = roomName.match(/\b([1-3])\b/);
+                if (numMatch) {
+                    const roomNoSel = document.getElementById('roomNoSelector');
+                    if (roomNoSel) roomNoSel.value = numMatch[1];
+                }
+            }
+
+            updateRoomState(rId, rName);
+
+            const targetEl = document.getElementById('itemsGrid') || document.querySelector('.room-tabs-container');
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleHeaderPriceMenu(e) {
+            if (e) e.stopPropagation();
+            const priceMenu = document.getElementById('headerPriceMenu');
+            const offerMenu = document.getElementById('headerOfferMenu');
+            if (offerMenu) offerMenu.style.display = 'none';
+            if (priceMenu) {
+                priceMenu.style.display = priceMenu.style.display === 'flex' ? 'none' : 'flex';
+            }
+        }
+
+        function toggleHeaderOfferMenu(e) {
+            if (e) e.stopPropagation();
+            const priceMenu = document.getElementById('headerPriceMenu');
+            const offerMenu = document.getElementById('headerOfferMenu');
+            if (priceMenu) priceMenu.style.display = 'none';
+            if (offerMenu) {
+                offerMenu.style.display = offerMenu.style.display === 'flex' ? 'none' : 'flex';
+            }
+        }
+
+        function applyGlobalOfferPct(pct) {
+            if (quoteLines.length === 0) return;
+            isQuoteDirty = true;
+            quoteLines.forEach(l => {
+                l.offerPrice = Math.round(l.amount * (1 + pct / 100));
+            });
+            renderQuote();
+            const priceMenu = document.getElementById('headerPriceMenu');
+            const offerMenu = document.getElementById('headerOfferMenu');
+            if (priceMenu) priceMenu.style.display = 'none';
+            if (offerMenu) offerMenu.style.display = 'none';
+        }
+
+        document.addEventListener('click', (e) => {
+            const priceMenu = document.getElementById('headerPriceMenu');
+            const offerMenu = document.getElementById('headerOfferMenu');
+            if (priceMenu && !priceMenu.contains(e.target) && !e.target.classList.contains('header-price-btn')) {
+                priceMenu.style.display = 'none';
+            }
+            if (offerMenu && !offerMenu.contains(e.target) && !e.target.classList.contains('header-offer-btn')) {
+                offerMenu.style.display = 'none';
+            }
+        });
 
         function applyOfferPct(lineId, pct) {
             const line = quoteLines.find(l => l.id === lineId);
