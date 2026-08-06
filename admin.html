@@ -1427,46 +1427,12 @@
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         let updated = false;
-                        if (!parsed.some(r => r.id === 'false_celling')) {
-                            const accIdx = parsed.findIndex(r => r.id === 'accessories');
-                            const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
-                            if (accIdx !== -1) {
-                                parsed.splice(accIdx, 0, newRoom);
-                            } else {
-                                parsed.push(newRoom);
+                        DEFAULT_ROOMS.forEach(defRoom => {
+                            if (!parsed.some(r => r && (r.id === defRoom.id || (defRoom.id === 'teak_wood' && r.name && r.name.toLowerCase().includes('teak'))))) {
+                                parsed.push({ ...defRoom });
+                                updated = true;
                             }
-                            updated = true;
-                        }
-                        if (!parsed.some(r => r.id === 'passage_celling')) {
-                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
-                            const newRoom = { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true };
-                            if (fcIdx !== -1) {
-                                parsed.splice(fcIdx + 1, 0, newRoom);
-                            } else {
-                                parsed.push(newRoom);
-                            }
-                            updated = true;
-                        }
-                        if (!parsed.some(r => r.id === 'teak_wood' || (r.name && r.name.toLowerCase().includes('teak')))) {
-                            const fcIdx = parsed.findIndex(r => r.id === 'passage_celling' || r.id === 'false_celling');
-                            const newRoom = { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true };
-                            if (fcIdx !== -1) {
-                                parsed.splice(fcIdx + 1, 0, newRoom);
-                            } else {
-                                parsed.push(newRoom);
-                            }
-                            updated = true;
-                        }
-                        if (!parsed.some(r => r.id === 'profile_glass_door')) {
-                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
-                            const newRoom = { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true };
-                            if (fcIdx !== -1) {
-                                parsed.splice(fcIdx, 0, newRoom);
-                            } else {
-                                parsed.push(newRoom);
-                            }
-                            updated = true;
-                        }
+                        });
                         if (updated) {
                             localStorage.setItem('pks_rooms', JSON.stringify(parsed));
                         }
@@ -2807,20 +2773,25 @@
 
                         let rowsHtml = '';
                         if (opts.length === 0) {
-                            rowsHtml = `<tr><td colspan="2" style="color:var(--muted);font-style:italic;padding:10px 16px;font-size:0.82rem;">No materials for this item.</td></tr>`;
+                            rowsHtml = `<tr><td colspan="3" style="color:var(--muted);font-style:italic;padding:10px 16px;font-size:0.82rem;">No materials for this item.</td></tr>`;
                         } else {
                             opts.forEach(opt => {
                                 const label = typeof opt === 'string' ? opt : (opt && opt.label ? opt.label : '');
                                 if (!label) return;
                                 const itemKey = `${itemId}::${label}`;
-                                // Priority: item-specific stored → room-level stored → default
                                 const rateVal = storedRates[itemKey] !== undefined
                                     ? storedRates[itemKey]
                                     : getRateForMaterial(label, roomId, adminDivision, adminRateMode, itemId);
                                 const esc = label.replace(/"/g, '&quot;');
+                                const fInfo = getMaterialFormulaInfo(itemId, opt);
                                 rowsHtml += `
                                     <tr>
                                         <td style="font-size:0.85rem;">${label}</td>
+                                        <td>
+                                            <button onclick="editMaterialFormula(${itemId}, ${JSON.stringify(label).replace(/"/g, '&quot;')})" title="Click to edit formula" style="font-size:0.72rem; padding:3px 8px; background:rgba(176,125,46,0.1); border:1px solid rgba(176,125,46,0.3); color:var(--text); border-radius:4px; cursor:pointer; font-weight:600;">
+                                                ⚙️ ${fInfo.formulaType} (${fInfo.note})
+                                            </button>
+                                        </td>
                                         <td><input type="number" min="0"
                                             data-room="${roomId}"
                                             data-item-id="${itemId}"
@@ -2846,6 +2817,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Material</th>
+                                                <th>Formula</th>
                                                 <th>Rate (₹/sq.ft)</th>
                                             </tr>
                                         </thead>
@@ -2977,6 +2949,80 @@
             }
         }
 
+        function getMaterialFormulaInfo(itemId, opt, defaultType) {
+            const label = typeof opt === 'string' ? opt : (opt && opt.label ? opt.label : '');
+            let customFormulas = {};
+            try {
+                customFormulas = JSON.parse(localStorage.getItem('pks_material_formulas')) || {};
+            } catch (e) { }
+
+            const key = `${itemId}-${label}`;
+            let formulaType = customFormulas[key] || customFormulas[label];
+
+            if (!formulaType) {
+                if (typeof opt === 'object' && opt.formulaType) {
+                    formulaType = opt.formulaType;
+                } else if (defaultType) {
+                    formulaType = defaultType;
+                } else {
+                    formulaType = getStandardFormulaInfo(itemId, label).formulaType;
+                }
+            }
+
+            if (formulaType === "L*H") {
+                return { fields: ["L", "H"], formulaType: "L*H", note: "L×H/144" };
+            }
+            if (formulaType === "L*W") {
+                return { fields: ["L", "W"], formulaType: "L*W", note: "L×W/144" };
+            }
+            if (formulaType === "SQFT") {
+                return { fields: ["SQFT"], formulaType: "SQFT", note: "direct sq.ft" };
+            }
+            if (formulaType === "QTY") {
+                return { fields: ["QTY"], formulaType: "QTY", note: "qty" };
+            }
+            return { fields: ["L", "W", "H"], formulaType: "(L+W)*H", note: "(L+W)×H/144" };
+        }
+
+        function editMaterialFormula(itemId, label) {
+            let customFormulas = {};
+            try {
+                customFormulas = JSON.parse(localStorage.getItem('pks_material_formulas')) || {};
+            } catch (e) { }
+
+            const key = `${itemId}-${label}`;
+            const fInfo = getMaterialFormulaInfo(itemId, label);
+            const current = fInfo.formulaType;
+
+            const choice = prompt(
+                `Edit Calculation Formula for "${label}":\n\n` +
+                `Current Formula: ${current} (${fInfo.note})\n\n` +
+                `Choose Formula Type:\n` +
+                `1 : (L+W)×H / 144  [Length, Width, Height]\n` +
+                `2 : L×H / 144      [Length, Height]\n` +
+                `3 : L×W / 144      [Length, Width]\n` +
+                `4 : SQFT            [Direct Sq.Ft]\n` +
+                `5 : QTY             [Direct Quantity]`,
+                "1"
+            );
+
+            if (!choice) return;
+            const trimmed = choice.trim().toUpperCase();
+            let type = "(L+W)*H";
+            if (trimmed === "2" || trimmed === "L*H" || trimmed === "L*H/144") type = "L*H";
+            else if (trimmed === "3" || trimmed === "L*W" || trimmed === "L*W/144") type = "L*W";
+            else if (trimmed === "4" || trimmed === "SQFT") type = "SQFT";
+            else if (trimmed === "5" || trimmed === "QTY") type = "QTY";
+            else type = "(L+W)*H";
+
+            customFormulas[key] = type;
+            localStorage.setItem('pks_material_formulas', JSON.stringify(customFormulas));
+            showToast(`Formula updated to "${type}" for "${label}"`);
+            renderCurrentItemsList();
+            renderCustomItemsList();
+            renderRatesTable();
+        }
+
         function renderCurrentItemsList() {
             const container = document.getElementById('currentItemsList');
             container.innerHTML = '';
@@ -2988,23 +3034,31 @@
 
                 // Get standard list (filter deleted)
                 let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
-                let matTags = filteredOptions.map(opt => `
-                    <span class="tag-pill">
-                        ${opt}
-                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt).replace(/"/g, '&quot;')}, 'standard')" title="Rename">✎</button>
-                        <button onclick="removeStandardMaterial(${item.id}, ${JSON.stringify(opt).replace(/"/g, '&quot;')})">✕</button>
-                    </span>
-                `).join('');
+                let matTags = filteredOptions.map(opt => {
+                    const label = typeof opt === 'string' ? opt : opt.label;
+                    const fInfo = getMaterialFormulaInfo(item.id, label);
+                    return `
+                    <span class="tag-pill" title="Formula: ${fInfo.note}">
+                        ${label} <small style="opacity:0.8; font-weight:bold; font-size:0.68rem; color:var(--accent);">(${fInfo.formulaType})</small>
+                        <button class="rename-btn" onclick="editMaterialFormula(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')})" title="Edit Formula">⚙️</button>
+                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')}, 'standard')" title="Rename">✎</button>
+                        <button onclick="removeStandardMaterial(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')})" title="Remove">✕</button>
+                    </span>`;
+                }).join('');
 
                 // Custom materials for this item (allow for all cards)
                 const customList = customMaterials[item.id] || [];
-                let customTags = customList.map((m, index) => `
-                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${m.label}
-                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(m.label).replace(/"/g, '&quot;')}, 'custom-standard', null, ${index})" title="Rename">✎</button>
-                        <button onclick="removeCustomMaterial(${item.id}, ${index})">✕</button>
-                    </span>
-                `).join('');
+                let customTags = customList.map((m, index) => {
+                    const label = m.label;
+                    const fInfo = getMaterialFormulaInfo(item.id, label, m.formulaType);
+                    return `
+                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);" title="Formula: ${fInfo.note}">
+                        ${label} <small style="opacity:0.8; font-weight:bold; font-size:0.68rem;">(${fInfo.formulaType})</small>
+                        <button class="rename-btn" onclick="editMaterialFormula(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')})" title="Edit Formula">⚙️</button>
+                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')}, 'custom-standard', null, ${index})" title="Rename">✎</button>
+                        <button onclick="removeCustomMaterial(${item.id}, ${index})" title="Remove">✕</button>
+                    </span>`;
+                }).join('');
 
                 div.innerHTML = `
                     <div class="item-manage-card-header">
@@ -3024,13 +3078,17 @@
                     const div = document.createElement('div');
                     div.className = 'item-manage-card';
 
-                    let optTags = item.options.map((opt, optIdx) => `
-                        <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                            ${opt.label}
-                            <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt.label).replace(/"/g, '&quot;')}, 'custom-item', ${index}, ${optIdx})" title="Rename">✎</button>
-                            <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
-                        </span>
-                    `).join('');
+                    let optTags = item.options.map((opt, optIdx) => {
+                        const label = opt.label;
+                        const fInfo = getMaterialFormulaInfo(item.id, label, opt.formulaType);
+                        return `
+                        <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);" title="Formula: ${fInfo.note}">
+                            ${label} <small style="opacity:0.8; font-weight:bold; font-size:0.68rem;">(${fInfo.formulaType})</small>
+                            <button class="rename-btn" onclick="editMaterialFormula(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')})" title="Edit Formula">⚙️</button>
+                            <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(label).replace(/"/g, '&quot;')}, 'custom-item', ${index}, ${optIdx})" title="Rename">✎</button>
+                            <button onclick="removeCustomItemMaterial(${index}, ${optIdx})" title="Remove">✕</button>
+                        </span>`;
+                    }).join('');
 
                     div.innerHTML = `
                         <div class="item-manage-card-header">
