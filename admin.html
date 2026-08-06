@@ -930,7 +930,7 @@
 <body>
 
     <!-- Security Verified Success Checkmark Splash Screen -->
-    <div class="security-verified-overlay" id="securityOverlay">
+    <div class="security-verified-overlay" id="securityOverlay" onclick="this.classList.add('fade-out'); setTimeout(() => this.style.display='none', 500);">
         <div class="verified-card">
             <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                 <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
@@ -2182,20 +2182,20 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
                 { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
+                { id: 12, name: "Dining Partition", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
                 { id: 38, name: "Wash basin unit wall paneling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ECO_CABINET_OPTS },
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ECO_CABINET_OPTS },
-                { id: 19, name: "Living & Dining Room Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
+                { id: 19, name: "Living & Dining Room Partition", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 20, name: "Living Room Wall Panelling", options: ECO_WALL_PANEL },
                 { id: 71, name: "Wall Panelling with Hidden Door", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ECO_CABINET_OPTS },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)", "Engineering Wood (Partition Type)"] },
                 { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
@@ -2395,7 +2395,7 @@
             ((sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true' ? 'economy' : 'premium');
         const isEconomyMode = quoteMode === 'economy';
         const isMediumMode = quoteMode === 'medium';
-        let BASE_ITEMS = (isMediumMode ? ROOM_ITEMS_MEDIUM[selectedRoom] : (isEconomyMode ? ROOM_ITEMS_ECONOMY[selectedRoom] : ROOM_ITEMS[selectedRoom])) || [];
+        let BASE_ITEMS = (isMediumMode ? (ROOM_ITEMS_MEDIUM[selectedRoom] || []) : (isEconomyMode ? (ROOM_ITEMS_ECONOMY[selectedRoom] || []) : (ROOM_ITEMS[selectedRoom] || []))) || [];
 
         /* ---------- Data Loaders ---------- */
         function getStoredRoomRates() {
@@ -2490,10 +2490,12 @@
             if (room === 'false_celling') aliases.push('false_celling', 'false_ceiling', 'celling', 'ceiling');
 
             aliases.forEach(rAlias => {
-                if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
-                if (!candidateKeys.includes(`${divId}_${otherModeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${otherModeStr}_${rAlias}`);
-                if (!candidateKeys.includes(`marketing_${modeStr}_${rAlias}`)) candidateKeys.push(`marketing_${modeStr}_${rAlias}`);
-                if (!candidateKeys.includes(`marketing_${otherModeStr}_${rAlias}`)) candidateKeys.push(`marketing_${otherModeStr}_${rAlias}`);
+                const k1 = `${divId}_${activeMode}_${rAlias}`;
+                const k2 = `${divId}_premium_${rAlias}`;
+                const k3 = `marketing_${activeMode}_${rAlias}`;
+                if (!candidateKeys.includes(k1)) candidateKeys.push(k1);
+                if (!candidateKeys.includes(k2)) candidateKeys.push(k2);
+                if (!candidateKeys.includes(k3)) candidateKeys.push(k3);
             });
 
             // 1. Search candidate room keys
@@ -2637,7 +2639,8 @@
             const select = document.getElementById('adminDivisionSelect');
             if (!select) return;
             select.innerHTML = '';
-            DIVISIONS.forEach(div => {
+            const divs = getDivisions();
+            divs.forEach(div => {
                 const opt = document.createElement('option');
                 opt.value = div.id;
                 opt.textContent = `${div.icon || '🏢'} ${div.name}`;
@@ -2648,7 +2651,8 @@
 
         function setAdminDivision(divId) {
             adminDivision = divId;
-            const divObj = DIVISIONS.find(d => d.id === divId);
+            const divs = getDivisions();
+            const divObj = divs.find(d => d.id === divId);
             const divName = divObj ? divObj.name : (divId.charAt(0).toUpperCase() + divId.slice(1));
             const badge = document.getElementById('divisionBadge');
             if (badge) badge.textContent = divName;
@@ -2712,24 +2716,20 @@
             body.classList.toggle('open', !isOpen);
         }
 
-        function getRoomItemsForRates(roomId) {
-            // Merge premium, medium, and economy items, deduplicate by id
-            const premItems = ROOM_ITEMS[roomId] || [];
-            const medItems = ROOM_ITEMS_MEDIUM[roomId] || [];
-            const ecoItems = ROOM_ITEMS_ECONOMY[roomId] || [];
-            const seen = new Set();
-            const merged = [];
-            [...premItems, ...medItems, ...ecoItems].forEach(item => {
-                if (!seen.has(item.id)) {
-                    seen.add(item.id);
-                    const premOpts = (ROOM_ITEMS[roomId] || []).find(i => i.id === item.id)?.options || [];
-                    const medOpts = (ROOM_ITEMS_MEDIUM[roomId] || []).find(i => i.id === item.id)?.options || [];
-                    const ecoOpts = (ROOM_ITEMS_ECONOMY[roomId] || []).find(i => i.id === item.id)?.options || [];
-                    const allOpts = [...new Set([...premOpts, ...medOpts, ...ecoOpts])];
-                    merged.push({ id: item.id, name: item.name, options: allOpts });
-                }
+        function getRoomItemsForRates(roomId, mode) {
+            const activeMode = mode || adminRateMode || 'premium';
+            let source = ROOM_ITEMS;
+            if (activeMode === 'medium') source = ROOM_ITEMS_MEDIUM;
+            else if (activeMode === 'economy') source = ROOM_ITEMS_ECONOMY;
+
+            const roomItems = source[roomId] || [];
+            const extractLabel = opt => (typeof opt === 'string' ? opt : (opt && opt.label ? opt.label : ''));
+
+            return roomItems.map(item => {
+                const rawOpts = (item.options || []).map(extractLabel).filter(Boolean);
+                const opts = [...new Set(rawOpts)];
+                return { id: item.id, name: item.name, options: opts };
             });
-            return merged;
         }
 
         function renderRatesTable() {
@@ -2749,7 +2749,7 @@
                 const roomKey = getRoomRatesKey(adminDivision, adminRateMode, roomId);
                 const storedRates = allRoomRates[roomKey] || {};
 
-                const roomItems = getRoomItemsForRates(roomId).filter(item => !deletedItems.includes(item.id));
+                const roomItems = getRoomItemsForRates(roomId, adminRateMode).filter(item => !deletedItems.includes(item.id));
 
                 // Build per-item sub-sections
                 let itemSectionsHtml = '';
@@ -4174,18 +4174,34 @@
             }
         }
 
-        // Setup dynamic tabs and panels
-        updateRoomState(selectedRoom, selectedRoomName);
+        function dismissSecurityOverlay() {
+            const overlay = document.getElementById('securityOverlay');
+            if (overlay) {
+                overlay.classList.add('fade-out');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+            }
+        }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // Setup dynamic tabs and panels safely
+        try {
+            renderRatesTable();
             initializeDefaultSpecsIfNeeded();
-            setTimeout(() => {
-                const overlay = document.getElementById('securityOverlay');
-                if (overlay) {
-                    overlay.classList.add('fade-out');
-                }
-            }, 1500);
-        });
+        } catch (err) {
+            console.error("Initialization error in admin panel:", err);
+        } finally {
+            setTimeout(dismissSecurityOverlay, 600);
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(dismissSecurityOverlay, 600);
+        } else {
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(dismissSecurityOverlay, 600);
+            });
+        }
+        window.addEventListener('load', dismissSecurityOverlay);
     </script>
 
     <!-- Change Passcode Modal -->
