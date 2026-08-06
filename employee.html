@@ -3533,9 +3533,14 @@
             let formulaType = customFormulas[key] || customFormulas[label];
 
             const isCeilingItem = (itemId >= 90 && itemId <= 100) ||
-                                  (selectedRoom === 'false_celling' || selectedRoom === 'passage_celling') ||
+                                  (typeof selectedRoom !== 'undefined' && (selectedRoom === 'false_celling' || selectedRoom === 'passage_celling')) ||
                                   label.toLowerCase().includes('celling') ||
-                                  label.toLowerCase().includes('ceiling');
+                                  label.toLowerCase().includes('ceiling') ||
+                                  (typeof opt === 'object' && opt.label && (opt.label.toLowerCase().includes('celling') || opt.label.toLowerCase().includes('ceiling')));
+
+            if (isCeilingItem && !customFormulas[key] && !customFormulas[label]) {
+                return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
+            }
 
             if (!formulaType) {
                 if (isCeilingItem) {
@@ -3561,10 +3566,6 @@
             }
             if (formulaType === "(L+W)*H") {
                 return { fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", formulaType: "(L+W)*H" };
-            }
-
-            if (!isCeilingItem && typeof opt === 'object' && opt.formula && opt.fields) {
-                return { fields: opt.fields, formula: opt.formula, note: opt.note || '', formulaType: opt.formulaType || 'custom' };
             }
 
             return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
