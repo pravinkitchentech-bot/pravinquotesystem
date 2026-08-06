@@ -4101,9 +4101,53 @@
             return getCalculatedOfferTotal();
         }
 
+        function numberToWordsIndian(num) {
+            if (isNaN(num) || num === null || num === undefined) return '';
+            num = Math.round(num);
+            if (num <= 0) return 'Rupees Zero Only';
+            if (num < 0) return 'Minus ' + numberToWordsIndian(Math.abs(num));
+
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            function inWords(n) {
+                if (n < 20) return a[n];
+                const digit = n % 10;
+                return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit].trim() : '') + ' ';
+            }
+
+            let str = '';
+            const crore = Math.floor(num / 10000000);
+            num %= 10000000;
+            const lakh = Math.floor(num / 100000);
+            num %= 100000;
+            const thousand = Math.floor(num / 1000);
+            num %= 1000;
+            const hundred = Math.floor(num / 100);
+            num %= 100;
+
+            if (crore) str += inWords(crore).trim() + ' Crore ';
+            if (lakh) str += inWords(lakh).trim() + ' Lakh ';
+            if (thousand) str += inWords(thousand).trim() + ' Thousand ';
+            if (hundred) str += inWords(hundred).trim() + ' Hundred ';
+            if (num) str += (str !== '' ? 'and ' : '') + inWords(num).trim() + ' ';
+
+            return 'Rupees ' + str.trim() + ' Only';
+        }
+
+        function updateFinalAmountInWords() {
+            const finalAmount = getEffectiveFinalAmount();
+            const words = numberToWordsIndian(finalAmount);
+            const wordsTextEl = document.getElementById('finalAmountWordsText');
+            if (wordsTextEl) {
+                wordsTextEl.textContent = words;
+            }
+        }
+
         function updateFinalAmount(val) {
             customFinalAmount = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
             updatePaymentSplits();
+            updateFinalAmountInWords();
         }
 
         function renderQuote() {
