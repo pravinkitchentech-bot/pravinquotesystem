@@ -1060,21 +1060,37 @@
                             <th class="num" id="rateHeader" style="display:none;">Rate</th>
                             <th class="num" style="position:relative;">
                                 <span>Price</span>
-                                <button type="button" class="header-price-btn no-print" onclick="toggleHeaderPriceMenu(event)" title="Increase Total Price (+5%, +10%, +20%)" style="background:rgba(40,167,69,0.25); border:1px solid #28a745; color:#28a745; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬆️</button>
-                                <div id="headerPriceMenu" class="no-print" style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #28a745; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
-                                    <div style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">Increase Total</div>
-                                    <button type="button" onclick="applyGlobalOfferPct(5)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+5%</button>
-                                    <button type="button" onclick="applyGlobalOfferPct(10)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+10%</button>
-                                    <button type="button" onclick="applyGlobalOfferPct(20)" style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+20%</button>
+                                <button type="button" class="header-price-btn no-print"
+                                    onclick="toggleHeaderPriceMenu(event)"
+                                    title="Increase Total Price (+5%, +10%, +20%)"
+                                    style="background:rgba(40,167,69,0.25); border:1px solid #28a745; color:#28a745; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬆️</button>
+                                <div id="headerPriceMenu" class="no-print"
+                                    style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #28a745; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
+                                    <div
+                                        style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">
+                                        Increase Total</div>
+                                    <button type="button" onclick="applyGlobalOfferPct(5)"
+                                        style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+5%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(10)"
+                                        style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+10%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(20)"
+                                        style="background:rgba(40,167,69,0.18); border:1px solid rgba(40,167,69,0.4); color:#28a745; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">+20%</button>
                                 </div>
                             </th>
                             <th class="num" style="color:#b07d2e; position:relative;">
                                 <span>Offer Price</span>
-                                <button type="button" class="header-offer-btn no-print" onclick="toggleHeaderOfferMenu(event)" title="Discount Total Price (-5%, -10%)" style="background:rgba(220,53,69,0.25); border:1px solid #dc3545; color:#dc3545; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬇️</button>
-                                <div id="headerOfferMenu" class="no-print" style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #dc3545; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
-                                    <div style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">Discount Total</div>
-                                    <button type="button" onclick="applyGlobalOfferPct(-5)" style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-5%</button>
-                                    <button type="button" onclick="applyGlobalOfferPct(-10)" style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-10%</button>
+                                <button type="button" class="header-offer-btn no-print"
+                                    onclick="toggleHeaderOfferMenu(event)" title="Discount Total Price (-5%, -10%)"
+                                    style="background:rgba(220,53,69,0.25); border:1px solid #dc3545; color:#dc3545; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; margin-left:6px; font-weight:bold; outline:none;">⬇️</button>
+                                <div id="headerOfferMenu" class="no-print"
+                                    style="display:none; position:absolute; right:0; top:100%; background:var(--surface, #1e1e1e); border:1.5px solid #dc3545; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); z-index:9999; padding:8px; width:120px; flex-direction:column; gap:6px; text-align:left; margin-top:4px;">
+                                    <div
+                                        style="font-size:0.68rem; color:var(--muted, #aaa); text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border, #333); padding-bottom:4px; margin-bottom:2px;">
+                                        Discount Total</div>
+                                    <button type="button" onclick="applyGlobalOfferPct(-5)"
+                                        style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-5%</button>
+                                    <button type="button" onclick="applyGlobalOfferPct(-10)"
+                                        style="background:rgba(220,53,69,0.18); border:1px solid rgba(220,53,69,0.4); color:#dc3545; border-radius:4px; padding:5px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s;">-10%</button>
                                 </div>
                             </th>
                             <th></th>
@@ -1158,9 +1174,11 @@
                 <!-- Any Requirements Box (Screen Only) -->
                 <div id="requirementsBoxContainer"
                     style="margin-top: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 10px;">
-                    <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
+                    <div
+                        style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
                         Any Requirements</div>
-                    <textarea id="anyRequirements" placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
+                    <textarea id="anyRequirements"
+                        placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
                         rows="3"
                         style="width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--text); outline: none; font-family: inherit; resize: vertical; box-sizing: border-box; line-height: 1.5;"></textarea>
                 </div>
@@ -1190,8 +1208,10 @@
                 <!-- Print-Only Any Requirements -->
                 <div id="printRequirementsBox" class="print-only-specs-terms"
                     style="display: none; margin-top: 12px; page-break-inside: avoid; break-inside: avoid;">
-                    <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any Requirements:</strong>
+                    <div
+                        style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any
+                            Requirements:</strong>
                         <div id="printRequirementsText" style="white-space: pre-wrap; color: #333;"></div>
                     </div>
                 </div>
@@ -1235,14 +1255,17 @@
             style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">📁 Saved Quotes Folder</h2>
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">📁 Saved
+                    Quotes Folder</h2>
                 <button onclick="closeSavedQuotesModal()"
                     style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
             </div>
 
             <!-- Top Search Bar -->
             <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="quoteFolderSearchInput" placeholder="🔍 Search by Quotation No, Date, Customer Name, Place..." oninput="renderSavedQuotes()" style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: var(--surface2); color: var(--text);">
+                <input type="text" id="quoteFolderSearchInput"
+                    placeholder="🔍 Search by Quotation No, Date, Customer Name, Place..." oninput="renderSavedQuotes()"
+                    style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: var(--surface2); color: var(--text);">
             </div>
 
             <div style="flex: 1; min-height: 250px; overflow-x: auto;">
@@ -1265,14 +1288,21 @@
     </div>
 
     <!-- Custom Delete Confirmation Modal Popup -->
-    <div class="modal-overlay" id="deleteConfirmModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px 30px; width: 90%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; gap: 16px;">
+    <div class="modal-overlay" id="deleteConfirmModal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div
+            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px 30px; width: 90%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; gap: 16px;">
             <div style="font-size: 2.2rem; line-height: 1;">⚠️</div>
             <h3 style="margin: 0; color: var(--text); font-size: 1.2rem;">Delete Quotation</h3>
-            <p id="deleteConfirmText" style="margin: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.4;">Are you sure you want to delete this quote?</p>
+            <p id="deleteConfirmText" style="margin: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.4;">Are
+                you sure you want to delete this quote?</p>
             <div style="display: flex; gap: 12px; justify-content: center; margin-top: 8px;">
-                <button id="confirmDeleteYesBtn" onclick="executePendingDelete()" style="flex: 1; padding: 10px; background: var(--danger); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Yes, Delete</button>
-                <button onclick="closeDeleteConfirmModal()" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">No, Cancel</button>
+                <button id="confirmDeleteYesBtn" onclick="executePendingDelete()"
+                    style="flex: 1; padding: 10px; background: var(--danger); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Yes,
+                    Delete</button>
+                <button onclick="closeDeleteConfirmModal()"
+                    style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">No,
+                    Cancel</button>
             </div>
         </div>
     </div>
@@ -1280,7 +1310,7 @@
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || localStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || localStorage.getItem('pks_selected_division_name') || 'Marketing';
-        const quoteMode = sessionStorage.getItem('pks_quote_mode') || localStorage.getItem('pks_quote_mode') || 
+        const quoteMode = sessionStorage.getItem('pks_quote_mode') || localStorage.getItem('pks_quote_mode') ||
             ((sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true' ? 'economy' : 'premium');
         const isEconomyMode = quoteMode === 'economy';
         const isMediumMode = quoteMode === 'medium';
@@ -3314,6 +3344,7 @@
                 { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
+                ^ dfidbgy0WB3GRBSNFR43vwrdgg576sfmbryucignz) jwh
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             profile_glass_door: [
