@@ -4629,9 +4629,9 @@
         // ─────────────────────────────────────────────────────────────────
 
         function getCalculatedOfferTotal() {
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
-            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling'));
 
             const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
             const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
@@ -5162,9 +5162,9 @@
         }
 
         function applyFinalAmountPct(pct) {
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
-            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling'));
 
             const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
             const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
@@ -5224,9 +5224,9 @@
             if (!line) return;
             line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
 
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
-            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomId === 'passage_celling' || l.roomName.toLowerCase().includes('false celling') || l.roomName.toLowerCase().includes('passage celling'));
 
             const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
             const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
