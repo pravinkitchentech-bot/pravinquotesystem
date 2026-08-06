@@ -3532,18 +3532,25 @@
             const key = `${itemId}-${label}`;
             let formulaType = customFormulas[key] || customFormulas[label];
 
+            const isCeilingItem = (itemId >= 90 && itemId <= 100) ||
+                                  (selectedRoom === 'false_celling' || selectedRoom === 'passage_celling') ||
+                                  label.toLowerCase().includes('celling') ||
+                                  label.toLowerCase().includes('ceiling');
+
             if (!formulaType) {
-                if (typeof opt === 'object' && opt.formulaType) {
-                    formulaType = opt.formulaType;
+                if (isCeilingItem) {
+                    formulaType = "L*W";
                 } else if (defaultType) {
                     formulaType = defaultType;
+                } else if (typeof opt === 'object' && opt.formulaType) {
+                    formulaType = opt.formulaType;
                 }
             }
 
             if (formulaType === "L*H") {
                 return { fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144", formulaType: "L*H" };
             }
-            if (formulaType === "L*W") {
+            if (formulaType === "L*W" || isCeilingItem) {
                 return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
             }
             if (formulaType === "SQFT") {
@@ -3556,11 +3563,11 @@
                 return { fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", formulaType: "(L+W)*H" };
             }
 
-            if (typeof opt === 'object' && opt.formula && opt.fields) {
+            if (!isCeilingItem && typeof opt === 'object' && opt.formula && opt.fields) {
                 return { fields: opt.fields, formula: opt.formula, note: opt.note || '', formulaType: opt.formulaType || 'custom' };
             }
 
-            return { fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", formulaType: "(L+W)*H" };
+            return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
         }
 
         // Combine base items with admin customizations
