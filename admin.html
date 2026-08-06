@@ -1424,7 +1424,7 @@
             const stored = localStorage.getItem('pks_rooms');
             if (stored) {
                 try {
-                    const parsed = JSON.parse(stored);
+                    let parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         let updated = false;
                         DEFAULT_ROOMS.forEach(defRoom => {
@@ -1443,7 +1443,7 @@
                 }
             }
             localStorage.setItem('pks_rooms', JSON.stringify(DEFAULT_ROOMS));
-            return DEFAULT_ROOMS;
+            return [...DEFAULT_ROOMS];
         }
 
         let ROOMS = getRooms();
@@ -2959,8 +2959,20 @@
             const key = `${itemId}-${label}`;
             let formulaType = customFormulas[key] || customFormulas[label];
 
+            const isCeilingItem = (itemId >= 90 && itemId <= 100) ||
+                                  (typeof selectedRoom !== 'undefined' && (selectedRoom === 'false_celling' || selectedRoom === 'passage_celling')) ||
+                                  label.toLowerCase().includes('celling') ||
+                                  label.toLowerCase().includes('ceiling') ||
+                                  (typeof opt === 'object' && opt.label && (opt.label.toLowerCase().includes('celling') || opt.label.toLowerCase().includes('ceiling')));
+
+            if (isCeilingItem && !customFormulas[key] && !customFormulas[label]) {
+                return { fields: ["L", "W"], formulaType: "L*W", note: "L×W/144" };
+            }
+
             if (!formulaType) {
-                if (typeof opt === 'object' && opt.formulaType) {
+                if (isCeilingItem) {
+                    formulaType = "L*W";
+                } else if (typeof opt === 'object' && opt.formulaType) {
                     formulaType = opt.formulaType;
                 } else if (defaultType) {
                     formulaType = defaultType;
@@ -2972,7 +2984,7 @@
             if (formulaType === "L*H") {
                 return { fields: ["L", "H"], formulaType: "L*H", note: "L×H/144" };
             }
-            if (formulaType === "L*W") {
+            if (formulaType === "L*W" || isCeilingItem) {
                 return { fields: ["L", "W"], formulaType: "L*W", note: "L×W/144" };
             }
             if (formulaType === "SQFT") {
