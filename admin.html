@@ -1415,6 +1415,7 @@
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
             { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true },
+            { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true },
             { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
@@ -1439,6 +1440,16 @@
                         if (!parsed.some(r => r.id === 'passage_celling')) {
                             const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
                             const newRoom = { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true };
+                            if (fcIdx !== -1) {
+                                parsed.splice(fcIdx + 1, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            updated = true;
+                        }
+                        if (!parsed.some(r => r.id === 'teak_wood' || (r.name && r.name.toLowerCase().includes('teak')))) {
+                            const fcIdx = parsed.findIndex(r => r.id === 'passage_celling' || r.id === 'false_celling');
+                            const newRoom = { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true };
                             if (fcIdx !== -1) {
                                 parsed.splice(fcIdx + 1, 0, newRoom);
                             } else {
@@ -2039,18 +2050,18 @@
 
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Framed)", "WPC – Lamination (Door Only)"] },
-                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination"] },
-                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
-                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
-                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination"] },
-                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] },
+                { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Framed)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 4, name: "Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC", "WPC – Lamination", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)", "Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 12, name: "Dining Partition", options: ["WPC", "WPC – Lamination", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
                 { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
@@ -2113,7 +2124,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 47, name: "Sit out area wall panelling", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] }
+                { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
@@ -2140,6 +2151,21 @@
                 { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
                 { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
                 { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+            ],
+            teak_wood: [
+                { id: 1, name: "Bottom", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Partition Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Partition Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 2, name: "Overhead Cabinets", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 3, name: "Loft", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Framed)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Framed)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 4, name: "Island Cabin", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 5, name: "Breakfast Table", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 8, name: "Breakfast Table – Open Box", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 9, name: "Spice Rack", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 10, name: "Ledge", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Full Teak Wood Kitchen (Box Type)", "Full Teak Wood Kitchen (Door Only)", "Full Teak Wood Kitchen", "Semi Teak Wood Kitchen (Box Type)", "Semi Teak Wood Kitchen (Door Only)", "Semi Teak Wood Kitchen"] },
+                { id: 12, name: "Dining Partition", options: ["Full Teak Wood Kitchen", "Semi Teak Wood Kitchen"] },
+                { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -2261,7 +2287,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ECO_CABINET_OPTS },
-                { id: 47, name: "Sit out area wall panelling", options: ECO_CABINET_OPTS }
+                { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
@@ -2362,7 +2388,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MED_CABINET_OPTS },
-                { id: 47, name: "Sit out area wall panelling", options: MED_CABINET_OPTS }
+                { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
