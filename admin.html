@@ -930,7 +930,8 @@
 <body>
 
     <!-- Security Verified Success Checkmark Splash Screen -->
-    <div class="security-verified-overlay" id="securityOverlay" onclick="this.classList.add('fade-out'); setTimeout(() => this.style.display='none', 500);">
+    <div class="security-verified-overlay" id="securityOverlay"
+        onclick="this.classList.add('fade-out'); setTimeout(() => this.style.display='none', 500);">
         <div class="verified-card">
             <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                 <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
@@ -951,7 +952,8 @@
                     <span class="role-badge" id="divisionBadge"
                         style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
                     <span class="role-badge" id="roomBadge"
-                        style="background:var(--accent);color:#030805;border-color:var(--accent);display:inline-block;">ALL ROOMS</span>
+                        style="background:var(--accent);color:#030805;border-color:var(--accent);display:inline-block;">ALL
+                        ROOMS</span>
                 </h1>
             </div>
         </div>
@@ -989,24 +991,38 @@
             <div id="rates" class="tab-panel active">
                 <h2>Rates Management — All Rooms</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 18px;">
-                    Set pricing per square foot for each room separately. Select division and mode to edit rates for Premium, Medium, or Economy tiers.
+                    Set pricing per square foot for each room separately. Select division and mode to edit rates for
+                    Premium, Medium, or Economy tiers.
                 </p>
 
                 <!-- Division and Mode Selector Bar -->
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(18, 36, 23, 0.4); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px;">
+                <div
+                    style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(18, 36, 23, 0.4); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Division:</label>
-                        <select id="adminDivisionSelect" onchange="setAdminDivision(this.value)" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                        <label
+                            style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Division:</label>
+                        <select id="adminDivisionSelect" onchange="setAdminDivision(this.value)"
+                            style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
                             <!-- Populated by JS -->
                         </select>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Pricing Mode:</label>
-                        <div style="display: flex; gap: 8px; background: rgba(5, 11, 7, 0.6); padding: 4px; border-radius: 30px; border: 1px solid var(--border);">
-                            <button id="modeBtnPremium" onclick="setAdminRateMode('premium')" class="admin-mode-btn active" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: var(--accent); color: var(--bg);">🌟 Premium</button>
-                            <button id="modeBtnMedium" onclick="setAdminRateMode('medium')" class="admin-mode-btn" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">⚖️ Medium</button>
-                            <button id="modeBtnEconomy" onclick="setAdminRateMode('economy')" class="admin-mode-btn" style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">💰 Economy</button>
+                        <label
+                            style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Pricing
+                            Mode:</label>
+                        <div
+                            style="display: flex; gap: 8px; background: rgba(5, 11, 7, 0.6); padding: 4px; border-radius: 30px; border: 1px solid var(--border);">
+                            <button id="modeBtnPremium" onclick="setAdminRateMode('premium')"
+                                class="admin-mode-btn active"
+                                style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: var(--accent); color: var(--bg);">🌟
+                                Premium</button>
+                            <button id="modeBtnMedium" onclick="setAdminRateMode('medium')" class="admin-mode-btn"
+                                style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">⚖️
+                                Medium</button>
+                            <button id="modeBtnEconomy" onclick="setAdminRateMode('economy')" class="admin-mode-btn"
+                                style="padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s; background: transparent; color: var(--text);">💰
+                                Economy</button>
                         </div>
                     </div>
                 </div>
@@ -1398,6 +1414,7 @@
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
+            { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true },
             { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
@@ -1414,6 +1431,16 @@
                             const newRoom = { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true };
                             if (accIdx !== -1) {
                                 parsed.splice(accIdx, 0, newRoom);
+                            } else {
+                                parsed.push(newRoom);
+                            }
+                            updated = true;
+                        }
+                        if (!parsed.some(r => r.id === 'passage_celling')) {
+                            const fcIdx = parsed.findIndex(r => r.id === 'false_celling');
+                            const newRoom = { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true };
+                            if (fcIdx !== -1) {
+                                parsed.splice(fcIdx + 1, 0, newRoom);
                             } else {
                                 parsed.push(newRoom);
                             }
@@ -2098,7 +2125,21 @@
                 { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
                 { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
                 { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+            ],
+            passage_celling: [
+                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
+                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
