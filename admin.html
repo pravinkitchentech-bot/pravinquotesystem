@@ -3200,8 +3200,8 @@
                 nameUpper.includes("CAROUSEL") || nameUpper.includes("SWING")) {
                 return { formulaType: "QTY", fields: ["QTY"], note: "qty" };
             }
-            // L*W formulas (Ledge)
-            if (itemId === 10 || name === "Wood finishing" ||
+            // L*W formulas (Ledge, False Celling, Passage Celling)
+            if (itemId === 10 || (itemId >= 90 && itemId <= 100) || nameUpper.includes("CELLING") || nameUpper.includes("CEILING") || name === "Wood finishing" ||
                 name === "Veneer finishing" || name === "PU Paint") {
                 return { formulaType: "L*W", fields: ["L", "W"], note: "L×W" };
             }
