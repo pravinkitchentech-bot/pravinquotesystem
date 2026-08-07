@@ -1468,6 +1468,12 @@
             "Sitpoout -wpc celling": 95,
             "Sitout -wpc celling": 95,
             "Sitout - wpc celling": 95,
+            "Gypsum Board Plain Ceiling": 95,
+            "Gypsum Board Design Ceiling": 95,
+            "Grid Ceiling": 95,
+            "WPC Ceiling": 95,
+            "PVC Ceiling": 95,
+            "POP Ceiling": 95,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Only)": 450,
@@ -2038,6 +2044,18 @@
             "Soft Closing Handles"
         ];
 
+        const FALSE_CELLING_ADMIN_OPTS = [
+            "Sitout-plane seeling",
+            "Sitout- design celling",
+            "Sitout - wpc celling",
+            "Gypsum Board Plain Ceiling",
+            "Gypsum Board Design Ceiling",
+            "Grid Ceiling",
+            "WPC Ceiling",
+            "PVC Ceiling",
+            "POP Ceiling"
+        ];
+
         const ROOM_ITEMS = {
             kitchen: [
                 { id: 1, name: "Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Partition Type)", "WPC – Lamination (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
@@ -2118,30 +2136,30 @@
                 { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
-                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_ADMIN_OPTS }
             ],
             passage_celling: [
-                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_ADMIN_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -2320,17 +2338,17 @@
                 { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
-                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_ADMIN_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -2453,30 +2471,30 @@
                 { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             false_celling: [
-                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_ADMIN_OPTS }
             ],
             passage_celling: [
-                { id: 90, name: "Kitchen -celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 91, name: "Living room-celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 92, name: "Prayer unit", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 93, name: "Bedroom", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 94, name: "Sitout", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 95, name: "Dinning room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 96, name: "Musical room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 97, name: "Study room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 98, name: "Store room", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 99, name: "Toilet area", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] },
-                { id: 100, name: "Passage celling", options: ["Sitout-plane seeling", "Sitout- design celling", "Sitout - wpc celling"] }
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_ADMIN_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_ADMIN_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
