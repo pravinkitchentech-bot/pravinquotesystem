@@ -1358,7 +1358,8 @@
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'false_celling', name: 'False Celling', icon: '🧱', active: true },
             { id: 'passage_celling', name: 'Passage Celling', icon: '🧱', active: true },
-            { id: 'teak_wood', name: 'Teak Wood', icon: '🪵', active: true },
+            { id: 'full_teak_wood_kitchen', name: 'Full Teak Wood Kitchen', icon: '🪵', active: true },
+            { id: 'half_teak_wood_kitchen', name: 'Half Teak Wood Kitchen', icon: '🪵', active: true },
             { id: 'profile_glass_door', name: 'Profile glass door', icon: '🚪', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
@@ -1370,8 +1371,12 @@
                     let parsed = JSON.parse(stored);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         let updated = false;
+                        if (parsed.some(r => r && r.id === 'teak_wood')) {
+                            parsed = parsed.filter(r => r && r.id !== 'teak_wood');
+                            updated = true;
+                        }
                         DEFAULT_ROOMS.forEach(defRoom => {
-                            if (!parsed.some(r => r && (r.id === defRoom.id || (defRoom.id === 'teak_wood' && r.name && r.name.toLowerCase().includes('teak'))))) {
+                            if (!parsed.some(r => r && r.id === defRoom.id)) {
                                 parsed.push({ ...defRoom });
                                 updated = true;
                             }
@@ -1385,7 +1390,8 @@
                     console.error("Error parsing rooms, using defaults", e);
                 }
             }
-            return [...DEFAULT_ROOMS];
+            localStorage.setItem('pks_rooms', JSON.stringify(DEFAULT_ROOMS));
+            return DEFAULT_ROOMS;
         }
 
         const ROOMS = getRooms();
@@ -1429,16 +1435,6 @@
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates"
             },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
         ];
         const WALL_PANEL = [
             {
@@ -1473,32 +1469,12 @@
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Super Premium Charcoal Panel – Korea"
             },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Wall Panelling"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Wall Panelling"
-            },
         ];
         const BEAM = [
             {
                 label: "Wall Panel Lamination",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness | Finish: Customer Choice Laminates"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Beam Covering"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Beam Covering"
             },
         ];
         const SPICE = [
@@ -1522,16 +1498,6 @@
                 fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates"
             },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
-                specs: "Full Teak Wood – Solid Teak Wood Spice Rack"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
-                specs: "Semi Teak Wood – Teak Wood Finish Spice Rack"
-            },
         ];
         const LEDGE = [
             {
@@ -1554,16 +1520,6 @@
                 fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates"
             },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
-                specs: "Full Teak Wood – Solid Teak Wood Ledge"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Ledge"
-            },
         ];
         const PARTITION = [
             {
@@ -1585,16 +1541,6 @@
                 label: "WPC – Lamination",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choose Laminates"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Partition"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Partition"
             },
         ];
 
@@ -1779,37 +1725,7 @@
                 label: "WPC – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
+            }
         ];
 
         const KITCHEN_BOTTOM_OPTS = [
@@ -1872,47 +1788,7 @@
                 label: "WPC – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Partition Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Partition | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Partition Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Partition | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
+            }
         ];
 
         const KITCHEN_LOFT_OPTS = [
@@ -1975,47 +1851,7 @@
                 label: "WPC – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Framed)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Frame"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Framed)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
+            }
         ];
 
         const KING_BED_OPTS = [
@@ -2081,6 +1917,22 @@
 
         const ENG_WOOD_QUEEN_BED = [
             { label: "Engineering Wood", fields: [], formula: v => 1, note: "direct price" }
+        ];
+
+        const FULL_TEAK_KITCHEN_OPTS = [
+            {
+                label: "Full teak wood kitchen",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Full Teak Wood – Solid Teak Wood Structure"
+            }
+        ];
+
+        const HALF_TEAK_KITCHEN_OPTS = [
+            {
+                label: "Half teak wood kitchen",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Half Teak Wood – Teak Wood Frame with Commercial Core"
+            }
         ];
 
         const PROFILE_GLASS_DOOR_OPTS = [
@@ -2160,6 +2012,12 @@
             "Semi Teak Wood Kitchen (Partition Type)": 900,
             "Semi Teak Wood Kitchen (Door Only)": 700,
             "Semi Teak Wood Kitchen (Framed)": 800,
+            "Full teak wood kitchen": 1200,
+            "Full teak wood kitchen (Box Type)": 1200,
+            "Full teak wood kitchen (Door Only)": 900,
+            "Half teak wood kitchen": 900,
+            "Half teak wood kitchen (Box Type)": 900,
+            "Half teak wood kitchen (Door Only)": 700,
 
             // Profile Glass Door Rates
             "Profile Glass Door": 200,
@@ -2866,8 +2724,23 @@
             const stored = localStorage.getItem('pks_custom_materials');
             if (stored) {
                 try {
-                    const parsed = JSON.parse(stored);
+                    let parsed = JSON.parse(stored);
                     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                        let changed = false;
+                        const kitchenIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+                        kitchenIds.forEach(id => {
+                            if (parsed[id] && Array.isArray(parsed[id])) {
+                                const beforeLen = parsed[id].length;
+                                parsed[id] = parsed[id].filter(m => {
+                                    const lbl = typeof m === 'string' ? m : (m && m.label ? m.label : '');
+                                    return !lbl.toLowerCase().includes('teak');
+                                });
+                                if (parsed[id].length !== beforeLen) changed = true;
+                            }
+                        });
+                        if (changed) {
+                            localStorage.setItem('pks_custom_materials', JSON.stringify(parsed));
+                        }
                         cachedCustomMaterials = parsed;
                         return cachedCustomMaterials;
                     }
@@ -2893,201 +2766,23 @@
         }
 
         // Setup base items list per room
-        const TEAK_WOOD_BOTTOM_OPTS = [
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Partition Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Partition | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Partition Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Partition | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            }
+
+        const FULL_TEAK_CABINET_OPTS = [
+            { label: "Full teak wood kitchen (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", specs: "Full Teak Wood Kitchen (Box Type)" },
+            { label: "Full teak wood kitchen (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144", specs: "Full Teak Wood Kitchen (Door Only)" }
         ];
 
-        const TEAK_WOOD_BOX_DOOR_ONLY = [
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door | Soft Closing Hinges: Sleek / Hettich"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            }
+        const FULL_TEAK_SPICE = [
+            { label: "Full teak wood kitchen", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft", specs: "Full Teak Wood Spice Rack" }
         ];
 
-        const TEAK_WOOD_LOFT_OPTS = [
-            {
-                label: "Full Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Framed)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Frame"
-            },
-            {
-                label: "Full Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Door"
-            },
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Framed)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame"
-            },
-            {
-                label: "Semi Teak Wood Kitchen (Door Only)",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame Door"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            }
+        const HALF_TEAK_CABINET_OPTS = [
+            { label: "Half teak wood kitchen (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", specs: "Half Teak Wood Kitchen (Box Type)" },
+            { label: "Half teak wood kitchen (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144", specs: "Half Teak Wood Kitchen (Door Only)" }
         ];
 
-        const TEAK_WOOD_WALL_PANEL = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Wall Panelling"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Wall Panelling"
-            }
-        ];
-
-        const TEAK_WOOD_BEAM = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Beam Covering"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Beam Covering"
-            }
-        ];
-
-        const TEAK_WOOD_OPEN_BOX = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Premium Quality Solid Teak Wood Structure"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Frame with Commercial Ply Core"
-            }
-        ];
-
-        const TEAK_WOOD_SPICE = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
-                specs: "Full Teak Wood – Solid Teak Wood Spice Rack"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft",
-                specs: "Semi Teak Wood – Teak Wood Finish Spice Rack"
-            }
-        ];
-
-        const TEAK_WOOD_LEDGE = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
-                specs: "Full Teak Wood – Solid Teak Wood Ledge"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Ledge"
-            }
-        ];
-
-        const TEAK_WOOD_PARTITION = [
-            {
-                label: "Full Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Full Teak Wood – Solid Teak Wood Partition"
-            },
-            {
-                label: "Semi Teak Wood Kitchen",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Semi Teak Wood – Teak Wood Finish Partition"
-            }
+        const HALF_TEAK_SPICE = [
+            { label: "Half teak wood kitchen", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft", specs: "Half Teak Wood Spice Rack" }
         ];
 
         const ROOM_ITEMS = {
@@ -3194,21 +2889,6 @@
                 { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
                 { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
             ],
-            teak_wood: [
-                { id: 1, name: "Bottom", options: TEAK_WOOD_BOTTOM_OPTS },
-                { id: 2, name: "Overhead Cabinets", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 3, name: "Loft", options: TEAK_WOOD_LOFT_OPTS },
-                { id: 4, name: "Island Cabin", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 5, name: "Breakfast Table", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: TEAK_WOOD_WALL_PANEL },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: TEAK_WOOD_BEAM },
-                { id: 8, name: "Breakfast Table – Open Box", options: TEAK_WOOD_OPEN_BOX },
-                { id: 9, name: "Spice Rack", options: TEAK_WOOD_SPICE },
-                { id: 10, name: "Ledge", options: TEAK_WOOD_LEDGE },
-                { id: 11, name: "Side Storage Cabinet", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 12, name: "Dining Partition", options: TEAK_WOOD_PARTITION },
-                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
-            ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
             ],
@@ -3217,6 +2897,36 @@
                 { id: 102, name: "Bedroom glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
                 { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
                 { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
+            ],
+            full_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: FULL_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: FULL_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: FULL_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: FULL_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: FULL_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: FULL_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: FULL_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: FULL_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: FULL_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: FULL_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: FULL_TEAK_CABINET_OPTS },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            half_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: HALF_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: HALF_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: HALF_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: HALF_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: HALF_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: HALF_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: HALF_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: HALF_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: HALF_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: HALF_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: HALF_TEAK_CABINET_OPTS },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ]
         };
 
@@ -3308,7 +3018,21 @@
                 { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
                 { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
                 { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
-                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS }
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
+            ],
+            passage_celling: [
+                { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
+                { id: 91, name: "Living room-celling", options: FALSE_CELLING_OPTS },
+                { id: 92, name: "Prayer unit", options: FALSE_CELLING_OPTS },
+                { id: 93, name: "Bedroom", options: FALSE_CELLING_OPTS },
+                { id: 94, name: "Sitout", options: FALSE_CELLING_OPTS },
+                { id: 95, name: "Dinning room", options: FALSE_CELLING_OPTS },
+                { id: 96, name: "Musical room", options: FALSE_CELLING_OPTS },
+                { id: 97, name: "Study room", options: FALSE_CELLING_OPTS },
+                { id: 98, name: "Store room", options: FALSE_CELLING_OPTS },
+                { id: 99, name: "Toilet area", options: FALSE_CELLING_OPTS },
+                { id: 100, name: "Passage celling", options: FALSE_CELLING_OPTS }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
@@ -3319,19 +3043,34 @@
                 { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
                 { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
             ],
-            teak_wood: [
-                { id: 1, name: "Bottom", options: TEAK_WOOD_BOTTOM_OPTS },
-                { id: 2, name: "Overhead Cabinets", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 3, name: "Loft", options: TEAK_WOOD_LOFT_OPTS },
-                { id: 4, name: "Island Cabin", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 5, name: "Breakfast Table", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: TEAK_WOOD_WALL_PANEL },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: TEAK_WOOD_BEAM },
-                { id: 8, name: "Breakfast Table – Open Box", options: TEAK_WOOD_OPEN_BOX },
-                { id: 9, name: "Spice Rack", options: TEAK_WOOD_SPICE },
-                { id: 10, name: "Ledge", options: TEAK_WOOD_LEDGE },
-                { id: 11, name: "Side Storage Cabinet", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 12, name: "Dining Partition", options: TEAK_WOOD_PARTITION },
+            full_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: FULL_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: FULL_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: FULL_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: FULL_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: FULL_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: FULL_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: FULL_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: FULL_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: FULL_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: FULL_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: FULL_TEAK_CABINET_OPTS },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            half_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: HALF_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: HALF_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: HALF_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: HALF_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: HALF_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: HALF_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: HALF_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: HALF_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: HALF_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: HALF_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: HALF_TEAK_CABINET_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ]
         };
@@ -3449,19 +3188,34 @@
                 { id: 103, name: "Tv-unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS },
                 { id: 104, name: "Crockery unit glass profile door", options: PROFILE_GLASS_DOOR_OPTS }
             ],
-            teak_wood: [
-                { id: 1, name: "Bottom", options: TEAK_WOOD_BOTTOM_OPTS },
-                { id: 2, name: "Overhead Cabinets", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 3, name: "Loft", options: TEAK_WOOD_LOFT_OPTS },
-                { id: 4, name: "Island Cabin", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 5, name: "Breakfast Table", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: TEAK_WOOD_WALL_PANEL },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: TEAK_WOOD_BEAM },
-                { id: 8, name: "Breakfast Table – Open Box", options: TEAK_WOOD_OPEN_BOX },
-                { id: 9, name: "Spice Rack", options: TEAK_WOOD_SPICE },
-                { id: 10, name: "Ledge", options: TEAK_WOOD_LEDGE },
-                { id: 11, name: "Side Storage Cabinet", options: TEAK_WOOD_BOX_DOOR_ONLY },
-                { id: 12, name: "Dining Partition", options: TEAK_WOOD_PARTITION },
+            full_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: FULL_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: FULL_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: FULL_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: FULL_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: FULL_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: FULL_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: FULL_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: FULL_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: FULL_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: FULL_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: FULL_TEAK_CABINET_OPTS },
+                { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            half_teak_wood_kitchen: [
+                { id: 1, name: "Bottom", options: HALF_TEAK_CABINET_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: HALF_TEAK_CABINET_OPTS },
+                { id: 3, name: "Loft", options: HALF_TEAK_CABINET_OPTS },
+                { id: 4, name: "Island Cabin", options: HALF_TEAK_CABINET_OPTS },
+                { id: 5, name: "Breakfast Table", options: HALF_TEAK_CABINET_OPTS },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: HALF_TEAK_CABINET_OPTS },
+                { id: 8, name: "Breakfast Table – Open Box", options: HALF_TEAK_CABINET_OPTS },
+                { id: 9, name: "Spice Rack", options: HALF_TEAK_SPICE },
+                { id: 10, name: "Ledge", options: HALF_TEAK_CABINET_OPTS },
+                { id: 11, name: "Side Storage Cabinet", options: HALF_TEAK_CABINET_OPTS },
+                { id: 12, name: "Dining Partition", options: HALF_TEAK_CABINET_OPTS },
                 { id: 13, name: "Accessories", options: ACCESSORY_OPTS }
             ]
         };
@@ -3532,30 +3286,18 @@
             const key = `${itemId}-${label}`;
             let formulaType = customFormulas[key] || customFormulas[label];
 
-            const isCeilingItem = (itemId >= 90 && itemId <= 100) ||
-                                  (typeof selectedRoom !== 'undefined' && (selectedRoom === 'false_celling' || selectedRoom === 'passage_celling')) ||
-                                  label.toLowerCase().includes('celling') ||
-                                  label.toLowerCase().includes('ceiling') ||
-                                  (typeof opt === 'object' && opt.label && (opt.label.toLowerCase().includes('celling') || opt.label.toLowerCase().includes('ceiling')));
-
-            if (isCeilingItem && !customFormulas[key] && !customFormulas[label]) {
-                return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
-            }
-
             if (!formulaType) {
-                if (isCeilingItem) {
-                    formulaType = "L*W";
+                if (typeof opt === 'object' && opt.formulaType) {
+                    formulaType = opt.formulaType;
                 } else if (defaultType) {
                     formulaType = defaultType;
-                } else if (typeof opt === 'object' && opt.formulaType) {
-                    formulaType = opt.formulaType;
                 }
             }
 
             if (formulaType === "L*H") {
                 return { fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144", formulaType: "L*H" };
             }
-            if (formulaType === "L*W" || isCeilingItem) {
+            if (formulaType === "L*W") {
                 return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
             }
             if (formulaType === "SQFT") {
@@ -3568,7 +3310,11 @@
                 return { fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", formulaType: "(L+W)*H" };
             }
 
-            return { fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144", formulaType: "L*W" };
+            if (typeof opt === 'object' && opt.formula && opt.fields) {
+                return { fields: opt.fields, formula: opt.formula, note: opt.note || '', formulaType: opt.formulaType || 'custom' };
+            }
+
+            return { fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144", formulaType: "(L+W)*H" };
         }
 
         // Combine base items with admin customizations
@@ -3682,7 +3428,7 @@
                     selectedRoomName = roomName || getRoomDisplayName(validRoom);
                 } else {
                     selectedRoom = roomId || 'kitchen';
-                    selectedRoomName = roomName || (roomId && roomId.toLowerCase().includes('teak') ? 'Teak Wood' : 'Kitchen');
+                    selectedRoomName = roomName || (roomId === 'full_teak_wood_kitchen' ? 'Full Teak Wood Kitchen' : (roomId === 'half_teak_wood_kitchen' ? 'Half Teak Wood Kitchen' : 'Kitchen'));
                 }
                 sessionStorage.setItem('pks_selected_room', selectedRoom);
                 sessionStorage.setItem('pks_selected_room_name', selectedRoomName);
@@ -3691,9 +3437,6 @@
 
                 const itemsSource = isMediumMode ? ROOM_ITEMS_MEDIUM : ((isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS);
                 let lookupKey = selectedRoom;
-                if (lookupKey && (lookupKey.toLowerCase().includes('teak') || (selectedRoomName && selectedRoomName.toLowerCase().includes('teak')))) {
-                    lookupKey = 'teak_wood';
-                }
                 const rawItems = (itemsSource && itemsSource[lookupKey]) ? itemsSource[lookupKey] : (ROOM_ITEMS[lookupKey] || ROOM_ITEMS['kitchen'] || []);
                 const deleted = getDeletedStandardItems() || [];
                 BASE_ITEMS = (rawItems || []).filter(item => item && !deleted.includes(item.id));
