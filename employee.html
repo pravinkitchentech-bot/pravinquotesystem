@@ -1560,6 +1560,16 @@
             { label: "WPC – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
+        const BED_SIDE_BOX_OPTS = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "WPC (Box Type)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "WPC (Door Only)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "WPC – Lamination (Box Type)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "WPC – Lamination (Door Only)", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+        ];
         const ECO_WALL_PANEL = [
             { label: "Wall Panel PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Wall Panel Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
@@ -1568,6 +1578,10 @@
             { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Engineering Wood (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Engineering Wood (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+        const ECO_BED_SIDE_BOX_OPTS = [
+            { label: "Engineering Wood (Box Type)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Engineering Wood (Door Only)", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
         ];
         const ECO_TV_BOTTOM_CABINET = [
             { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1591,6 +1605,38 @@
                 label: "Marine Ply – Lamination (Partition Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
                 specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            }
+        ];
+        const MED_BED_SIDE_BOX_OPTS = [
+            {
+                label: "Marine Ply – Lamination (Box Type)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Lamination (Door Only)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "Marine Ply – 710 grade - 16mm Thickness Unbrand | Brand: fineply/saburi MR grade | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "WPC (Box Type)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC (Door Only)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Box Type)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Door Only)",
+                fields: ["QTY"], formula: v => v.QTY, note: "qty",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
             }
         ];
         const MED_CABINET_BOX_ONLY = [
@@ -2307,6 +2353,18 @@
             "65::Engineering Wood (Box Type)": 900,
             "65::Engineering Wood (Door Only)": 500,
 
+            // Bed Side Box (ID 650)
+            "650::Marine Ply – Lamination (Box Type)": 1300,
+            "650::Marine Ply – Lamination (Door Only)": 800,
+            "650::Marine Ply – Acrylic (Box Type)": 2600,
+            "650::Marine Ply – Acrylic (Door Only)": 1800,
+            "650::WPC (Box Type)": 1300,
+            "650::WPC (Door Only)": 800,
+            "650::WPC – Lamination (Box Type)": 1400,
+            "650::WPC – Lamination (Door Only)": 900,
+            "650::Engineering Wood (Box Type)": 900,
+            "650::Engineering Wood (Door Only)": 500,
+
             // Cupboard 1 (ID 66)
             "66::Marine Ply – Lamination (Box Type)": 1300,
             "66::Marine Ply – Lamination (Door Only)": 800,
@@ -2828,6 +2886,7 @@
                 { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 65, name: "SIDE CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 650, name: "BED SIDE BOX", options: BED_SIDE_BOX_OPTS },
                 { id: 66, name: "CUPBOARD 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 67, name: "CUPBOARD 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 68, name: "LOFT 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -2973,6 +3032,7 @@
                 { id: 33, name: "Tv unit-bottom cabinet", options: ECO_CABINET_OPTS },
                 { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: ECO_CABINET_OPTS },
                 { id: 65, name: "Side Cabinet", options: ECO_CABINET_OPTS },
+                { id: 650, name: "Bed Side Box", options: ECO_BED_SIDE_BOX_OPTS },
                 { id: 66, name: "Cupboard 1", options: ECO_CABINET_OPTS },
                 { id: 67, name: "Cupboard 2", options: ECO_CABINET_OPTS },
                 { id: 68, name: "Loft 1", options: ECO_CABINET_OPTS },
@@ -3118,6 +3178,7 @@
                 { id: 33, name: "Tv unit-bottom cabinet", options: MED_CABINET_OPTS },
                 { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MED_CABINET_OPTS },
                 { id: 65, name: "SIDE CABINET", options: MED_CABINET_OPTS },
+                { id: 650, name: "BED SIDE BOX", options: MED_BED_SIDE_BOX_OPTS },
                 { id: 66, name: "CUPBOARD 1", options: MED_CABINET_OPTS },
                 { id: 67, name: "CUPBOARD 2", options: MED_CABINET_OPTS },
                 { id: 68, name: "LOFT 1", options: MED_CABINET_OPTS },
@@ -3410,6 +3471,7 @@
 
         let ITEMS = [];
         let quoteLines = [];
+        let activeBuilderSpecs = {};
         let lineIdCounter = 1;
         let isRestoringQuote = false;
 
@@ -4021,15 +4083,23 @@
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
 
             const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
+            activeBuilderSpecs[buildId] = [...allSpecsArray];
 
-            const specsHtml = (allSpecsArray.length > 0) ? `
+            const specsHtml = `
                 <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
-                    <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
-                    ${allSpecsArray.map(s => {
-                return `<div style="padding:1px 0;">▸ ${s}</div>`;
-            }).join('')}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <strong style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px; margin:0;">📋 Specifications</strong>
+                        <button type="button" onclick="toggleAddSpec('${buildId}')" style="background:none; border:none; cursor:pointer; font-size:0.85rem; padding:0; line-height:1; display:inline-flex; align-items:center;" title="Add new specification">✏️</button>
+                    </div>
+                    <div id="${buildId}-specs-list">
+                        ${allSpecsArray.length > 0 ? allSpecsArray.map(s => `<div style="padding:1px 0;">▸ ${s}</div>`).join('') : '<div style="font-style:italic; opacity:0.6;">No specifications defined.</div>'}
+                    </div>
+                    <div id="${buildId}-add-spec-wrap" style="display:none; margin-top:8px; align-items:center; gap:6px;">
+                        <input type="text" id="${buildId}-new-spec-input" placeholder="Type new specification..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); addSpecToBuilder('${buildId}'); }" style="flex:1; background:#fff; border:1px solid rgba(176,125,46,0.5); border-radius:4px; padding:3px 6px; font-size:0.75rem; color:#333; outline:none;">
+                        <button type="button" onclick="addSpecToBuilder('${buildId}')" style="background:var(--accent); color:#fff; border:none; border-radius:4px; padding:3px 8px; font-size:0.72rem; font-weight:700; cursor:pointer;">Add</button>
+                    </div>
                 </div>
-            ` : '';
+            `;
 
             const fieldsHtml = opt.fields.map(f => `
                 <div class="field">
@@ -4193,7 +4263,7 @@
             }
 
             const itemDisplayName = getItemDisplayName(item);
-            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, itemDisplayName, opt.specs);
+            const allSpecsArray = activeBuilderSpecs[buildId] || getAllMaterialSpecs(selectedRoom, opt.label, itemDisplayName, opt.specs);
 
             quoteLines.push({
                 id: lineIdCounter++,
@@ -4256,6 +4326,44 @@
         function closeBuilder(buildId) {
             const el = document.getElementById(buildId);
             if (el) el.remove();
+            delete activeBuilderSpecs[buildId];
+        }
+
+        function toggleAddSpec(buildId) {
+            const wrap = document.getElementById(`${buildId}-add-spec-wrap`);
+            if (wrap) {
+                if (wrap.style.display === 'none') {
+                    wrap.style.display = 'flex';
+                    const input = document.getElementById(`${buildId}-new-spec-input`);
+                    if (input) input.focus();
+                } else {
+                    wrap.style.display = 'none';
+                }
+            }
+        }
+
+        function addSpecToBuilder(buildId) {
+            const input = document.getElementById(`${buildId}-new-spec-input`);
+            if (!input) return;
+            const newSpec = input.value.trim();
+            if (!newSpec) return;
+
+            if (!activeBuilderSpecs[buildId]) {
+                activeBuilderSpecs[buildId] = [];
+            }
+
+            if (!activeBuilderSpecs[buildId].includes(newSpec)) {
+                activeBuilderSpecs[buildId].push(newSpec);
+            }
+
+            const listEl = document.getElementById(`${buildId}-specs-list`);
+            if (listEl) {
+                listEl.innerHTML = activeBuilderSpecs[buildId].map(s => `<div style="padding:1px 0;">▸ ${s}</div>`).join('');
+            }
+
+            input.value = '';
+            const wrap = document.getElementById(`${buildId}-add-spec-wrap`);
+            if (wrap) wrap.style.display = 'none';
         }
 
         // ── Sq.Ft & Rate toggle state ─────────────────────
