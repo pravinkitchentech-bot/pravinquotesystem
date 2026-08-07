@@ -4587,7 +4587,6 @@
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
-                                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
                                   <strong>${shortName}</strong>
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
@@ -4734,7 +4733,6 @@
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                               <td style="vertical-align:top; padding-top:10px;">
-                                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
                                   <strong>${shortName}</strong>
                               </td>
                               <td style="vertical-align:top; padding-top:10px;">
@@ -5168,8 +5166,10 @@
             const docType = document.getElementById('docType').value || 'Quotation';
             const quoteNo = document.getElementById('quoteNo').value || 'Draft';
             const custName = document.getElementById('custName').value || 'Customer';
+            const quoteDate = document.getElementById('quoteDate').value || '';
             const originalTitle = document.title;
-            document.title = `${docType}_${quoteNo}_${custName}`.replace(/[^a-z0-9]/gi, '_');
+            const datePart = quoteDate ? `${quoteDate}_` : '';
+            document.title = `${datePart}${custName}_${docType}_${quoteNo}`.replace(/[^a-z0-9]/gi, '_');
             window.print();
             setTimeout(() => { document.title = originalTitle; }, 1000);
         }
@@ -5263,7 +5263,6 @@
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                        <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${pdfMatContent}</td>
@@ -5346,7 +5345,6 @@
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                        <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
                                     <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
@@ -5566,7 +5564,9 @@
                 const quoteNo = document.getElementById('quoteNo').value || '—';
                 const custName = document.getElementById('custName').value || '—';
                 const custAddress = document.getElementById('custAddress').value || '—';
-                const filename = `${docType}_${quoteNo}_${custName}`.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf';
+                const quoteDate = document.getElementById('quoteDate').value || '';
+                const datePart = quoteDate ? `${quoteDate}_` : '';
+                const filename = `${datePart}${custName}_${docType}_${quoteNo}`.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf';
                 const baseGrandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
                 const shareKitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
                 const shareKitchenTotal = shareKitchenLines.reduce((s, l) => s + l.amount, 0);
