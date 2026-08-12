@@ -1296,18 +1296,13 @@
             const currentDbVersion = 'v19';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
-            if (stored && storedVersion === currentDbVersion) {
-                try {
-                    return JSON.parse(stored);
-                } catch(e) {}
-            }
-
-            const db = [];
+            
+            let db = [];
             const qualities = ['Premium', 'Middle / Standard', 'Economy'];
             
             function addMat(room, type, qual, item, constType, specs, formula, baseAmount, showSqft = true) {
                 db.push({
-                    id: 'mat_' + room + '_' + type.replace(/\s+/g, '_').toLowerCase() + '_' + qual.replace(/\s+/g, '_').toLowerCase() + '_' + item.replace(/\s+/g, '_').toLowerCase() + '_' + constType.replace(/\s+/g, '_').toLowerCase() + '_' + (db.length + 1),
+                    id: 'mat_' + room + '_' + type.replace(/\s+/g, '_').toLowerCase() + '_' + qual.replace(/\s+/g, '_').toLowerCase() + '_' + item.replace(/\s+/g, '_').toLowerCase() + '_' + constType.replace(/\s+/g, '_').toLowerCase(),
                     roomId: room,
                     materialType: type,
                     quality: qual,
@@ -1323,6 +1318,17 @@
                     status: 'ON'
                 });
             }
+
+            let loadedFromStore = false;
+            if (stored && storedVersion === currentDbVersion) {
+                try {
+                    db = JSON.parse(stored);
+                    loadedFromStore = true;
+                } catch(e) {}
+            }
+
+            const adminSavedSpecs = localStorage.getItem('pks_material_specs');
+            const defaultSpecs = adminSavedSpecs || "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
 
             // Standard Rooms items
             const stdMaterials = [
@@ -1350,6 +1356,7 @@
 
             // Helper to populate standard items in standard rooms
             function addStd(room, item, mats, specs = null) {
+                if (loadedFromStore) return;
                 qualities.forEach(qual => {
                     if (qual === 'Economy') {
                         let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -1367,7 +1374,7 @@
 
                             // If it is kitchen, also add the standard materials (mats) under Economy
                             if (room === 'kitchen') {
-                                let stdSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+                                let stdSpecs = defaultSpecs;
                                 mats.forEach(m => {
                                     let factor = 0.70; // Economy pricing factor for standard materials
                                     addMat(room, 'Standard', qual, item, m.label, stdSpecs, m.formula, Math.round(m.base * factor));
@@ -1378,7 +1385,7 @@
                     }
                     
                     let factor = qual === 'Premium' ? 1.0 : 0.85;
-                    let finalSpecs = specs || "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+                    let finalSpecs = specs || defaultSpecs;
 
                     mats.forEach(m => {
                         addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, Math.round(m.base * factor));
@@ -1539,6 +1546,7 @@
 
             // Helper to add the 3 construction types to a Full Teak Wood card
             function addFullTeakCabinet(itemName, boxBase, doorBase, partBase, boxSpecs, partSpecs, customBoxFormula = null) {
+                if (loadedFromStore) return;
                 const boxFormula = customBoxFormula || "(Length + Width) * Height / 144";
                 addMat('full_teak_wood', 'Full Teak Wood', 'Premium', itemName, 'Box Type', boxSpecs, boxFormula, boxBase);
                 addMat('full_teak_wood', 'Full Teak Wood', 'Premium', itemName, 'Door Only', ftSpecsDoor, 'L * H / 144', doorBase);
@@ -1576,6 +1584,7 @@
 
             // Helper to add the 3 construction types to a half teak wood item card
             function addHalfTeakCabinet(itemName, boxBase, doorBase, partBase, boxSpecs, doorSpecs, partSpecs, customBoxFormula = null) {
+                if (loadedFromStore) return;
                 const boxFormula = customBoxFormula || "(Length + Width) * Height / 144";
                 qualities.forEach(qual => {
                     let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
@@ -1586,6 +1595,7 @@
             }
 
             function addHalfTeakPanel(itemName, base, specs, formula) {
+                if (loadedFromStore) return;
                 qualities.forEach(qual => {
                     let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
                     addMat('half_teak_wood', 'Half Teak Wood', qual, itemName, 'Box Type', specs, formula, Math.round(base * factor));
@@ -1633,18 +1643,140 @@
                 { name: "Profile Handle", base: 450 }
             ];
 
-            const allAccRooms = ['accessories', 'kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'sitout', 'store_room', 'toilet_area'];
-            allAccRooms.forEach(room => {
-                accOpts.forEach(acc => {
-                    qualities.forEach(qual => {
-                        if (qual === 'Economy' && room !== 'accessories') return; // Do not add accessories inside other rooms for Economy quality
-                        addMat(room, 'Accessories', qual, acc.name, 'Box Type', 'Stainless Steel Kitchen Accessories', 'QTY', acc.base, false);
+            if (!loadedFromStore) {
+                const allAccRooms = ['accessories', 'kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'sitout', 'store_room', 'toilet_area'];
+                allAccRooms.forEach(room => {
+                    accOpts.forEach(acc => {
+                        qualities.forEach(qual => {
+                            if (qual === 'Economy' && room !== 'accessories') return; // Do not add accessories inside other rooms for Economy quality
+                            addMat(room, 'Accessories', qual, acc.name, 'Box Type', 'Stainless Steel Kitchen Accessories', 'QTY', acc.base, false);
+                        });
                     });
                 });
+            }
+
+            // Sync/override rates, custom materials, custom items, and deletions from localStorage
+            const rates = getRates();
+            
+            // 1. Sync custom rates (from admin Rates Management)
+            db.forEach(m => {
+                if (rates[m.constructionType] !== undefined) {
+                    m.baseAmount = rates[m.constructionType];
+                    m.offerPrice = rates[m.constructionType] * (1 - (m.discountPercentage || 0) / 100);
+                }
             });
 
+            // 2. Merge custom materials added by admin to standard items
+            const customMats = localStorage.getItem('pks_custom_materials');
+            if (customMats) {
+                try {
+                    const parsedMats = JSON.parse(customMats);
+                    for (const stdItemId in parsedMats) {
+                        const itemId = parseInt(stdItemId);
+                        const options = parsedMats[stdItemId];
+                        const matchingItemKeys = new Set();
+                        db.forEach(m => {
+                            if (getStandardItemId(m.roomId, m.itemName) === itemId) {
+                                matchingItemKeys.add(`${m.roomId}||${m.itemName}||${m.materialType}`);
+                            }
+                        });
+                        
+                        matchingItemKeys.forEach(keyStr => {
+                            const [room, itemName, matType] = keyStr.split('||');
+                            options.forEach(opt => {
+                                qualities.forEach(qual => {
+                                    const exists = db.some(m => 
+                                        m.roomId === room &&
+                                        m.itemName === itemName &&
+                                        m.quality === qual &&
+                                        m.constructionType === opt.label
+                                    );
+                                    if (!exists) {
+                                        let formula = "L*H/144";
+                                        let fields = ["L", "H"];
+                                        if (opt.formulaType === "L*H") { fields = ["L", "H"]; formula = "L*H/144"; }
+                                        else if (opt.formulaType === "L*W") { fields = ["L", "W"]; formula = "L*W/144"; }
+                                        else if (opt.formulaType === "SQFT") { fields = ["SQFT"]; formula = "SQFT"; }
+                                        else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
+                                        else { fields = ["L", "W", "H"]; formula = "(L+W)*H/144"; }
+                                        
+                                        const rate = rates[opt.label] !== undefined ? rates[opt.label] : (opt.rate || 0);
+                                        
+                                        addMat(room, matType, qual, itemName, opt.label, opt.specifications || "", formula, rate);
+                                    }
+                                });
+                            });
+                        });
+                    }
+                } catch (e) { console.error("Error merging custom materials: ", e); }
+            }
+
+            // 3. Merge custom items created by admin
+            const customItemsStr = localStorage.getItem('pks_custom_items');
+            if (customItemsStr) {
+                try {
+                    const parsedItems = JSON.parse(customItemsStr);
+                    const standardRooms = ['kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'toilet_area', 'store_room', 'sitout'];
+                    parsedItems.forEach(item => {
+                        standardRooms.forEach(room => {
+                            qualities.forEach(qual => {
+                                item.options.forEach(opt => {
+                                    const exists = db.some(m => 
+                                        m.roomId === room &&
+                                        m.itemName === item.name &&
+                                        m.quality === qual &&
+                                        m.constructionType === opt.label
+                                    );
+                                    if (!exists) {
+                                        let formula = "L*H/144";
+                                        let fields = ["L", "H"];
+                                        if (opt.formulaType === "L*H") { fields = ["L", "H"]; formula = "L*H/144"; }
+                                        else if (opt.formulaType === "L*W") { fields = ["L", "W"]; formula = "L*W/144"; }
+                                        else if (opt.formulaType === "SQFT") { fields = ["SQFT"]; formula = "SQFT"; }
+                                        else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
+                                        else { fields = ["L", "W", "H"]; formula = "(L+W)*H/144"; }
+                                        
+                                        const rate = rates[opt.label] !== undefined ? rates[opt.label] : (opt.rate || 0);
+                                        
+                                        addMat(room, 'Standard', qual, item.name, opt.label, opt.specifications || "", formula, rate);
+                                    }
+                                });
+                            });
+                        });
+                    });
+                } catch (e) { console.error("Error merging custom items: ", e); }
+            }
+
+            // 4. Filter out deleted standard items
+            const deletedItemsStr = localStorage.getItem('pks_deleted_standard_items');
+            if (deletedItemsStr) {
+                try {
+                    const deletedItems = JSON.parse(deletedItemsStr);
+                    db = db.filter(m => {
+                        const stdItemId = getStandardItemId(m.roomId, m.itemName);
+                        return !(stdItemId && deletedItems.includes(stdItemId));
+                    });
+                } catch (e) { }
+            }
+
+            // 5. Filter out deleted standard materials
+            const deletedMatsStr = localStorage.getItem('pks_deleted_standard_materials');
+            if (deletedMatsStr) {
+                try {
+                    const deletedMats = JSON.parse(deletedMatsStr);
+                    db = db.filter(m => {
+                        const stdItemId = getStandardItemId(m.roomId, m.itemName);
+                        if (stdItemId) {
+                            const key = `${stdItemId}-${m.constructionType}`;
+                            return !deletedMats.includes(key);
+                        }
+                        return true;
+                    });
+                } catch (e) { }
+            }
+
             localStorage.setItem('pks_materials_db', JSON.stringify(db));
-            localStorage.setItem('pks_materials_db_version', 'v19');
+            localStorage.setItem('pks_materials_db_version', currentDbVersion);
             return db;
         }
 
@@ -1946,6 +2078,10 @@
                             <label>Description</label>
                             <input type="text" id="${buildId}-desc" placeholder="e.g. Handle upgrade">
                         </div>
+                        <div class="field" style="flex:2">
+                            <label>Specifications</label>
+                            <input type="text" id="${buildId}-specs" placeholder="e.g. 16mm Marine Ply, SS Accessories">
+                        </div>
                         <div class="field">
                             <label>Sq.Ft / Qty</label>
                             <input type="number" id="${buildId}-sqft" placeholder="0" value="1">
@@ -2165,6 +2301,7 @@
             const rateStr = prompt("Enter rate (₹):");
             if (!rateStr) return;
             const rate = parseFloat(rateStr) || 0;
+            const specs = prompt("Enter specifications (optional):") || "";
 
             const item = ITEMS.find(i => i.id === itemId);
             const firstOpt = item.options[0] || {};
@@ -2186,7 +2323,7 @@
                         quality: qual,
                         itemName: item.name,
                         constructionType: matName.trim(),
-                        specifications: firstOpt.specifications || "",
+                        specifications: specs || firstOpt.specifications || "",
                         formula: firstOpt.formula || "(L+W)*H/144",
                         baseAmount: rate,
                         offerPrice: rate,
@@ -2217,7 +2354,7 @@
                         if (!customMats[stdItemId]) {
                             customMats[stdItemId] = [];
                         }
-                        customMats[stdItemId].push({ label: matName.trim(), rate: rate });
+                        customMats[stdItemId].push({ label: matName.trim(), rate: rate, specifications: specs });
                         localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
                     }
 
@@ -2256,15 +2393,13 @@
             sizeArea.innerHTML = `
                 <div class="size-panel">
                   <div class="step-label">Size &amp; rate — ${labelText} <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
-                  ${opt.specifications ? `
                   <div id="${buildId}-specs-block" style="font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; line-height: 1.4; padding: 6px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; display: flex; flex-direction: column; gap: 4px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                       <strong>Specifications:</strong>
                       <button type="button" style="background: transparent; border: none; cursor: pointer; font-size: 0.85rem; padding: 2px;" onclick="enableInlineSpecsEdit('${buildId}', ${itemId}, ${optIdx})" title="Edit Specifications">✏️</button>
                     </div>
-                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${opt.specifications}</div>
+                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${opt.specifications || "No specifications added. Click edit icon to add."}</div>
                   </div>
-                  ` : ''}
                   <div class="field-row">
                     ${fieldsHtml}
                     <div class="field" ${showRate ? '' : 'style="display:none;"'}>
@@ -2407,6 +2542,7 @@
         function confirmCustom(buildId, itemId) {
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
+            const specs = document.getElementById(`${buildId}-specs`).value.trim();
             const sqft = Math.round(parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0);
 
             let rate = 0;
@@ -2430,7 +2566,8 @@
                 rate, 
                 amount,
                 enabled: true,
-                showSqft: true
+                showSqft: true,
+                specifications: specs
             });
             renderQuote();
             closeBuilder(buildId);
