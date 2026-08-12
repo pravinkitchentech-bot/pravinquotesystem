@@ -974,7 +974,8 @@
                             </div>
                         </th>
                         <th class="num">Offer Price</th>
-                        <th></th>
+                        <th style="width: 50px;"></th>
+                        <th style="width: 40px;"></th>
                     </tr>
                 </thead>
                 <tbody id="quoteBody">
@@ -991,13 +992,7 @@
                 </tfoot>
             </table>
 
-            <!-- Materials Specs Display (Screen Only) -->
-            <div id="uiSpecsBlock"
-                style="margin-top: 18px; padding: 12px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.8rem; line-height: 1.5; color: var(--text); display: none;">
-                <strong style="color: var(--accent-dark); display: block; margin-bottom: 4px;">Material
-                    Specifications:</strong>
-                <span id="uiSpecsText"></span>
-            </div>
+
 
             <!-- Payment Terms Inputs (Screen Only) -->
             <div class="specs-and-terms-container"
@@ -1030,14 +1025,8 @@
                 </div>
             </div>
 
-            <!-- Print-Only Payment Terms & Specs (shown only during browser print) -->
+            <!-- Print-Only Payment Terms (shown only during browser print) -->
             <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
-                <div
-                    style="margin-bottom: 12px; padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Material
-                        Specifications:</strong>
-                    <span id="printSpecsText"></span>
-                </div>
                 <div
                     style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
                     <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
@@ -1135,7 +1124,6 @@
 
         const ROOMS = allRooms.filter(r => {
             if (isEconomyMode && r.id === 'study_room') return false;
-            if ((r.id === 'full_teak_wood' || r.id === 'half_teak_wood') && pricingMode !== 'premium') return false;
             return true;
         });
 
@@ -1285,7 +1273,17 @@
             const stored = localStorage.getItem('pks_custom_items');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    const items = JSON.parse(stored);
+                    if (Array.isArray(items)) {
+                        const filtered = items.filter(item => {
+                            const name = (item.name || "").toLowerCase();
+                            return !(name.includes("passage") || name.includes("seeling") || name.includes("false") || name.includes("celling") || name.includes("ceiling"));
+                        });
+                        if (filtered.length !== items.length) {
+                            localStorage.setItem('pks_custom_items', JSON.stringify(filtered));
+                        }
+                        return filtered;
+                    }
                 } catch (e) { }
             }
             return [];
@@ -1293,7 +1291,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v26';
+            const currentDbVersion = 'v28';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1510,6 +1508,7 @@
             ]);
 
             addStd('prayer_unit', 'PRAYER UNIT BOTTOM CABINET', sideCabinetOptions);
+            addStd('prayer_unit', 'PRAYER UNIT WALL PANELING', wallPanelMats);
 
             addStd('bedroom', 'Wardrobe', sideCabinetOptions);
             addStd('bedroom', 'Bed back wall paneling with headrest', wallPanelMats);
@@ -2782,11 +2781,9 @@
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 10 : 9}">No items added yet — start with any card above.</td></tr>`;
                 document.getElementById('grandTotal').textContent = '₹0';
-                document.getElementById('uiSpecsBlock').style.display = 'none';
                 document.querySelector('.specs-and-terms-container').style.display = 'none';
                 return;
             } else {
-                document.getElementById('uiSpecsBlock').style.display = 'block';
                 document.querySelector('.specs-and-terms-container').style.display = 'flex';
             }
 
@@ -2923,16 +2920,14 @@
             // Render tfoot colspan based on role
             const totalRow = document.querySelector('tfoot tr');
             totalRow.innerHTML = `
-                <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
+                <td colspan="${showRate ? 6 : 5}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
                 <td class="num" id="grandTotal" style="font-weight:600; text-decoration: line-through; color: var(--muted);">₹${grandTotal.toFixed(2)}</td>
                 <td class="num" id="offerGrandTotal" style="color: var(--accent); font-weight: 700;">₹${offerGrandTotal.toFixed(2)}</td>
                 <td></td>
                 <td></td>
             `;
 
-            // Display dynamic specs
-            const specsText = getFormattedSpecsText(quoteLines, '\n');
-            document.getElementById('uiSpecsText').textContent = specsText.toUpperCase();
+
         }
 
         function deleteLine(id) {
@@ -3047,9 +3042,7 @@
             document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
-            // Populate print specs and terms
-            const specsText = getFormattedSpecsText(quoteLines, '\n');
-            document.getElementById('printSpecsText').textContent = specsText.toUpperCase();
+
             document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
             document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
             document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
@@ -3236,7 +3229,7 @@
                         </tbody>
                         <tfoot>
                             <tr style="background: #fdfaf6; font-weight: 700; border-top: 2px solid #b07d2e;">
-                                <td colspan="${showRate ? 7 : 6}" style="padding: 10px; font-size: 0.82rem; text-align: right; color: #1c2820; border: 1px solid #e0d6c8;">Grand Total (Rooms + Accessories)</td>
+                                <td colspan="${showRate ? 6 : 5}" style="padding: 10px; font-size: 0.82rem; text-align: right; color: #1c2820; border: 1px solid #e0d6c8;">Grand Total (Rooms + Accessories)</td>
                                 <td style="padding: 10px; font-size: 0.85rem; text-align: right; color: #7a6e61; font-weight: 600; text-decoration: line-through; border: 1px solid #e0d6c8;">₹${grandTotal.toFixed(2)}</td>
                                 <td style="padding: 10px; font-size: 0.85rem; text-align: right; color: #b07d2e; font-weight: 700; border: 1px solid #e0d6c8;">₹${offerGrandTotal.toFixed(2)}</td>
                             </tr>
@@ -3267,17 +3260,12 @@
                 </div>
             `;
 
-            // Specs and Payment Terms HTML for PDF
-            const specsText = getFormattedSpecsText(quoteLines, '<br>');
+            // Payment Terms HTML for PDF
             const payAdvance = document.getElementById('payAdvance').value || '';
             const paySecond = document.getElementById('paySecond').value || '';
             const payFinal = document.getElementById('payFinal').value || '';
 
             let specsAndTermsHTML = `
-                <div style="margin-top: 15px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
-                    <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Material Specifications:</strong>
-                    <div>${specsText || 'NONE'}</div>
-                </div>
                 <div style="margin-top: 12px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
                     <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Payment Terms:</strong>
                     <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #1a1714;">
