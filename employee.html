@@ -1293,8 +1293,10 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
+            const currentDbVersion = 'v18';
             let stored = localStorage.getItem('pks_materials_db');
-            if (stored && stored.includes('full_teak_wood') && stored.includes('Marineply-710 grade') && stored.includes('breakfast_table_wall_paneling_single_box_teak_mats_v18')) {
+            let storedVersion = localStorage.getItem('pks_materials_db_version');
+            if (stored && storedVersion === currentDbVersion) {
                 try {
                     return JSON.parse(stored);
                 } catch(e) {}
@@ -1652,6 +1654,7 @@
             });
 
             localStorage.setItem('pks_materials_db', JSON.stringify(db));
+            localStorage.setItem('pks_materials_db_version', 'v18');
             return db;
         }
 
