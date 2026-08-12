@@ -1191,29 +1191,41 @@
                     "Engineering Wood (Door Only)",
                     "Engineering Wood (Partition Type)"
                 ];
-                const engWoodOnly = [
-                    "Engineering Wood"
-                ];
+                const engWoodOnly = ["Engineering Wood"];
 
                 const items = ROOM_ITEMS[selectedRoom] || [];
                 items.forEach(item => {
                     const itemName = item.name.toUpperCase();
+
+                    // Skip accessories in non-accessories rooms
                     if (itemName === 'ACCESSORIES') {
-                        const ACCESSORY_LIST = [
-                            "Basket", "Tandom Box", "Oil Pull Out", "PVC Cutlery Tray", "SS Cutlery Tray",
-                            "Dustbin Unit", "Detergent Holder", "GTBT", "ROLLING SHUTTER", "Tall Unit",
-                            "Swing Corner", "Magic Corner", "PARACEL CORNER", "D-Tray",
-                            "Soft Closing Runner", "Soft Closing Hinges", "Profile Handle"
-                        ];
-                        ACCESSORY_LIST.forEach(opt => roomOptions.add(opt));
-                    } else if (item.options.includes("PVC") || item.options.includes("Lamination") || item.options.includes("Charcoal")) {
+                        if (selectedRoom === 'accessories') {
+                            const ACCESSORY_LIST = [
+                                "Basket", "Tandom Box", "Oil Pull Out", "PVC Cutlery Tray", "SS Cutlery Tray",
+                                "Dustbin Unit", "Detergent Holder", "GTBT", "ROLLING SHUTTER", "Tall Unit",
+                                "Swing Corner", "Magic Corner", "PARACEL CORNER", "D-Tray",
+                                "Soft Closing Runner", "Soft Closing Hinges", "Profile Handle"
+                            ];
+                            ACCESSORY_LIST.forEach(opt => roomOptions.add(opt));
+                        }
+                        return;
+                    }
+
+                    // Mirror addStd Economy logic:
+                    // Wall paneling / ceiling items keep their PVC/Lamination/Charcoal options
+                    const isWallPanelOrCeiling = item.options.some(
+                        o => o === "PVC" || o === "Lamination" || o === "Charcoal"
+                    );
+                    if (isWallPanelOrCeiling) {
                         item.options.forEach(opt => roomOptions.add(opt));
-                    } else if (itemName.includes("BED") && !itemName.includes("BACK")) {
-                        engWoodOnly.forEach(opt => roomOptions.add(opt));
-                    } else if (itemName.includes("TABLE") || itemName === "LIVING" || itemName.includes("PARTITION")) {
-                        engWoodOnly.forEach(opt => roomOptions.add(opt));
                     } else {
-                        engWoodBoxDoor.forEach(opt => roomOptions.add(opt));
+                        // Cabinet items (have Box/Door/Partition/Framed variants) → engWoodBoxDoor
+                        // Simple items (no such variants) → engWoodOnly
+                        const isCabinet = item.options.some(
+                            o => o.includes("Box") || o.includes("Door") || o.includes("Partition") || o.includes("Framed")
+                        );
+                        const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
+                        ecoMats.forEach(opt => roomOptions.add(opt));
                     }
                 });
             } else {
@@ -1725,7 +1737,12 @@
             sessionStorage.setItem('pks_selected_room_name', roomName);
 
             const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
-            BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
+            const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
+            BASE_ITEMS = rawItems.filter(item => {
+                if (deletedStandardItems.includes(item.id)) return false;
+                if (pMode === 'economy' && roomId !== 'accessories' && item.name.toUpperCase() === 'ACCESSORIES') return false;
+                return true;
+            });
             currentRates = getRates();
             customMaterials = getCustomMaterials();
             customItems = getCustomItems();
@@ -1969,4 +1986,3 @@
 </body>
 
 </html>
-    
