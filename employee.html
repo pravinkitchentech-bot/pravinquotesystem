@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v21';
+            const currentDbVersion = 'v22';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1375,8 +1375,8 @@
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
                             });
 
-                            // If it is kitchen, also add the standard materials (mats) under Economy
-                            if (room === 'kitchen') {
+                            // If it is kitchen, living room or a partition, also add the standard materials (mats) under Economy
+                            if (room === 'kitchen' || room === 'living_room' || item.toUpperCase().includes('PARTITION')) {
                                 let stdSpecs = defaultSpecs;
                                 mats.forEach(m => {
                                     let factor = 0.70; // Economy pricing factor for standard materials
@@ -2387,14 +2387,18 @@
                             const itemMat = (item.material || "").toLowerCase().trim();
                             const currentMat = (currentMaterialLabel || "").toLowerCase().trim();
                             
-                            let matMatch = currentMat.includes(itemMat) || itemMat.includes(currentMat);
+                            let matMatch = false;
                             
-                            const keyWords = ["lamination", "acrylic", "wpc", "pvc", "teak", "charcoal", "wood", "glass", "mirror", "stone", "quartz"];
-                            for (const word of keyWords) {
-                                if (currentMat.includes(word) && itemMat.includes(word)) {
-                                    matMatch = true;
-                                    break;
-                                }
+                            if (currentMat.includes("wpc")) {
+                                matMatch = itemMat.includes("wpc");
+                            } else if (currentMat.includes("pvc")) {
+                                matMatch = itemMat.includes("pvc");
+                            } else if (currentMat.includes("acrylic")) {
+                                matMatch = itemMat.includes("acrylic");
+                            } else if (currentMat.includes("lamination")) {
+                                matMatch = itemMat.includes("lamination") && !itemMat.includes("wpc");
+                            } else {
+                                matMatch = currentMat.includes(itemMat) || itemMat.includes(currentMat);
                             }
                             
                             if (!matMatch) return false;
@@ -3596,7 +3600,7 @@
             if (!specsTextBlock) return;
 
             specsTextBlock.innerHTML = `
-                <textarea id="${buildId}-specs-input" style="width: 100%; min-height: 80px; margin-top: 4px; font-family: inherit; font-size: 0.72rem; padding: 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); resize: vertical;">${opt.specifications}</textarea>
+                <textarea id="${buildId}-specs-input" style="width: 100%; min-height: 80px; margin-top: 4px; font-family: inherit; font-size: 0.72rem; padding: 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); resize: vertical;">${formatSpecificationsText(opt.specifications, selectedRoom, opt.label)}</textarea>
                 <div style="display: flex; gap: 8px; margin-top: 4px; justify-content: flex-end;">
                     <button type="button" class="confirm-btn" style="padding: 2px 8px; font-size: 0.68rem; line-height: 1.2; border-radius: 4px;" onclick="saveInlineSpecs('${buildId}', ${itemId}, ${optIdx})">Save</button>
                     <button type="button" class="cancel-btn" style="padding: 2px 8px; font-size: 0.68rem; line-height: 1.2; border-radius: 4px;" onclick="cancelInlineSpecs('${buildId}', ${itemId}, ${optIdx})">Cancel</button>
@@ -3647,7 +3651,7 @@
             // Restore display view
             const specsTextBlock = document.getElementById(`${buildId}-specs-text`);
             if (specsTextBlock) {
-                specsTextBlock.textContent = opt.specifications;
+                specsTextBlock.textContent = formatSpecificationsText(opt.specifications, selectedRoom, opt.label) || "No specifications added. Click edit icon to add.";
             }
         }
 
@@ -3656,7 +3660,7 @@
             const opt = item.options[optIdx];
             const specsTextBlock = document.getElementById(`${buildId}-specs-text`);
             if (specsTextBlock) {
-                specsTextBlock.textContent = opt.specifications;
+                specsTextBlock.textContent = formatSpecificationsText(opt.specifications, selectedRoom, opt.label) || "No specifications added. Click edit icon to add.";
             }
         }
 
