@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v25';
+            const currentDbVersion = 'v26';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1363,6 +1363,13 @@
                 qualities.forEach(qual => {
                     if (qual === 'Economy') {
                         let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+                        if (item.toUpperCase() === 'BED') {
+                            mats.forEach(m => {
+                                let factor = 0.70; // Economy pricing factor
+                                addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, Math.round(m.base * factor));
+                            });
+                            return;
+                        }
                         const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal");
                         if (isWallPanelOrCeiling) {
                             mats.forEach(m => {
