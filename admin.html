@@ -917,7 +917,9 @@
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
-            { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
+            { id: 'accessories', name: 'Accessories', icon: '🧺', active: true },
+            { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
+            { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true }
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -1100,6 +1102,47 @@
                 { id: 104, name: "Soft Closing Runner", options: ["Soft Closing Runner"] },
                 { id: 105, name: "Soft Closing Hinges", options: ["Soft Closing Hinges"] },
                 { id: 106, name: "Profile Handle", options: ["Profile Handle"] }
+            ],
+            full_teak_wood: [
+                { id: 301, name: "Kitchen Bottom", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 302, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 303, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 304, name: "Kitchen Island Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 305, name: "Kitchen Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 306, name: "Kitchen Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 307, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
+                { id: 308, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
+                { id: 309, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 310, name: "Spice Rack", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 311, name: "Ledge", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 312, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 313, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 314, name: "Kitchen & Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 315, name: "Wall Paneling", options: ["Box Type"] },
+                { id: 316, name: "Wash Basin", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 317, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 318, name: "Tv Unit", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 319, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
+            ],
+            half_teak_wood: [
+                { id: 401, name: "Kitchen Bottom", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 402, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 403, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 404, name: "Kitchen Island Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 405, name: "Kitchen Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 406, name: "Kitchen Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 407, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 408, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
+                { id: 409, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
+                { id: 410, name: "Breakfast Table Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 411, name: "Spice Rack", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 412, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 413, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 414, name: "Kitchen & Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 415, name: "Wash Basin Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 416, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 417, name: "Tv Unit", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 418, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
             ]
         };
 
@@ -1136,7 +1179,17 @@
             const stored = localStorage.getItem('pks_custom_items');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    const items = JSON.parse(stored);
+                    if (Array.isArray(items)) {
+                        const filtered = items.filter(item => {
+                            const name = (item.name || "").toLowerCase();
+                            return !(name.includes("passage") || name.includes("seeling") || name.includes("false") || name.includes("celling") || name.includes("ceiling"));
+                        });
+                        if (filtered.length !== items.length) {
+                            localStorage.setItem('pks_custom_items', JSON.stringify(filtered));
+                        }
+                        return filtered;
+                    }
                 } catch (e) { }
             }
             return [];
