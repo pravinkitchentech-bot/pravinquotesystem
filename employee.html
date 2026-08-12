@@ -2376,6 +2376,43 @@
             openMaterialSelector(buildId, itemId);
         }
 
+        function formatSpecificationsText(specsStr, currentRoomId, currentMaterialLabel) {
+            if (!specsStr) return "";
+            specsStr = specsStr.trim();
+            if (specsStr.startsWith('[') && specsStr.endsWith(']')) {
+                try {
+                    const arr = JSON.parse(specsStr);
+                    if (Array.isArray(arr)) {
+                        const filtered = arr.filter(item => {
+                            const itemMat = (item.material || "").toLowerCase().trim();
+                            const currentMat = (currentMaterialLabel || "").toLowerCase().trim();
+                            
+                            let matMatch = currentMat.includes(itemMat) || itemMat.includes(currentMat);
+                            
+                            const keyWords = ["lamination", "acrylic", "wpc", "pvc", "teak", "charcoal", "wood", "glass", "mirror", "stone", "quartz"];
+                            for (const word of keyWords) {
+                                if (currentMat.includes(word) && itemMat.includes(word)) {
+                                    matMatch = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!matMatch) return false;
+                            
+                            const itemRoom = (item.room || "").toLowerCase().trim();
+                            const roomMatch = itemRoom === 'all' || itemRoom === currentRoomId.toLowerCase().trim();
+                            return roomMatch;
+                        });
+                        
+                        if (filtered.length > 0) {
+                            return filtered.map(item => item.text).join('\n');
+                        }
+                    }
+                } catch (e) {}
+            }
+            return specsStr;
+        }
+
         function getFinalRateForOption(opt) {
             const increasedRate = opt.baseAmount * (1 + (opt.amountIncreasePercentage || 0) / 100);
             const discountPct = opt.discountPercentage || 0;
@@ -2408,7 +2445,7 @@
                       <strong>Specifications:</strong>
                       <button type="button" style="background: transparent; border: none; cursor: pointer; font-size: 0.85rem; padding: 2px;" onclick="enableInlineSpecsEdit('${buildId}', ${itemId}, ${optIdx})" title="Edit Specifications">✏️</button>
                     </div>
-                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${opt.specifications || "No specifications added. Click edit icon to add."}</div>
+                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${formatSpecificationsText(opt.specifications, selectedRoom, opt.label) || "No specifications added. Click edit icon to add."}</div>
                   </div>
                   <div class="field-row">
                     ${fieldsHtml}
@@ -2543,7 +2580,7 @@
                 amount,
                 enabled: true,
                 showSqft: opt.showSqft,
-                specifications: opt.specifications
+                specifications: formatSpecificationsText(opt.specifications, selectedRoom, opt.label)
             });
             renderQuote();
             closeBuilder(buildId);
