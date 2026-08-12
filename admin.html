@@ -1180,6 +1180,51 @@
         }
 
         /* ---------- Renderers ---------- */
+        function getActiveRoomOptions() {
+            const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
+            const roomOptions = new Set();
+
+            if (pMode === 'economy') {
+                const engWoodBoxDoor = [
+                    "Engineering Wood (Box Type)",
+                    "Engineering Wood (Door Only)",
+                    "Engineering Wood (Partition Type)"
+                ];
+                const engWoodOnly = [
+                    "Engineering Wood"
+                ];
+
+                const items = ROOM_ITEMS[selectedRoom] || [];
+                items.forEach(item => {
+                    const itemName = item.name.toUpperCase();
+                    if (itemName === 'ACCESSORIES') {
+                        const ACCESSORY_LIST = [
+                            "Basket", "Tandom Box", "Oil Pull Out", "PVC Cutlery Tray", "SS Cutlery Tray",
+                            "Dustbin Unit", "Detergent Holder", "GTBT", "ROLLING SHUTTER", "Tall Unit",
+                            "Swing Corner", "Magic Corner", "PARACEL CORNER", "D-Tray",
+                            "Soft Closing Runner", "Soft Closing Hinges", "Profile Handle"
+                        ];
+                        ACCESSORY_LIST.forEach(opt => roomOptions.add(opt));
+                    } else if (item.options.includes("PVC") || item.options.includes("Lamination") || item.options.includes("Charcoal")) {
+                        item.options.forEach(opt => roomOptions.add(opt));
+                    } else if (itemName.includes("BED") && !itemName.includes("BACK")) {
+                        engWoodOnly.forEach(opt => roomOptions.add(opt));
+                    } else if (itemName.includes("TABLE") || itemName === "LIVING" || itemName.includes("PARTITION")) {
+                        engWoodOnly.forEach(opt => roomOptions.add(opt));
+                    } else {
+                        engWoodBoxDoor.forEach(opt => roomOptions.add(opt));
+                    }
+                });
+            } else {
+                const items = ROOM_ITEMS[selectedRoom] || [];
+                items.forEach(item => {
+                    item.options.forEach(opt => roomOptions.add(opt));
+                });
+            }
+
+            return roomOptions;
+        }
+
         function renderRatesTable() {
             const body = document.getElementById('ratesTableBody');
             body.innerHTML = '';
@@ -1187,11 +1232,13 @@
             // Get all unique material labels used in the selectedRoom
             const roomMaterials = new Set();
             
-            // 1. Get standard items defined for this room in ROOM_ITEMS
+            // 1. Get standard item options for this room based on current pricing mode
+            const activeOpts = getActiveRoomOptions();
+            activeOpts.forEach(opt => roomMaterials.add(opt));
+            
+            // Add custom materials added to standard items in this room
             const items = ROOM_ITEMS[selectedRoom] || [];
             items.forEach(item => {
-                item.options.forEach(opt => roomMaterials.add(opt));
-                
                 const customList = customMaterials[item.id] || [];
                 customList.forEach(m => roomMaterials.add(m.label));
             });
