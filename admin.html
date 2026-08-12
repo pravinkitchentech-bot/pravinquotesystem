@@ -1227,6 +1227,11 @@
                         );
                         const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
                         ecoMats.forEach(opt => roomOptions.add(opt));
+
+                        // If it is kitchen, also add the standard options under Economy
+                        if (selectedRoom === 'kitchen') {
+                            item.options.forEach(opt => roomOptions.add(opt));
+                        }
                     }
                 });
             } else {
