@@ -1294,7 +1294,7 @@
         // Setup base database
         function getOrInitMaterialsDb() {
             let stored = localStorage.getItem('pks_materials_db');
-            if (stored && stored.includes('full_teak_wood') && stored.includes('Marineply-710 grade') && stored.includes('breakfast_table_wall_paneling_single_box_teak_mats_v17')) {
+            if (stored && stored.includes('full_teak_wood') && stored.includes('Marineply-710 grade') && stored.includes('breakfast_table_wall_paneling_single_box_teak_mats_v18')) {
                 try {
                     return JSON.parse(stored);
                 } catch(e) {}
@@ -1365,6 +1365,15 @@
                             ecoMats.forEach(m => {
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
                             });
+
+                            // If it is kitchen, also add the standard materials (mats) under Economy
+                            if (room === 'kitchen') {
+                                let stdSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE";
+                                mats.forEach(m => {
+                                    let factor = 0.70; // Economy pricing factor for standard materials
+                                    addMat(room, 'Standard', qual, item, m.label, stdSpecs, m.formula, Math.round(m.base * factor));
+                                });
+                            }
                         }
                         return;
                     }
