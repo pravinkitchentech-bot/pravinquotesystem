@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v24';
+            const currentDbVersion = 'v25';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1556,9 +1556,12 @@
             function addFullTeakCabinet(itemName, boxBase, doorBase, partBase, boxSpecs, partSpecs, customBoxFormula = null) {
                 if (loadedFromStore) return;
                 const boxFormula = customBoxFormula || "(Length + Width) * Height / 144";
-                addMat('full_teak_wood', 'Full Teak Wood', 'Premium', itemName, 'Box Type', boxSpecs, boxFormula, boxBase);
-                addMat('full_teak_wood', 'Full Teak Wood', 'Premium', itemName, 'Door Only', ftSpecsDoor, 'L * H / 144', doorBase);
-                addMat('full_teak_wood', 'Full Teak Wood', 'Premium', itemName, 'Partition Type', partSpecs, '(Length + Width) * Height / 144', partBase);
+                qualities.forEach(qual => {
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Box Type', boxSpecs, boxFormula, Math.round(boxBase * factor));
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Door Only', ftSpecsDoor, 'L * H / 144', Math.round(doorBase * factor));
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Partition Type', partSpecs, '(Length + Width) * Height / 144', Math.round(partBase * factor));
+                });
             }
 
             addFullTeakCabinet('Kitchen Bottom', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
@@ -1568,15 +1571,28 @@
             addFullTeakCabinet('Kitchen Breakfast Table', 1400, 800, 1400, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Side Storage Cabinet', 1100, 900, 1100, ftSpecsTop, ftSpecsPartition);
 
-            addMat('full_teak_wood', 'Full Teak Wood', 'Premium', 'Breakfast Table Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', 650);
-            addMat('full_teak_wood', 'Full Teak Wood', 'Premium', 'Breakfast Table Beam Covering', 'Box Type', ftSpecsThin, 'W * H / 144', 600);
+            if (!loadedFromStore) {
+                qualities.forEach(qual => {
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, 'Breakfast Table Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(650 * factor));
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, 'Breakfast Table Beam Covering', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(600 * factor));
+                });
+            }
+            
             addFullTeakCabinet('Open Box', 750, 850, 1600, ftSpecsThin, ftSpecsPartition, '(W + Depth) * H / 144');
             addFullTeakCabinet('Spice Rack', 800, 850, 1600, ftSpecsThin, ftSpecsPartition, '(W + Depth) * H / 144');
             addFullTeakCabinet('Ledge', 500, 850, 1600, ftSpecsThin, ftSpecsPartition, 'L * W / 144');
             addFullTeakCabinet('Ledge 1', 500, 850, 1600, ftSpecsThin, ftSpecsPartition, 'L * W / 144');
             addFullTeakCabinet('Ledge 2', 500, 850, 1600, ftSpecsThin, ftSpecsPartition, 'L * W / 144');
             addFullTeakCabinet('Kitchen & Dining Partition', 1600, 850, 1600, ftSpecsThin, ftSpecsPartition);
-            addMat('full_teak_wood', 'Full Teak Wood', 'Premium', 'Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', 700);
+            
+            if (!loadedFromStore) {
+                qualities.forEach(qual => {
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    addMat('full_teak_wood', 'Full Teak Wood', qual, 'Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(700 * factor));
+                });
+            }
+            
             addFullTeakCabinet('Wash Basin', 1300, 850, 1600, ftSpecsBottom, ftSpecsPartition);
 
             addFullTeakCabinet('Wardrobe', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
