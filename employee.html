@@ -2125,12 +2125,20 @@
                 return;
             }
 
+            container.appendChild(wrap);
+            openMaterialSelector(buildId, itemId);
+        }
+
+        function openMaterialSelector(buildId, itemId) {
+            const wrap = document.getElementById(buildId);
+            if (!wrap) return;
+
+            const item = ITEMS.find(i => i.id === itemId);
             wrap.innerHTML = `
                 <div class="step-label">Choose material</div>
                 <div class="opt-row" id="${buildId}-opts"></div>
                 <div id="${buildId}-sizeArea"></div>
             `;
-            container.appendChild(wrap);
 
             const optRow = document.getElementById(`${buildId}-opts`);
             item.options.forEach((opt, idx) => {
