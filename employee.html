@@ -1260,6 +1260,7 @@
             "Engineering Wood (Box Type)": 280,
             "Engineering Wood (Door Type)": 280,
             "Engineering Wood (Door Only)": 280,
+            "Engineering Wood (Partition Type)": 280,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1293,7 +1294,7 @@
         // Setup base database
         function getOrInitMaterialsDb() {
             let stored = localStorage.getItem('pks_materials_db');
-            if (stored && stored.includes('full_teak_wood') && stored.includes('Marineply-710 grade') && stored.includes('breakfast_table_wall_paneling_single_box_teak_mats_v14')) {
+            if (stored && stored.includes('full_teak_wood') && stored.includes('Marineply-710 grade') && stored.includes('breakfast_table_wall_paneling_single_box_teak_mats_v16')) {
                 try {
                     return JSON.parse(stored);
                 } catch(e) {}
@@ -1335,12 +1336,40 @@
                 { label: "Lamination", base: 250, formula: "L*W/144" }
             ];
 
+            // Economy items (Engineering Wood only)
+            const engWoodBoxDoor = [
+                { label: "Engineering Wood (Box Type)", base: 280, formula: "(L+W)*H/144" },
+                { label: "Engineering Wood (Door Only)", base: 280, formula: "L*H/144" },
+                { label: "Engineering Wood (Partition Type)", base: 280, formula: "(L+W)*H/144" }
+            ];
+            const engWoodOnly = [
+                { label: "Engineering Wood", base: 280, formula: "(L+W)*H/144" }
+            ];
+
             // Helper to populate standard items in standard rooms
             function addStd(room, item, mats, specs = null) {
                 qualities.forEach(qual => {
-                    if (qual === 'Economy') return; // Economy uses engineering wood
-                    let factor = qual === 'Premium' ? 1.0 : 0.85;
+                    if (qual === 'Economy') {
+                        let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE";
+                        if (room !== 'kitchen') {
+                            finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+                        }
+                        const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal");
+                        if (isWallPanelOrCeiling) {
+                            mats.forEach(m => {
+                                addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
+                            });
+                        } else {
+                            const isCabinet = mats.some(m => m.label.includes("Box") || m.label.includes("Door") || m.label.includes("Partition") || m.label.includes("Framed"));
+                            const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
+                            ecoMats.forEach(m => {
+                                addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
+                            });
+                        }
+                        return;
+                    }
                     
+                    let factor = qual === 'Premium' ? 1.0 : 0.85;
                     let finalSpecs = specs;
                     if (!finalSpecs) {
                         if (room === 'kitchen') {
@@ -1495,15 +1524,7 @@
             addStd('sitout', 'Chappal stand', sideCabinetOptions);
             addStd('sitout', 'Sit out area ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
 
-            // Economy items (Engineering Wood only)
-            const engWoodBoxDoor = [
-                { label: "Engineering Wood (Box Type)", base: 280, formula: "(L+W)*H/144" },
-                { label: "Engineering Wood (Door Only)", base: 280, formula: "L*H/144" },
-                { label: "Engineering Wood (Partition Type)", base: 280, formula: "(L+W)*H/144" }
-            ];
-            const engWoodOnly = [
-                { label: "Engineering Wood", base: 280, formula: "(L+W)*H/144" }
-            ];
+            // Economy items mapped above
 
             function addEco(room, item, mats) {
                 let finalSpecs;
@@ -1646,6 +1667,7 @@
             allAccRooms.forEach(room => {
                 accOpts.forEach(acc => {
                     qualities.forEach(qual => {
+                        if (qual === 'Economy' && room !== 'accessories') return; // Do not add accessories inside other rooms for Economy quality
                         addMat(room, 'Accessories', qual, acc.name, 'Box Type', 'Stainless Steel Kitchen Accessories', 'QTY', acc.base, false);
                     });
                 });
