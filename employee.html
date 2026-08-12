@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v18';
+            const currentDbVersion = 'v19';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             if (stored && storedVersion === currentDbVersion) {
@@ -1352,10 +1352,7 @@
             function addStd(room, item, mats, specs = null) {
                 qualities.forEach(qual => {
                     if (qual === 'Economy') {
-                        let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE";
-                        if (room !== 'kitchen') {
-                            finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-                        }
+                        let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
                         const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal");
                         if (isWallPanelOrCeiling) {
                             mats.forEach(m => {
@@ -1370,7 +1367,7 @@
 
                             // If it is kitchen, also add the standard materials (mats) under Economy
                             if (room === 'kitchen') {
-                                let stdSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE";
+                                let stdSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
                                 mats.forEach(m => {
                                     let factor = 0.70; // Economy pricing factor for standard materials
                                     addMat(room, 'Standard', qual, item, m.label, stdSpecs, m.formula, Math.round(m.base * factor));
@@ -1381,14 +1378,7 @@
                     }
                     
                     let factor = qual === 'Premium' ? 1.0 : 0.85;
-                    let finalSpecs = specs;
-                    if (!finalSpecs) {
-                        if (room === 'kitchen') {
-                            finalSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE";
-                        } else {
-                            finalSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-                        }
-                    }
+                    let finalSpecs = specs || "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
 
                     mats.forEach(m => {
                         addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, Math.round(m.base * factor));
@@ -1654,7 +1644,7 @@
             });
 
             localStorage.setItem('pks_materials_db', JSON.stringify(db));
-            localStorage.setItem('pks_materials_db_version', 'v18');
+            localStorage.setItem('pks_materials_db_version', 'v19');
             return db;
         }
 
@@ -1854,13 +1844,9 @@
         let lineIdCounter = 1;
 
         function getFullRoomLabel() {
-            if (selectedRoom === 'bedroom') {
-                const floor = document.getElementById('floorSelector').value;
-                const roomNo = document.getElementById('roomNoSelector').value;
-                return `${floor} - ${selectedRoomName} ${roomNo}`;
-            } else {
-                return selectedRoomName;
-            }
+            const floor = document.getElementById('floorSelector').value;
+            const roomNo = document.getElementById('roomNoSelector').value;
+            return `${floor} - ${selectedRoomName} ${roomNo}`;
         }
 
         function updateRoomState(roomId, roomName) {
