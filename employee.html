@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v23';
+            const currentDbVersion = 'v24';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1369,7 +1369,11 @@
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
                             });
                         } else {
-                            const isCabinet = mats.some(m => m.label.includes("Box") || m.label.includes("Door") || m.label.includes("Partition") || m.label.includes("Framed"));
+                            const isCabinet = item.toUpperCase().includes("PARTITION") || 
+                                              item.toUpperCase().includes("CABINET") || 
+                                              item.toUpperCase().includes("WARDROBE") || 
+                                              item.toUpperCase().includes("CUPBOARD") || 
+                                              mats.some(m => m.label.includes("Box") || m.label.includes("Door") || m.label.includes("Partition") || m.label.includes("Framed"));
                             const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
                             ecoMats.forEach(m => {
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
@@ -1379,6 +1383,7 @@
                             if (room === 'kitchen' || room === 'living_room' || item.toUpperCase().includes('PARTITION')) {
                                 let stdSpecs = defaultSpecs;
                                 mats.forEach(m => {
+                                    if (m.label === "Engineering Wood") return;
                                     let factor = 0.70; // Economy pricing factor for standard materials
                                     addMat(room, 'Standard', qual, item, m.label, stdSpecs, m.formula, Math.round(m.base * factor));
                                 });
