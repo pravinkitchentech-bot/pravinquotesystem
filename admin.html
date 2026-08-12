@@ -576,47 +576,6 @@
             margin-left: 4px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .pricing-mode-btn {
-            background: rgba(5, 11, 7, 0.4);
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .pricing-mode-btn:hover {
-            border-color: var(--accent);
-            color: var(--text);
-        }
-
-        .pricing-mode-btn.active.premium {
-            background: var(--accent-gradient);
-            color: #07120a;
-            border-color: var(--accent);
-            box-shadow: 0 4px 15px rgba(61, 187, 110, 0.25);
-        }
-
-        .pricing-mode-btn.active.medium {
-            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
-            color: #07120a;
-            border-color: #f1c40f;
-            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.25);
-        }
-
-        .pricing-mode-btn.active.economy {
-            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-            color: #fff;
-            border-color: #e67e22;
-            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.25);
-        }
     </style>
 </head>
 
@@ -637,7 +596,6 @@
             </div>
         </div>
         <div class="nav-actions">
-            <button class="nav-btn" onclick="openChangePasswordModal()">Change Password</button>
             <button class="nav-btn" onclick="location.href='employee.html'">Go to Employee Panel</button>
             <button class="nav-btn" onclick="logout()">Logout</button>
         </div>
@@ -687,7 +645,6 @@
             <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
             <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
             <button class="tab-btn" onclick="switchTab('add-div', this)">Manage Divisions</button>
-            <button class="tab-btn" onclick="switchTab('add-room', this)">Manage Rooms</button>
             <button class="tab-btn" onclick="switchTab('settings', this)">Settings &amp; Specs</button>
             <button class="tab-btn" onclick="switchTab('quotes-folder', this)">Saved Quotes</button>
         </div>
@@ -695,34 +652,11 @@
         <div class="content">
             <!-- Rates Management Tab -->
             <div id="rates" class="tab-panel active">
-                <h2 id="ratesTitle">Rates Management — All Rooms</h2>
+                <h2>Default &amp; Custom Rates</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
-                    Set pricing per square foot for each room separately. Select division and mode to edit rates for Premium, Medium, or Economy tiers.
+                    Set standard pricing per square foot for all materials. These rates will automatically lock on the
+                    employee screen.
                 </p>
-                
-                <div style="display: flex; gap: 24px; align-items: center; background: rgba(5,11,7,0.3); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Division:</label>
-                        <select id="ratesDivisionSelect" onchange="onRatesConfigChange()" style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; outline: none; width: auto; font-family: var(--sans);">
-                            <!-- populated by JS -->
-                        </select>
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;">Pricing Mode:</label>
-                        <div style="display: flex; gap: 8px;">
-                            <button id="modeBtn-premium" class="pricing-mode-btn active premium" onclick="setRatesPricingMode('premium')">
-                                🌱 Premium
-                            </button>
-                            <button id="modeBtn-medium" class="pricing-mode-btn medium" onclick="setRatesPricingMode('medium')">
-                                ⚖️ Medium
-                            </button>
-                            <button id="modeBtn-economy" class="pricing-mode-btn economy" onclick="setRatesPricingMode('economy')">
-                                💰 Economy
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <div style="max-height: 400px; overflow-y: auto;">
                     <table class="rates-table">
                         <thead>
@@ -738,7 +672,7 @@
                 </div>
                 <div class="action-row">
                     <button class="btn-danger" onclick="resetAllDefaults()">Reset to Defaults</button>
-                    <button class="btn-primary" onclick="saveRates()">Save All Rates</button>
+                    <button class="btn-primary" onclick="saveRates()">Save Rates</button>
                 </div>
             </div>
 
@@ -827,33 +761,6 @@
 
                 <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Divisions</h3>
                 <div class="item-list-container" id="currentDivisionsList">
-                    <!-- populated by JS -->
-                </div>
-            </div>
-
-            <!-- Manage Rooms Tab -->
-            <div id="add-room" class="tab-panel">
-                <h2>Manage Rooms</h2>
-                <div class="sub-form" style="background: none; border: none; padding: 0;">
-                    <div class="form-group">
-                        <label for="newRoomId">Room ID (lowercase, alphanumeric, e.g. 'balcony')</label>
-                        <input type="text" id="newRoomId" placeholder="e.g. balcony">
-                    </div>
-                    <div class="form-group">
-                        <label for="newRoomName">Room Name</label>
-                        <input type="text" id="newRoomName" placeholder="e.g. Balcony">
-                    </div>
-                    <div class="form-group">
-                        <label for="newRoomIcon">Room Icon (Emoji)</label>
-                        <input type="text" id="newRoomIcon" placeholder="e.g. 🌅">
-                    </div>
-                    <div class="action-row">
-                        <button class="btn-primary" onclick="addRoom()">Create Room Card</button>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Rooms</h3>
-                <div class="item-list-container" id="currentRoomsList">
                     <!-- populated by JS -->
                 </div>
             </div>
@@ -963,7 +870,7 @@
         }
         let deletedStandardMaterials = getDeletedStandardMaterials();
 
-        const DEFAULT_ROOMS = [
+        const ROOMS = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
             { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
@@ -974,25 +881,11 @@
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
-            { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
+            { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
         ];
 
-        function getRooms() {
-            const stored = localStorage.getItem('pks_rooms');
-            if (stored) {
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) return parsed;
-                } catch (e) { }
-            }
-            localStorage.setItem('pks_rooms', JSON.stringify(DEFAULT_ROOMS));
-            return DEFAULT_ROOMS;
-        }
-
-        let ROOMS = getRooms();
-
-        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'all';
-        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'All Rooms';
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
 
         function logout() {
             sessionStorage.removeItem('pks_admin_auth');
@@ -1092,7 +985,8 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
+                { id: 13, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -1102,10 +996,12 @@
                 { id: 20, name: "Living Room Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 60, name: "QUATUYAD", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Marine Plane", "Engineering Wood"] },
+                { id: 22, name: "Accessories", options: ACCESSORY_LIST }
             ],
             prayer_unit: [
-                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 76, name: "Accessories", options: ACCESSORY_LIST }
             ],
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
@@ -1123,7 +1019,8 @@
                 { id: 68, name: "LOFT 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 69, name: "LOFT 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 70, name: "WALL PANNELING", options: ["PVC", "Lamination", "Charcoal"] },
-                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["PVC", "Lamination", "Charcoal"] }
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 72, name: "Accessories", options: ACCESSORY_LIST }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
@@ -1133,23 +1030,47 @@
             ],
             musical_room: [
                 { id: 80, name: "WALL PANEL", options: ["PVC", "Lamination", "Charcoal"] },
-                { id: 81, name: "WALL PANNELLING TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+                { id: 81, name: "WALL PANNELLING TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 82, name: "Accessories", options: ACCESSORY_LIST }
             ],
             study_room: [
                 { id: 85, name: "BOOK SHELF", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 86, name: "STUDY TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 87, name: "STUDY TABLE TOP BOX", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 88, name: "COMPUTER TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+                { id: 88, name: "COMPUTER TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 89, name: "Accessories", options: ACCESSORY_LIST }
             ],
             toilet_area: [
                 { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 42, name: "Accessories", options: ACCESSORY_LIST }
             ],
             store_room: [
-                { id: 44, name: "Store room cupboard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+                { id: 44, name: "Store room cupboard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 45, name: "Accessories", options: ACCESSORY_LIST }
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 47, name: "Sit out area ceiling", options: ["PVC", "Lamination", "Charcoal", "Wood finishing", "Veneer finishing", "PU Paint"] }
+                { id: 47, name: "Sit out area ceiling", options: ["PVC", "Lamination", "Charcoal", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 48, name: "Accessories", options: ACCESSORY_LIST }
+            ],
+            accessories: [
+                { id: 90, name: "Basket", options: ["Basket"] },
+                { id: 91, name: "Tandom Box", options: ["Tandom Box"] },
+                { id: 92, name: "Oil Pull Out", options: ["Oil Pull Out"] },
+                { id: 93, name: "PVC Cutlery Tray", options: ["PVC Cutlery Tray"] },
+                { id: 94, name: "SS Cutlery Tray", options: ["SS Cutlery Tray"] },
+                { id: 95, name: "Dustbin Unit", options: ["Dustbin Unit"] },
+                { id: 96, name: "Detergent Holder", options: ["Detergent Holder"] },
+                { id: 97, name: "GTBT", options: ["GTBT"] },
+                { id: 98, name: "ROLLING SHUTTER", options: ["ROLLING SHUTTER"] },
+                { id: 99, name: "Tall Unit", options: ["Tall Unit"] },
+                { id: 100, name: "Swing Corner", options: ["Swing Corner"] },
+                { id: 101, name: "Magic Corner", options: ["Magic Corner"] },
+                { id: 102, name: "PARACEL CORNER", options: ["PARACEL CORNER"] },
+                { id: 103, name: "D-Tray", options: ["D-Tray"] },
+                { id: 104, name: "Soft Closing Runner", options: ["Soft Closing Runner"] },
+                { id: 105, name: "Soft Closing Hinges", options: ["Soft Closing Hinges"] },
+                { id: 106, name: "Profile Handle", options: ["Profile Handle"] }
             ]
         };
 
@@ -1159,7 +1080,7 @@
             });
         }
 
-        let BASE_ITEMS = (selectedRoom !== 'all') ? (ROOM_ITEMS[selectedRoom] || []) : [];
+        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
 
         /* ---------- Data Loaders ---------- */
         function getRates() {
@@ -1169,64 +1090,7 @@
                     return JSON.parse(stored);
                 } catch (e) { }
             }
-            return {};
-        }
-
-        function getRateForMaterial(label, division, room, mode) {
-            const rates = getRates();
-            // If the rates object is flat (old style) or does not have division key:
-            if (rates && rates[label] !== undefined && (division === undefined || rates[division] === undefined)) {
-                return rates[label];
-            }
-            if (rates && rates[division] && rates[division][mode]) {
-                // 1. check room-specific rate
-                if (rates[division][mode][room] && rates[division][mode][room][label] !== undefined) {
-                    return rates[division][mode][room][label];
-                }
-                // 2. check 'all' room rate
-                if (rates[division][mode]['all'] && rates[division][mode]['all'][label] !== undefined) {
-                    return rates[division][mode]['all'][label];
-                }
-            }
-            // 3. fallback to DEFAULT_RATES
-            return DEFAULT_RATES[label] !== undefined ? DEFAULT_RATES[label] : 0;
-        }
-
-        function getMaterialsForRoom(roomId) {
-            const allMaterials = new Set();
-            if (roomId === 'all') {
-                // Get all materials from standard default rates
-                Object.keys(DEFAULT_RATES).forEach(k => allMaterials.add(k));
-                // Add from customMaterials
-                Object.values(customMaterials).forEach(mats => {
-                    mats.forEach(m => allMaterials.add(m.label));
-                });
-                // Add from customItems
-                customItems.forEach(item => {
-                    item.options.forEach(opt => allMaterials.add(opt.label));
-                });
-            } else {
-                // Get standard items for this room
-                const rawItems = ROOM_ITEMS[roomId] || [];
-                const roomStandardItems = rawItems.filter(item => !deletedStandardItems.includes(item.id));
-                
-                roomStandardItems.forEach(item => {
-                    // Filter deleted standard options
-                    let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
-                    filteredOptions.forEach(opt => allMaterials.add(opt));
-                    
-                    // Add custom materials added to standard items
-                    const customList = customMaterials[item.id] || [];
-                    customList.forEach(m => allMaterials.add(m.label));
-                });
-
-                // Add custom items for this room
-                const roomCustomItems = customItems.filter(item => item.roomId === roomId);
-                roomCustomItems.forEach(item => {
-                    item.options.forEach(opt => allMaterials.add(opt.label));
-                });
-            }
-            return Array.from(allMaterials).sort();
+            return { ...DEFAULT_RATES };
         }
 
         function getCustomMaterials() {
@@ -1261,15 +1125,10 @@
             document.getElementById(tabId).classList.add('active');
             btnEl.classList.add('active');
 
-            // Automatically switch room from 'all' to 'kitchen' if going to room-specific management panels
-            if ((tabId === 'add-opt' || tabId === 'add-item') && selectedRoom === 'all') {
-                updateRoomState('kitchen', 'Kitchen');
-            }
-
             // Hide room tabs when managing divisions or settings (it's a global action, not room-specific)
             const roomTabsEl = document.getElementById('roomTabs');
             const roomBadgeEl = document.getElementById('roomBadge');
-            if (tabId === 'add-div' || tabId === 'add-room' || tabId === 'settings' || tabId === 'quotes-folder') {
+            if (tabId === 'add-div' || tabId === 'settings' || tabId === 'quotes-folder') {
                 if (roomTabsEl) roomTabsEl.style.display = 'none';
                 if (roomBadgeEl) roomBadgeEl.style.display = 'none';
             } else {
@@ -1290,56 +1149,32 @@
         }
 
         /* ---------- Renderers ---------- */
-        let ratesPricingMode = 'premium'; // state variable
-
-        function setRatesPricingMode(mode) {
-            ratesPricingMode = mode;
-            document.querySelectorAll('.pricing-mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`modeBtn-${mode}`).classList.add('active');
-            renderRatesTable();
-        }
-
-        function populateRatesDivisions() {
-            const select = document.getElementById('ratesDivisionSelect');
-            if (!select) return;
-            select.innerHTML = '';
-            divisionsList.forEach(div => {
-                const opt = document.createElement('option');
-                opt.value = div.id;
-                opt.textContent = div.name;
-                if (div.id === selectedDivision) {
-                    opt.selected = true;
-                }
-                select.appendChild(opt);
-            });
-        }
-
-        function onRatesConfigChange() {
-            const divisionId = document.getElementById('ratesDivisionSelect').value;
-            const div = divisionsList.find(d => d.id === divisionId);
-            if (div) {
-                sessionStorage.setItem('pks_selected_division', div.id);
-                sessionStorage.setItem('pks_selected_division_name', div.name);
-                document.getElementById('divisionBadge').textContent = div.name;
-            }
-            renderRatesTable();
-        }
-
         function renderRatesTable() {
-            const divisionId = document.getElementById('ratesDivisionSelect').value || 'marketing';
             const body = document.getElementById('ratesTableBody');
             body.innerHTML = '';
 
-            const materials = getMaterialsForRoom(selectedRoom);
+            // Get all unique material labels used in the selectedRoom
+            const roomMaterials = new Set();
+            
+            // 1. Get standard items defined for this room in ROOM_ITEMS
+            const items = ROOM_ITEMS[selectedRoom] || [];
+            items.forEach(item => {
+                item.options.forEach(opt => roomMaterials.add(opt));
+                
+                const customList = customMaterials[item.id] || [];
+                customList.forEach(m => roomMaterials.add(m.label));
+            });
 
-            if (materials.length === 0) {
-                body.innerHTML = `<tr><td colspan="2" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No materials found in this room.</td></tr>`;
-                return;
+            // 2. Add custom items created for this room
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach(item => {
+                    item.options.forEach(opt => roomMaterials.add(opt.label));
+                });
             }
 
-            materials.forEach(mat => {
+            Array.from(roomMaterials).sort().forEach(mat => {
                 const tr = document.createElement('tr');
-                const rateVal = getRateForMaterial(mat, divisionId, selectedRoom, ratesPricingMode);
+                const rateVal = currentRates[mat] !== undefined ? currentRates[mat] : 0;
                 tr.innerHTML = `
                     <td>${mat}</td>
                     <td><input type="number" data-material="${mat}" value="${rateVal}"></td>
@@ -1349,51 +1184,40 @@
         }
 
         function saveRates() {
-            const divisionId = document.getElementById('ratesDivisionSelect').value || 'marketing';
             const inputs = document.querySelectorAll('#ratesTableBody input');
-            
-            const ratesObj = getRates();
-            if (!ratesObj[divisionId]) ratesObj[divisionId] = {};
-            if (!ratesObj[divisionId][ratesPricingMode]) ratesObj[divisionId][ratesPricingMode] = {};
-            if (!ratesObj[divisionId][ratesPricingMode][selectedRoom]) ratesObj[divisionId][ratesPricingMode][selectedRoom] = {};
-
+            const ratesObj = { ...currentRates };
             inputs.forEach(input => {
                 const mat = input.dataset.material;
                 const val = parseFloat(input.value) || 0;
-                ratesObj[divisionId][ratesPricingMode][selectedRoom][mat] = val;
-                
-                if (selectedRoom === 'all') {
-                    if (!ratesObj[divisionId][ratesPricingMode]['all']) ratesObj[divisionId][ratesPricingMode]['all'] = {};
-                    ratesObj[divisionId][ratesPricingMode]['all'][mat] = val;
-                }
+                ratesObj[mat] = val;
             });
-
             localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
             currentRates = ratesObj;
             showToast("Rates saved successfully!");
         }
 
         function resetAllDefaults() {
-            if (confirm("Are you sure you want to reset all rates to zero and clear all custom rooms, items, materials, and divisions?")) {
+            if (confirm("Are you sure you want to reset all rates to zero and clear all custom items, materials, and divisions?")) {
                 localStorage.removeItem('pks_custom_materials');
                 localStorage.removeItem('pks_custom_items');
                 localStorage.removeItem('pks_divisions');
-                localStorage.removeItem('pks_rooms');
                 localStorage.removeItem('pks_deleted_standard_items');
                 deletedStandardItems = [];
                 localStorage.removeItem('pks_deleted_standard_materials');
                 deletedStandardMaterials = [];
                 localStorage.removeItem('pks_saved_quotes');
 
-                localStorage.removeItem('pks_rates');
+                // Set all rates in currentRates to 0
                 currentRates = {};
+                Object.keys(DEFAULT_RATES).forEach(k => {
+                    currentRates[k] = 0;
+                });
+                localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
-                ROOMS = getRooms();
-                BASE_ITEMS = (selectedRoom !== 'all') ? (ROOM_ITEMS[selectedRoom] || []) : [];
+                BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 customMaterials = {};
                 customItems = [];
                 divisionsList = getDivisions();
-                populateRatesDivisions();
                 renderRatesTable();
                 renderItemsDropdown();
                 renderCurrentItemsList();
@@ -1401,10 +1225,7 @@
                 if (document.getElementById('add-div').classList.contains('active')) {
                     renderDivisionsList();
                 }
-                if (document.getElementById('add-room').classList.contains('active')) {
-                    renderRoomsList();
-                }
-                showToast("All settings reset. Rates set to default.");
+                showToast("All settings reset. Rates set to zero.");
             }
         }
 
@@ -1422,9 +1243,8 @@
             });
 
             // Custom Items
-            if (selectedRoom !== 'accessories' && selectedRoom !== 'all') {
-                const roomCustomItems = customItems.filter(item => item.roomId === selectedRoom);
-                roomCustomItems.forEach(item => {
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = `custom-${item.id}`;
                     opt.textContent = `${item.id}. ${item.name} [Custom]`;
@@ -1475,17 +1295,16 @@
             });
 
             // Render Custom items under the same list
-            if (selectedRoom !== 'accessories' && selectedRoom !== 'all') {
-                const roomCustomItems = customItems.filter(item => item.roomId === selectedRoom);
-                roomCustomItems.forEach((item, index) => {
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach((item, index) => {
                     const div = document.createElement('div');
                     div.className = 'item-manage-card';
 
                     let optTags = item.options.map((opt, optIdx) => `
                         <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
                             ${opt.label}
-                            <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt.label).replace(/"/g, '&quot;')}, 'custom-item', ${customItems.indexOf(item)}, ${optIdx})" title="Rename">✎</button>
-                            <button onclick="removeCustomItemMaterial(${customItems.indexOf(item)}, ${optIdx})">✕</button>
+                            <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt.label).replace(/"/g, '&quot;')}, 'custom-item', ${index}, ${optIdx})" title="Rename">✎</button>
+                            <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
                         </span>
                     `).join('');
 
@@ -1533,9 +1352,8 @@
             });
 
             // 2. Render Custom items
-            if (selectedRoom !== 'accessories' && selectedRoom !== 'all') {
-                const roomCustomItems = customItems.filter(item => item.roomId === selectedRoom);
-                roomCustomItems.forEach((item, index) => {
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach((item, index) => {
                     const div = document.createElement('div');
                     div.className = 'item-manage-card';
 
@@ -1548,7 +1366,7 @@
                     div.innerHTML = `
                         <div class="item-manage-card-header">
                             <div class="item-manage-card-title">${item.id}. ${item.name.toUpperCase()} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
-                            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${customItems.indexOf(item)})">Delete Card</button>
+                            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
                         </div>
                         <div class="tags-row" style="margin-bottom: 10px;">
                             ${optTags || '<span style="font-size: 0.8rem; color: var(--muted); font-style: italic;">No materials added yet</span>'}
@@ -1596,12 +1414,8 @@
                 }
             }
 
-            // Also save rate in current config
-            const activeDiv = document.getElementById('ratesDivisionSelect') ? document.getElementById('ratesDivisionSelect').value : 'marketing';
-            if (!currentRates[activeDiv]) currentRates[activeDiv] = {};
-            if (!currentRates[activeDiv][ratesPricingMode]) currentRates[activeDiv][ratesPricingMode] = {};
-            if (!currentRates[activeDiv][ratesPricingMode][selectedRoom]) currentRates[activeDiv][ratesPricingMode][selectedRoom] = {};
-            currentRates[activeDiv][ratesPricingMode][selectedRoom][label] = initialRate;
+            // Also save rate
+            currentRates[label] = initialRate;
             localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
             // Clean inputs & redraw
@@ -1671,32 +1485,6 @@
             return { formulaType: "(L+W)*H", fields: ["L", "W", "H"], note: "(L+W)×H" };
         }
 
-        function renameMaterialInRates(oldName, newName) {
-            const rates = getRates();
-            if (rates[oldName] !== undefined) {
-                rates[newName] = rates[oldName];
-                delete rates[oldName];
-            }
-            for (const div in rates) {
-                if (typeof rates[div] === 'object' && rates[div] !== null) {
-                    for (const mode in rates[div]) {
-                        if (typeof rates[div][mode] === 'object' && rates[div][mode] !== null) {
-                            for (const room in rates[div][mode]) {
-                                if (typeof rates[div][mode][room] === 'object' && rates[div][mode][room] !== null) {
-                                    if (rates[div][mode][room][oldName] !== undefined) {
-                                        rates[div][mode][room][newName] = rates[div][mode][room][oldName];
-                                        delete rates[div][mode][room][oldName];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            localStorage.setItem('pks_rates', JSON.stringify(rates));
-            currentRates = rates;
-        }
-
         function renameMaterialOption(itemId, oldLabel, type, customItemIndex, customOptIndex) {
             const newLabel = prompt(`Rename "${oldLabel}" to:`, oldLabel);
             if (!newLabel) return;
@@ -1705,7 +1493,23 @@
             if (cleanLabel === oldLabel) return;
 
             // Transfer rate
-            renameMaterialInRates(oldLabel, cleanLabel);
+            if (currentRates[oldLabel] !== undefined) {
+                currentRates[cleanLabel] = currentRates[oldLabel];
+                // Only delete old key if not referenced elsewhere
+                let usedElsewhere = false;
+                for (const room in ROOM_ITEMS) {
+                    ROOM_ITEMS[room].forEach(item => {
+                        if (item.id !== itemId && item.options.includes(oldLabel) &&
+                            !deletedStandardMaterials.includes(`${item.id}-${oldLabel}`)) {
+                            usedElsewhere = true;
+                        }
+                    });
+                }
+                if (!usedElsewhere) delete currentRates[oldLabel];
+            } else {
+                currentRates[cleanLabel] = 0;
+            }
+            localStorage.setItem('pks_rates', JSON.stringify(currentRates));
 
             if (type === 'standard') {
                 // Hide the old standard option
@@ -1755,7 +1559,6 @@
             customItems.push({
                 id: nextId,
                 name: name,
-                roomId: selectedRoom,
                 options: []
             });
 
@@ -1786,7 +1589,7 @@
                 localStorage.setItem('pks_deleted_standard_items', JSON.stringify(deletedStandardItems));
 
                 // Refresh base items
-                const rawItems = ROOM_ITEMS[selectedRoom] || [];
+                const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
 
                 renderItemsDropdown();
@@ -1810,19 +1613,9 @@
 
         function renderRoomTabs() {
             const tabsEl = document.getElementById('roomTabs');
-            if (!tabsEl) return;
             tabsEl.innerHTML = '';
 
-            const activePanel = document.querySelector('.tab-panel.active');
-            const activeTabId = activePanel ? activePanel.id : 'rates';
-
-            const list = [];
-            if (activeTabId === 'rates') {
-                list.push({ id: 'all', name: 'All Rooms', icon: '🌐', active: true });
-            }
-            list.push(...ROOMS);
-
-            list.forEach(room => {
+            ROOMS.forEach(room => {
                 const tab = document.createElement('div');
                 tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
 
@@ -1852,7 +1645,7 @@
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
 
-            const rawItems = (roomId !== 'all') ? (ROOM_ITEMS[selectedRoom] || []) : [];
+            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
             BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
             currentRates = getRates();
             customMaterials = getCustomMaterials();
@@ -1948,103 +1741,6 @@
                 renderDivisionsList();
                 showToast("Division deleted.");
             }
-        }
-
-        /* ---------- Manage Rooms Actions ---------- */
-        function renderRoomsList() {
-            const container = document.getElementById('currentRoomsList');
-            if (!container) return;
-            container.innerHTML = '';
-
-            ROOMS.forEach((room, index) => {
-                const card = document.createElement('div');
-                card.className = 'item-manage-card';
-                card.innerHTML = `
-                    <div class="item-manage-card-header">
-                        <div class="item-manage-card-title">${room.icon} ${room.name} <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(ID: ${room.id})</span></div>
-                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteRoom(${index})">Delete</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function addRoom() {
-            const id = document.getElementById('newRoomId').value.trim().toLowerCase();
-            const name = document.getElementById('newRoomName').value.trim();
-            const icon = document.getElementById('newRoomIcon').value.trim() || '🏠';
-
-            if (!id || !name) {
-                alert("Please fill in the ID and Name.");
-                return;
-            }
-
-            if (!/^[a-z0-9_]+$/.test(id)) {
-                alert("Room ID must be lowercase alphanumeric and underscores only.");
-                return;
-            }
-
-            if (ROOMS.some(r => r.id === id)) {
-                alert("A room with this ID already exists.");
-                return;
-            }
-
-            ROOMS.push({ id, name, icon, active: true });
-            localStorage.setItem('pks_rooms', JSON.stringify(ROOMS));
-
-            document.getElementById('newRoomId').value = '';
-            document.getElementById('newRoomName').value = '';
-            document.getElementById('newRoomIcon').value = '';
-
-            renderRoomsList();
-            renderRoomTabs();
-            showToast("New room added successfully!");
-        }
-
-        function deleteRoom(index) {
-            if (ROOMS.length <= 1) {
-                alert("You must keep at least one room in the system.");
-                return;
-            }
-
-            const room = ROOMS[index];
-            if (confirm(`Are you sure you want to delete the room "${room.name}"?`)) {
-                ROOMS.splice(index, 1);
-                localStorage.setItem('pks_rooms', JSON.stringify(ROOMS));
-
-                if (room.id === selectedRoom) {
-                    const fallbackRoom = ROOMS[0];
-                    sessionStorage.setItem('pks_selected_room', fallbackRoom.id);
-                    sessionStorage.setItem('pks_selected_room_name', fallbackRoom.name);
-                    location.reload();
-                    return;
-                }
-
-                renderRoomsList();
-                renderRoomTabs();
-                showToast("Room deleted.");
-            }
-        }
-
-        /* ---------- Change Password Modal Actions ---------- */
-        function openChangePasswordModal() {
-            document.getElementById('changePasswordModal').style.display = 'flex';
-        }
-
-        function closeChangePasswordModal() {
-            document.getElementById('changePasswordModal').style.display = 'none';
-            document.getElementById('newAdminPassword').value = '';
-        }
-
-        function saveAdminPassword() {
-            const newPass = document.getElementById('newAdminPassword').value.trim();
-            if (!newPass) {
-                alert("Password cannot be empty.");
-                return;
-            }
-            localStorage.setItem('pks_admin_pass', newPass);
-            closeChangePasswordModal();
-            showToast("Admin password updated successfully!");
         }
 
         function cleanupExpiredQuotes() {
@@ -2147,18 +1843,14 @@
 
         /* ---------- Initialize View ---------- */
         function renderTabContent(tabId) {
-            if (tabId === 'rates') {
-                populateRatesDivisions();
-                renderRatesTable();
-            } else if (tabId === 'add-opt') {
+            if (tabId === 'rates') renderRatesTable();
+            else if (tabId === 'add-opt') {
                 renderItemsDropdown();
                 renderCurrentItemsList();
             } else if (tabId === 'add-item') {
                 renderCustomItemsList();
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
-            } else if (tabId === 'add-room') {
-                renderRoomsList();
             } else if (tabId === 'settings') {
                 const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
                 document.getElementById('materialSpecsInput').value = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
@@ -2170,29 +1862,6 @@
         // Setup dynamic tabs and panels
         updateRoomState(selectedRoom, selectedRoomName);
     </script>
-
-    <!-- Change Password Modal -->
-    <div class="modal-overlay" id="changePasswordModal"
-        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);">
-        <div
-            style="background: rgba(18, 36, 23, 0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 400px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 20px; backdrop-filter: var(--blur);">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 1.35rem; font-family: var(--sans);">Change Admin Password</h2>
-                <button onclick="closeChangePasswordModal()"
-                    style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Cancel</button>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label for="newAdminPassword">New Password</label>
-                    <input type="password" id="newAdminPassword" placeholder="Enter new password" style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 10px; font-size: 0.95rem; width: 100%; transition: all 0.3s; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); font-family: var(--sans);">
-                </div>
-                <div class="action-row" style="margin-top: 10px;">
-                    <button class="btn-primary" onclick="saveAdminPassword()">Update Password</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
