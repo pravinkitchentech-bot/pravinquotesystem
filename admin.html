@@ -735,6 +735,11 @@
                         <label for="matInitialRate">Initial Rate (₹)</label>
                         <input type="number" id="matInitialRate" placeholder="e.g. 500">
                     </div>
+                    <div class="form-group">
+                        <label for="matSpecs">Specifications</label>
+                        <textarea id="matSpecs" rows="3" placeholder="e.g. MARINE PLY THICKNESS-16MM..." 
+                            style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
+                    </div>
                     <div class="action-row">
                         <button class="btn-primary" onclick="addMaterialToItem()">Add Material Option</button>
                     </div>
@@ -1256,12 +1261,6 @@
             const activeOpts = getActiveRoomOptions();
             activeOpts.forEach(opt => roomMaterials.add(opt));
             
-            // 2. In Premium / Middle mode also include ALL keys from previously saved rates
-            //    so admins can see and edit rates they configured before.
-            if (pMode !== 'economy') {
-                Object.keys(currentRates).forEach(mat => roomMaterials.add(mat));
-            }
-
             // 3. Add custom materials added to standard items in this room
             const items = ROOM_ITEMS[selectedRoom] || [];
             items.forEach(item => {
@@ -1487,6 +1486,7 @@
             const label = document.getElementById('matLabel').value.trim();
             const formulaType = document.getElementById('matFormula').value;
             const initialRate = parseFloat(document.getElementById('matInitialRate').value) || 0;
+            const specifications = document.getElementById('matSpecs').value.trim();
 
             if (!label) {
                 alert("Please specify a material label.");
@@ -1507,13 +1507,13 @@
                 if (!customMaterials[itemId]) {
                     customMaterials[itemId] = [];
                 }
-                customMaterials[itemId].push({ label, fields, formulaType, note });
+                customMaterials[itemId].push({ label, fields, formulaType, note, specifications });
                 localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
             } else if (targetSelect.startsWith('custom-')) {
                 const itemId = parseInt(targetSelect.substring(7));
                 const item = customItems.find(i => i.id === itemId);
                 if (item) {
-                    item.options.push({ label, fields, formulaType, note });
+                    item.options.push({ label, fields, formulaType, note, specifications });
                     localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
                 }
             }
@@ -1525,6 +1525,7 @@
             // Clean inputs & redraw
             document.getElementById('matLabel').value = '';
             document.getElementById('matInitialRate').value = '';
+            document.getElementById('matSpecs').value = '';
 
             renderCurrentItemsList();
             renderCustomItemsList();
