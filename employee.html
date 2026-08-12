@@ -2054,6 +2054,90 @@
             }
         }
 
+        function getStandardItemId(room, name) {
+            const normalized = name.toUpperCase().trim();
+            if (room === 'kitchen') {
+                if (normalized.includes('BOTTOM') && !normalized.includes('STAIRCASE')) return 1;
+                if (normalized.includes('TOP')) return 2;
+                if (normalized.includes('LOFT')) return 3;
+                if (normalized.includes('ISLAND')) return 4;
+                if (normalized.includes('BREAKFAST TABLE') && !normalized.includes('PANEL') && !normalized.includes('BEAM') && !normalized.includes('BOX')) return 5;
+                if (normalized.includes('WALL PANEL')) return 6;
+                if (normalized.includes('BEAM')) return 7;
+                if (normalized.includes('OPEN BOX')) return 8;
+                if (normalized.includes('SPICE')) return 9;
+                if (normalized.includes('LEDGE')) return 10;
+                if (normalized.includes('SIDE')) return 11;
+                if (normalized.includes('PARTITION')) return 12;
+                if (normalized.includes('STAIRCASE')) return 14;
+                if (normalized.includes('ACCESSORIES')) return 13;
+            }
+            if (room === 'living_room') {
+                if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 16;
+                if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 17;
+                if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 18;
+                if (normalized.includes('PARTITION') && normalized.includes('DINING')) return 19;
+                if (normalized.includes('WALL PANEL')) return 20;
+                if (normalized.includes('STAIRCASE')) return 21;
+                if (normalized.includes('ACCESSORIES')) return 22;
+            }
+            if (room === 'prayer_unit') {
+                if (normalized.includes('BOTTOM') || normalized.includes('PRAYER')) return 75;
+                if (normalized.includes('ACCESSORIES')) return 76;
+            }
+            if (room === 'bedroom') {
+                if (normalized.includes('WARDROBE')) return 25;
+                if (normalized.includes('BED BACK') || normalized.includes('HEADREST')) return 27;
+                if (normalized === 'BED') return 28;
+                if (normalized.includes('BAY WINDOW')) return 29;
+                if (normalized.includes('DRESSING') && normalized.includes('PANEL')) return 30;
+                if (normalized.includes('DRESSING') && normalized.includes('BOTTOM')) return 31;
+                if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 32;
+                if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 33;
+                if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 34;
+                if (normalized === 'SIDE CABINET') return 65;
+                if (normalized.includes('CUPBOARD 1')) return 66;
+                if (normalized.includes('CUPBOARD 2')) return 67;
+                if (normalized.includes('LOFT 1')) return 68;
+                if (normalized.includes('LOFT 2')) return 69;
+                if (normalized === 'WALL PANNELING') return 70;
+                if (normalized.includes('HIDDEN DOOR')) return 71;
+                if (normalized.includes('ACCESSORIES')) return 72;
+            }
+            if (room === 'dining_room') {
+                if (normalized.includes('BOTTOM')) return 37;
+                if (normalized.includes('WALL PANEL')) return 38;
+                if (normalized.includes('CROCKERY')) return 39;
+                if (normalized.includes('ACCESSORIES')) return 40;
+            }
+            if (room === 'musical_room') {
+                if (normalized.includes('WALL PANEL')) return 80;
+                if (normalized.includes('TABLE')) return 81;
+                if (normalized.includes('ACCESSORIES')) return 82;
+            }
+            if (room === 'study_room') {
+                if (normalized.includes('BOOK')) return 85;
+                if (normalized.includes('STUDY TABLE') && !normalized.includes('TOP')) return 86;
+                if (normalized.includes('TOP BOX')) return 87;
+                if (normalized.includes('COMPUTER')) return 88;
+                if (normalized.includes('ACCESSORIES')) return 89;
+            }
+            if (room === 'toilet_area') {
+                if (normalized.includes('WASHBASIN') || normalized.includes('CABINET')) return 93;
+                if (normalized.includes('ACCESSORIES')) return 94;
+            }
+            if (room === 'store_room') {
+                if (normalized.includes('CUPBOARD') || normalized.includes('STORE')) return 96;
+                if (normalized.includes('ACCESSORIES')) return 97;
+            }
+            if (room === 'sitout') {
+                if (normalized.includes('CHAPPAL') || normalized.includes('STAND')) return 100;
+                if (normalized.includes('CEILING')) return 101;
+                if (normalized.includes('ACCESSORIES')) return 102;
+            }
+            return null;
+        }
+
         function deleteMaterialOption(buildId, itemId, optIdx) {
             if (!confirm("Are you sure you want to delete this material option?")) return;
             const item = ITEMS.find(i => i.id === itemId);
@@ -2063,20 +2147,23 @@
             if (storedDb) {
                 try {
                     let db = JSON.parse(storedDb);
-                    db = db.filter(m => m.id !== opt.id);
+                    db = db.filter(m => m.id !== opt.dbId);
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
                 } catch(e) {}
             }
             
-            const storedCustom = localStorage.getItem('pks_custom_materials');
-            if (storedCustom) {
-                try {
-                    let customMats = JSON.parse(storedCustom);
-                    if (customMats[itemId]) {
-                        customMats[itemId] = customMats[itemId].filter(m => m.label !== opt.label);
-                        localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
-                    }
-                } catch(e) {}
+            const stdItemId = getStandardItemId(selectedRoom, item.name);
+            if (stdItemId) {
+                const storedCustom = localStorage.getItem('pks_custom_materials');
+                if (storedCustom) {
+                    try {
+                        let customMats = JSON.parse(storedCustom);
+                        if (customMats[stdItemId]) {
+                            customMats[stdItemId] = customMats[stdItemId].filter(m => m.label !== opt.label);
+                            localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
+                        }
+                    } catch(e) {}
+                }
             }
             
             ITEMS = getFullItemsList();
@@ -2131,16 +2218,19 @@
                     rates[matName.trim()] = rate;
                     localStorage.setItem('pks_rates', JSON.stringify(rates));
 
-                    const storedCustom = localStorage.getItem('pks_custom_materials');
-                    let customMats = {};
-                    if (storedCustom) {
-                        try { customMats = JSON.parse(storedCustom); } catch(e) {}
+                    const stdItemId = getStandardItemId(selectedRoom, item.name);
+                    if (stdItemId) {
+                        const storedCustom = localStorage.getItem('pks_custom_materials');
+                        let customMats = {};
+                        if (storedCustom) {
+                            try { customMats = JSON.parse(storedCustom); } catch(e) {}
+                        }
+                        if (!customMats[stdItemId]) {
+                            customMats[stdItemId] = [];
+                        }
+                        customMats[stdItemId].push({ label: matName.trim(), rate: rate });
+                        localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
                     }
-                    if (!customMats[itemId]) {
-                        customMats[itemId] = [];
-                    }
-                    customMats[itemId].push({ label: matName.trim(), rate: rate });
-                    localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
 
                     showToast("Material option added successfully!");
                 } catch(e) {}
