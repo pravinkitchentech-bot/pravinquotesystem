@@ -1244,19 +1244,26 @@
 
             // Get all unique material labels used in the selectedRoom
             const roomMaterials = new Set();
+            const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
             
             // 1. Get standard item options for this room based on current pricing mode
             const activeOpts = getActiveRoomOptions();
             activeOpts.forEach(opt => roomMaterials.add(opt));
             
-            // Add custom materials added to standard items in this room
+            // 2. In Premium / Middle mode also include ALL keys from previously saved rates
+            //    so admins can see and edit rates they configured before.
+            if (pMode !== 'economy') {
+                Object.keys(currentRates).forEach(mat => roomMaterials.add(mat));
+            }
+
+            // 3. Add custom materials added to standard items in this room
             const items = ROOM_ITEMS[selectedRoom] || [];
             items.forEach(item => {
                 const customList = customMaterials[item.id] || [];
                 customList.forEach(m => roomMaterials.add(m.label));
             });
 
-            // 2. Add custom items created for this room
+            // 4. Add custom items created for this room
             if (selectedRoom !== 'accessories') {
                 customItems.forEach(item => {
                     item.options.forEach(opt => roomMaterials.add(opt.label));
