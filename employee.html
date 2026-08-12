@@ -1293,7 +1293,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v19';
+            const currentDbVersion = 'v20';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1326,6 +1326,9 @@
                     loadedFromStore = true;
                 } catch(e) {}
             }
+            
+            // Ensure no standard rooms have Accessories material type
+            db = db.filter(m => !(m.materialType === 'Accessories' && m.roomId !== 'accessories'));
 
             const adminSavedSpecs = localStorage.getItem('pks_material_specs');
             const defaultSpecs = adminSavedSpecs || "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -1644,11 +1647,10 @@
             ];
 
             if (!loadedFromStore) {
-                const allAccRooms = ['accessories', 'kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'sitout', 'store_room', 'toilet_area'];
+                const allAccRooms = ['accessories'];
                 allAccRooms.forEach(room => {
                     accOpts.forEach(acc => {
                         qualities.forEach(qual => {
-                            if (qual === 'Economy' && room !== 'accessories') return; // Do not add accessories inside other rooms for Economy quality
                             addMat(room, 'Accessories', qual, acc.name, 'Box Type', 'Stainless Steel Kitchen Accessories', 'QTY', acc.base, false);
                         });
                     });
