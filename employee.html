@@ -1871,10 +1871,10 @@
             // Update badge in header
             document.getElementById('roomBadge').textContent = selectedRoomName;
 
-            // Toggle Floor and Room selectors ONLY for bedroom
+            // Show Floor and Room selectors
             const selectorsWrap = document.getElementById('floorSelectorsWrap');
             if (selectorsWrap) {
-                selectorsWrap.style.display = (roomId === 'bedroom') ? 'flex' : 'none';
+                selectorsWrap.style.display = 'flex';
             }
 
             renderRoomTabs();
