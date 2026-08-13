@@ -1266,12 +1266,18 @@
                         o => o === "PVC" || o === "Lamination" || o === "Charcoal"
                     );
                     
+                    const isTable = itemName.includes("TABLE") && 
+                                    !itemName.includes("PANEL") && 
+                                    !itemName.includes("BEAM") && 
+                                    !itemName.includes("COVERING");
+                    
                     if (isWallPanelOrCeiling) {
                         item.options.forEach(opt => roomOptions.add(opt));
                     } else if (itemName === 'BED') {
                         item.options.forEach(opt => roomOptions.add(opt));
                     } else {
-                        const isCabinet = itemName.includes("PARTITION") || 
+                        const isCabinet = isTable ||
+                                          itemName.includes("PARTITION") || 
                                           itemName.includes("CABINET") || 
                                           itemName.includes("WARDROBE") || 
                                           itemName.includes("CUPBOARD") || 
@@ -1281,8 +1287,8 @@
                         const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
                         ecoMats.forEach(opt => roomOptions.add(opt));
 
-                        // If it is kitchen, living room or a partition, also add standard options (skipping raw Engineering Wood)
-                        if (selectedRoom === 'kitchen' || selectedRoom === 'living_room' || itemName.includes('PARTITION')) {
+                        // If it is kitchen, living room or a partition (excluding tables), also add standard options (skipping raw Engineering Wood)
+                        if (!isTable && (selectedRoom === 'kitchen' || selectedRoom === 'living_room' || itemName.includes('PARTITION'))) {
                             item.options.forEach(opt => {
                                 if (opt === "Engineering Wood") return;
                                 roomOptions.add(opt);
