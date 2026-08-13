@@ -997,45 +997,99 @@
             <!-- Payment Terms Inputs (Screen Only) -->
             <div class="specs-and-terms-container"
                 style="margin-top: 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 14px;">
-                <div
-                    style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
                     Payment Terms</div>
-                <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                        <label
-                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
-                            Payment</label>
-                        <input type="text" id="payAdvance" placeholder="e.g. 50% Advance"
-                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+
+                <!-- Row: Payment Fields (left) + Split Calculator (right) -->
+                <div style="display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;">
+
+                    <!-- Left: 4 payment input fields -->
+                    <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <!-- Token Payment -->
+                            <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">10% Token</label>
+                                <div style="font-size: 0.72rem; color: var(--muted); font-style: italic;">Commencement of 3D design on receipt of token.</div>
+                                <input type="text" id="payToken" placeholder="e.g. ₹25,000"
+                                    style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                            </div>
+                            <!-- 50% Advance -->
+                            <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">50% Advance</label>
+                                <div style="font-size: 0.72rem; color: var(--muted); font-style: italic;">Drawing will be sent for production on receipt of advance.</div>
+                                <input type="text" id="payAdvance" placeholder="e.g. ₹1,25,000"
+                                    style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <!-- 35% Part Payment -->
+                            <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">35% Part Payment</label>
+                                <div style="font-size: 0.72rem; color: var(--muted); font-style: italic;">After the completion of frame work.</div>
+                                <input type="text" id="paySecond" placeholder="e.g. ₹87,500"
+                                    style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                            </div>
+                            <!-- 5% Final Payment -->
+                            <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">5% Final Payment</label>
+                                <div style="font-size: 0.72rem; color: var(--muted); font-style: italic;">The last day of work completion in site.</div>
+                                <input type="text" id="payFinal" placeholder="e.g. ₹12,500"
+                                    style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                            </div>
+                        </div>
+                        <!-- Any Requirements -->
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Any Requirements / Notes</label>
+                            <textarea id="anyRequirements" rows="2" placeholder="e.g. Customer requested specific colour shade, delivery by Diwali, etc."
+                                style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none; resize: vertical; font-family: inherit;"></textarea>
+                        </div>
                     </div>
-                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                        <label
-                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Second
-                            Payment</label>
-                        <input type="text" id="paySecond" placeholder="e.g. 45% Delivery"
-                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+
+                    <!-- Right: Auto-Split Calculator Box -->
+                    <div id="paySplitBox" style="min-width: 200px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);">
+                        <div style="font-size: 0.72rem; font-weight: 700; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 2px;">
+                            💰 Amount Split
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--muted); margin-bottom: 2px;">
+                            Grand Total: <strong id="splitTotalDisplay" style="color: var(--text);">₹0</strong>
+                        </div>
+                        <!-- Split rows -->
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(176,125,46,0.08); border-radius: 6px; padding: 5px 10px;">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--accent-dark);">10% Token</span>
+                                <span id="split10" style="font-size: 0.8rem; font-weight: 700; color: var(--text);">₹0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(176,125,46,0.08); border-radius: 6px; padding: 5px 10px;">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--accent-dark);">50% Advance</span>
+                                <span id="split50" style="font-size: 0.8rem; font-weight: 700; color: var(--text);">₹0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(176,125,46,0.08); border-radius: 6px; padding: 5px 10px;">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--accent-dark);">35% Part Pay</span>
+                                <span id="split35" style="font-size: 0.8rem; font-weight: 700; color: var(--text);">₹0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(176,125,46,0.13); border-radius: 6px; padding: 5px 10px; border: 1px solid rgba(176,125,46,0.25);">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--accent-dark);">5% Final</span>
+                                <span id="split5" style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">₹0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                        <label
-                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Final
-                            Payment</label>
-                        <input type="text" id="payFinal" placeholder="e.g. 5% Handover"
-                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
-                    </div>
+
                 </div>
             </div>
 
             <!-- Print-Only Payment Terms (shown only during browser print) -->
             <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
-                <div
-                    style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
-                        Terms:</strong>
+                <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment Terms:</strong>
                     <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
-                        <li><strong>Advance Payment:</strong> <span id="printPayAdvance"></span></li>
-                        <li><strong>Second Payment:</strong> <span id="printPaySecond"></span></li>
-                        <li><strong>Final Payment:</strong> <span id="printPayFinal"></span></li>
+                        <li><strong>10% Token:</strong> Commencement of 3D design on receipt of token.<span id="printPayToken"></span></li>
+                        <li><strong>50% Advance:</strong> Drawing will be sent for production on receipt of advance.<span id="printPayAdvance"></span></li>
+                        <li><strong>35% Part Payment:</strong> After the completion of frame work.<span id="printPaySecond"></span></li>
+                        <li><strong>5% Final Payment:</strong> The last day of work completion in site.<span id="printPayFinal"></span></li>
                     </ul>
+                    <div id="printAnyRequirements" style="margin-top: 6px; display: none;">
+                        <strong>Requirements / Notes:</strong> <span id="printAnyRequirementsText"></span>
+                    </div>
                 </div>
             </div>
 
@@ -1268,6 +1322,21 @@
             return DEFAULT_RATES;
         }
 
+        function resolveRate(ratesObj, constType, matType) {
+            if (!ratesObj) return undefined;
+            if (ratesObj[constType] !== undefined && ratesObj[constType] !== null && ratesObj[constType] !== '') {
+                return parseFloat(ratesObj[constType]);
+            }
+            const baseName = constType ? constType.replace(/\s*\([^)]*\)/g, '').trim() : '';
+            if (baseName && ratesObj[baseName] !== undefined && ratesObj[baseName] !== null && ratesObj[baseName] !== '') {
+                return parseFloat(ratesObj[baseName]);
+            }
+            if (matType && ratesObj[matType] !== undefined && ratesObj[matType] !== null && ratesObj[matType] !== '') {
+                return parseFloat(ratesObj[matType]);
+            }
+            return undefined;
+        }
+
         // Load custom item cards
         function getCustomItems() {
             const stored = localStorage.getItem('pks_custom_items');
@@ -1291,7 +1360,7 @@
 
         // Setup base database
         function getOrInitMaterialsDb() {
-            const currentDbVersion = 'v28';
+            const currentDbVersion = 'v30';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
             
@@ -1363,7 +1432,7 @@
                         let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
                         if (item.toUpperCase() === 'BED') {
                             mats.forEach(m => {
-                                let factor = 0.70; // Economy pricing factor
+                                let factor = 0.70;
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, Math.round(m.base * factor));
                             });
                             return;
@@ -1374,29 +1443,34 @@
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
                             });
                         } else {
-                            const isCabinet = item.toUpperCase().includes("PARTITION") || 
-                                              item.toUpperCase().includes("CABINET") || 
-                                              item.toUpperCase().includes("WARDROBE") || 
-                                              item.toUpperCase().includes("CUPBOARD") || 
+                            const isTable = item.toUpperCase().includes("TABLE") &&
+                                            !item.toUpperCase().includes("PANEL") &&
+                                            !item.toUpperCase().includes("BEAM") &&
+                                            !item.toUpperCase().includes("COVERING");
+                            const isCabinet = isTable ||
+                                              item.toUpperCase().includes("PARTITION") ||
+                                              item.toUpperCase().includes("CABINET") ||
+                                              item.toUpperCase().includes("WARDROBE") ||
+                                              item.toUpperCase().includes("CUPBOARD") ||
                                               mats.some(m => m.label.includes("Box") || m.label.includes("Door") || m.label.includes("Partition") || m.label.includes("Framed"));
                             const ecoMats = isCabinet ? engWoodBoxDoor : engWoodOnly;
                             ecoMats.forEach(m => {
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
                             });
 
-                            // If it is kitchen, living room or a partition, also add the standard materials (mats) under Economy
-                            if (room === 'kitchen' || room === 'living_room' || item.toUpperCase().includes('PARTITION')) {
+                            // If kitchen, living room or partition (excluding tables), also add standard materials
+                            if (!isTable && (room === 'kitchen' || room === 'living_room' || item.toUpperCase().includes('PARTITION'))) {
                                 let stdSpecs = defaultSpecs;
                                 mats.forEach(m => {
                                     if (m.label === "Engineering Wood") return;
-                                    let factor = 0.70; // Economy pricing factor for standard materials
+                                    let factor = 0.70;
                                     addMat(room, 'Standard', qual, item, m.label, stdSpecs, m.formula, Math.round(m.base * factor));
                                 });
                             }
                         }
                         return;
                     }
-                    
+
                     let factor = qual === 'Premium' ? 1.0 : 0.85;
                     let finalSpecs = specs || defaultSpecs;
 
@@ -1689,9 +1763,15 @@
             
             // 1. Sync custom rates (from admin Rates Management)
             db.forEach(m => {
-                if (rates[m.constructionType] !== undefined) {
-                    m.baseAmount = rates[m.constructionType];
-                    m.offerPrice = rates[m.constructionType] * (1 - (m.discountPercentage || 0) / 100);
+                const targetRate = resolveRate(rates, m.constructionType, m.materialType);
+                if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
+                    let factor = 1.0;
+                    if (rates[m.constructionType] === undefined) {
+                        if (m.quality === 'Middle / Standard') factor = 0.85;
+                        else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
+                    }
+                    m.baseAmount = Math.round(parseFloat(targetRate) * factor);
+                    m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
                 }
             });
 
@@ -1749,6 +1829,31 @@
                     parsedItems.forEach(item => {
                         standardRooms.forEach(room => {
                             qualities.forEach(qual => {
+                                // In Economy mode, table items only get Engineering Wood variants
+                                const itemUpper = item.name.toUpperCase();
+                                const isEcoTable = qual === 'Economy' &&
+                                    itemUpper.includes('TABLE') &&
+                                    !itemUpper.includes('PANEL') &&
+                                    !itemUpper.includes('BEAM') &&
+                                    !itemUpper.includes('COVERING');
+
+                                if (isEcoTable) {
+                                    // Only add the 3 Engineering Wood variants
+                                    engWoodBoxDoor.forEach(m => {
+                                        const exists = db.some(e =>
+                                            e.roomId === room &&
+                                            e.itemName === item.name &&
+                                            e.quality === qual &&
+                                            e.constructionType === m.label
+                                        );
+                                        if (!exists) {
+                                            const rate = rates[m.label] !== undefined ? rates[m.label] : m.base;
+                                            addMat(room, 'Standard', qual, item.name, m.label, "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS", m.formula, rate);
+                                        }
+                                    });
+                                    return;
+                                }
+
                                 item.options.forEach(opt => {
                                     const exists = db.some(m => 
                                         m.roomId === room &&
@@ -1803,6 +1908,21 @@
                     });
                 } catch (e) { }
             }
+
+            // 6. Strip non-Engineering-Wood options from TABLE items in Economy mode (catches cached entries)
+            db = db.filter(m => {
+                if (m.quality !== 'Economy') return true;
+                const nameUpper = m.itemName.toUpperCase();
+                const isTable = nameUpper.includes('TABLE') &&
+                                !nameUpper.includes('PANEL') &&
+                                !nameUpper.includes('BEAM') &&
+                                !nameUpper.includes('COVERING');
+                if (!isTable) return true;
+                // Only keep Engineering Wood variants
+                return m.constructionType === 'Engineering Wood (Box Type)' ||
+                       m.constructionType === 'Engineering Wood (Door Only)' ||
+                       m.constructionType === 'Engineering Wood (Partition Type)';
+            });
 
             localStorage.setItem('pks_materials_db', JSON.stringify(db));
             localStorage.setItem('pks_materials_db_version', currentDbVersion);
@@ -1949,6 +2069,22 @@
                 }
             });
 
+            // ── Apply admin-set rates from pks_rates to all DB entries ──────────────
+            // Rates saved by admin override the hardcoded default base rates.
+            const adminRates = getRates();
+            db.forEach(m => {
+                const targetRate = resolveRate(adminRates, m.constructionType, m.materialType);
+                if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
+                    let factor = 1.0;
+                    if (adminRates[m.constructionType] === undefined) {
+                        if (m.quality === 'Middle / Standard') factor = 0.85;
+                        else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
+                    }
+                    m.baseAmount = Math.round(parseFloat(targetRate) * factor);
+                    m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
+                }
+            });
+
             const filtered = db.filter(m => 
                 m.roomId === selectedRoom &&
                 m.quality === activeQuality &&
@@ -2082,6 +2218,15 @@
 
         // Initialize dynamic tabs and list
         updateRoomState(selectedRoom, selectedRoomName);
+
+        ['payToken', 'payAdvance', 'paySecond', 'payFinal'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    el.dataset.userEdited = "true";
+                });
+            }
+        });
 
         // Listen for admin changes in other tabs/windows
         window.addEventListener('storage', (e) => {
@@ -2927,7 +3072,53 @@
                 <td></td>
             `;
 
+            updatePaySplit();
+        }
 
+        // Auto-update Payment Split Calculator & Input Boxes whenever quote is re-rendered
+        function updatePaySplit() {
+            const offerEl = document.getElementById('offerGrandTotal');
+            const grandEl = document.getElementById('grandTotal');
+            const el = offerEl || grandEl;
+            if (!el) return;
+            const raw = el.textContent.replace(/[₹,\s]/g, '');
+            const total = parseFloat(raw) || 0;
+            const fmt = v => '₹' + Math.round(v).toLocaleString('en-IN');
+            
+            const disp = document.getElementById('splitTotalDisplay');
+            if (disp) disp.textContent = fmt(total);
+
+            const v10 = total > 0 ? fmt(total * 0.10) : '';
+            const v50 = total > 0 ? fmt(total * 0.50) : '';
+            const v35 = total > 0 ? fmt(total * 0.35) : '';
+            const v5  = total > 0 ? fmt(total * 0.05) : '';
+
+            const s10 = document.getElementById('split10');
+            const s50 = document.getElementById('split50');
+            const s35 = document.getElementById('split35');
+            const s5  = document.getElementById('split5');
+            if (s10) s10.textContent = fmt(total * 0.10);
+            if (s50) s50.textContent = fmt(total * 0.50);
+            if (s35) s35.textContent = fmt(total * 0.35);
+            if (s5)  s5.textContent  = fmt(total * 0.05);
+
+            // Auto-populate input boxes on the left
+            const payInputs = [
+                { id: 'payToken', val: v10, placeholder: 'e.g. ₹25,000' },
+                { id: 'payAdvance', val: v50, placeholder: 'e.g. ₹1,25,000' },
+                { id: 'paySecond', val: v35, placeholder: 'e.g. ₹87,500' },
+                { id: 'payFinal', val: v5, placeholder: 'e.g. ₹12,500' }
+            ];
+
+            payInputs.forEach(item => {
+                const input = document.getElementById(item.id);
+                if (input) {
+                    if (!input.dataset.userEdited) {
+                        input.value = item.val;
+                    }
+                    input.placeholder = item.val || item.placeholder;
+                }
+            });
         }
 
         function deleteLine(id) {
@@ -2981,9 +3172,16 @@
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
 
+                if (document.getElementById('payToken')) document.getElementById('payToken').value = '';
                 document.getElementById('payAdvance').value = '';
                 document.getElementById('paySecond').value = '';
                 document.getElementById('payFinal').value = '';
+                if (document.getElementById('anyRequirements')) document.getElementById('anyRequirements').value = '';
+
+                ['payToken', 'payAdvance', 'paySecond', 'payFinal'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) delete el.dataset.userEdited;
+                });
 
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
@@ -3043,9 +3241,26 @@
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
 
-            document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
-            document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
-            document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
+            const tokenVal = document.getElementById('payToken').value.trim();
+            const advVal = document.getElementById('payAdvance').value.trim();
+            const partVal = document.getElementById('paySecond').value.trim();
+            const finalVal = document.getElementById('payFinal').value.trim();
+            const reqVal = document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '';
+
+            document.getElementById('printPayToken').textContent = tokenVal ? ` — ${tokenVal}` : '';
+            document.getElementById('printPayAdvance').textContent = advVal ? ` — ${advVal}` : '';
+            document.getElementById('printPaySecond').textContent = partVal ? ` — ${partVal}` : '';
+            document.getElementById('printPayFinal').textContent = finalVal ? ` — ${finalVal}` : '';
+
+            const printReqBlock = document.getElementById('printAnyRequirements');
+            if (printReqBlock) {
+                if (reqVal) {
+                    printReqBlock.style.display = 'block';
+                    document.getElementById('printAnyRequirementsText').textContent = reqVal;
+                } else {
+                    printReqBlock.style.display = 'none';
+                }
+            }
 
             window.print();
         }
@@ -3340,9 +3555,11 @@
                 economyMode: isEconomyMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
+                payToken: document.getElementById('payToken') ? document.getElementById('payToken').value : '',
                 payAdvance: document.getElementById('payAdvance').value,
                 paySecond: document.getElementById('paySecond').value,
                 payFinal: document.getElementById('payFinal').value,
+                anyRequirements: document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value : '',
                 lineIdCounter,
                 timestamp: Date.now()
             };
@@ -3467,9 +3684,17 @@
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
 
+            if (document.getElementById('payToken')) document.getElementById('payToken').value = quote.payToken || '';
             document.getElementById('payAdvance').value = quote.payAdvance || '';
             document.getElementById('paySecond').value = quote.paySecond || '';
             document.getElementById('payFinal').value = quote.payFinal || '';
+            if (document.getElementById('anyRequirements')) document.getElementById('anyRequirements').value = quote.anyRequirements || '';
+
+            ['payToken', 'payAdvance', 'paySecond', 'payFinal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value) el.dataset.userEdited = "true";
+                else if (el) delete el.dataset.userEdited;
+            });
 
             const restoredMode = quote.pricingMode || (quote.economyMode ? 'economy' : 'premium');
             sessionStorage.setItem('pks_pricing_mode', restoredMode);
