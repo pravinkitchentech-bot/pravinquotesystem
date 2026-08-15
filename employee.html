@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pravin Kitchens &amp; Interiors — Employee Quote System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-sync.js"></script>
     <style>
         :root {
             --bg: #f2ede6;
@@ -1011,6 +1013,10 @@
 
             <!-- Top Right Page Actions -->
             <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="cloud-sync-badge role-badge" style="background: rgba(255,255,255,0.08); font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">⚪ Local Mode</span>
+                <button id="adminPanelNavBtn" class="back-btn"
+                    style="display:none; padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: var(--accent); border: none; color: #ffffff !important;"
+                    onclick="location.href='admin.html'">Admin Panel</button>
                 <button class="back-btn"
                     style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
                     onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
@@ -1376,6 +1382,10 @@
         const role = sessionStorage.getItem('pks_role');
         if (!role) {
             location.href = 'index.html';
+        }
+        if (role === 'admin') {
+            const adminBtn = document.getElementById('adminPanelNavBtn');
+            if (adminBtn) adminBtn.style.display = 'inline-flex';
         }
         const showRate = (role === 'admin');
 
@@ -2855,9 +2865,89 @@
             openMaterialSelector(buildId, itemId);
         }
 
+        function getEffectiveSpecs(roomId, itemId, materialLabel, defaultSpecs) {
+            const stored = localStorage.getItem('pks_item_specs');
+            if (stored) {
+                try {
+                    const specsMap = JSON.parse(stored);
+                    if (specsMap) {
+                        const specificKey = `${roomId}_${itemId}_${materialLabel}`;
+                        if (specsMap[specificKey] !== undefined && specsMap[specificKey] !== null && specsMap[specificKey] !== '') {
+                            return specsMap[specificKey];
+                        }
+                        const roomMatKey = `${roomId}_${materialLabel}`;
+                        if (specsMap[roomMatKey] !== undefined && specsMap[roomMatKey] !== null && specsMap[roomMatKey] !== '') {
+                            return specsMap[roomMatKey];
+                        }
+                        if (specsMap[materialLabel] !== undefined && specsMap[materialLabel] !== null && specsMap[materialLabel] !== '') {
+                            return specsMap[materialLabel];
+                        }
+                    }
+                } catch (e) { }
+            }
+
+            // Check custom materials list
+            const storedCustom = localStorage.getItem('pks_custom_materials');
+            if (storedCustom) {
+                try {
+                    const customMats = JSON.parse(storedCustom);
+                    if (customMats && customMats[itemId]) {
+                        const found = customMats[itemId].find(m => m.label === materialLabel);
+                        if (found && found.specifications) return found.specifications;
+                    }
+                } catch (e) { }
+            }
+
+            return defaultSpecs || "";
+        }
+
+        function enableInlineSpecsEdit(buildId, itemId, optIdx) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const currentSpecs = getEffectiveSpecs(selectedRoom, itemId, opt.label, opt.specifications);
+            const newSpecs = prompt("Edit specifications for " + opt.label + ":", currentSpecs);
+            if (newSpecs !== null) {
+                const stored = localStorage.getItem('pks_item_specs');
+                let specsMap = {};
+                if (stored) {
+                    try { specsMap = JSON.parse(stored) || {}; } catch (e) { }
+                }
+                const specificKey = `${selectedRoom}_${itemId}_${opt.label}`;
+                specsMap[specificKey] = newSpecs.trim();
+                localStorage.setItem('pks_item_specs', JSON.stringify(specsMap));
+
+                opt.specifications = newSpecs.trim();
+                const textEl = document.getElementById(`${buildId}-specs-text`);
+                if (textEl) textEl.textContent = newSpecs.trim() || "No specifications added.";
+            }
+        }
+
+        function cleanSpecsForType(text, materialLabel) {
+            if (!text) return "";
+            const mat = (materialLabel || "").toLowerCase();
+            const isNoBack = mat.includes("framed") || mat.includes("door only") || mat.includes("door type") || mat.includes("partition") || mat.includes("partician") || mat.includes("door");
+            if (isNoBack) {
+                const isCommaSeparated = !text.includes('\n') && text.includes(',');
+                const parts = isCommaSeparated ? text.split(',') : text.split('\n');
+                const filtered = parts.filter(p => {
+                    const l = p.toLowerCase().trim();
+                    if (l.includes("back") && (l.includes("panel") || l.includes("seat") || l.includes("dseat") || l.includes("railing") || l.includes("sheet") || l.includes("board") || l.includes("wood") || l.includes("ply") || l.includes("8mm") || l.includes("8 mm") || l.includes("6mm") || l.includes("6 mm"))) {
+                        return false;
+                    }
+                    if (l.includes("backpanel") || l.includes("backdseat") || l.includes("backsheet") || l.includes("backboard")) {
+                        return false;
+                    }
+                    return true;
+                });
+                return filtered.join(isCommaSeparated ? ', ' : '\n').trim();
+            }
+            return text;
+        }
+
         function formatSpecificationsText(specsStr, currentRoomId, currentMaterialLabel) {
             if (!specsStr) return "";
             specsStr = specsStr.trim();
+            let resultText = specsStr;
             if (specsStr.startsWith('[') && specsStr.endsWith(']')) {
                 try {
                     const arr = JSON.parse(specsStr);
@@ -2888,12 +2978,12 @@
                         });
 
                         if (filtered.length > 0) {
-                            return filtered.map(item => item.text).join('\n');
+                            resultText = filtered.map(item => item.text).join('\n');
                         }
                     }
                 } catch (e) { }
             }
-            return specsStr;
+            return cleanSpecsForType(resultText, currentMaterialLabel);
         }
 
         function getFinalRateForOption(opt) {
@@ -2930,6 +3020,7 @@
             if (!sizeArea) return;
 
             const defaultRate = getFinalRateForOption(opt);
+            const effectiveSpecs = getEffectiveSpecs(selectedRoom, itemId, opt.label, opt.specifications);
 
             const fieldsHtml = opt.fields.map(f => `
                 <div class="field">
@@ -2949,7 +3040,7 @@
                       <strong>Specifications:</strong>
                       <button type="button" style="background: transparent; border: none; cursor: pointer; font-size: 0.85rem; padding: 2px;" onclick="enableInlineSpecsEdit('${buildId}', ${itemId}, ${optIdx})" title="Edit Specifications">✏️</button>
                     </div>
-                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${formatSpecificationsText(opt.specifications, selectedRoom, opt.label) || "No specifications added. Click edit icon to add."}</div>
+                    <div id="${buildId}-specs-text" style="word-break: break-word; white-space: pre-wrap;">${formatSpecificationsText(effectiveSpecs, selectedRoom, opt.label) || "No specifications added. Click edit icon to add."}</div>
                   </div>
                   <div class="field-row">
                     ${fieldsHtml}
@@ -3083,7 +3174,7 @@
                 amount,
                 enabled: true,
                 showSqft: opt.showSqft,
-                specifications: formatSpecificationsText(opt.specifications, selectedRoom, opt.label)
+                specifications: formatSpecificationsText(getEffectiveSpecs(selectedRoom, itemId, opt.label, opt.specifications), selectedRoom, opt.label)
             });
             renderQuote();
             closeBuilder(buildId);
@@ -4415,4 +4506,15 @@
         // Initialize customer auto-fill logic
         initCustomerAutofill();
         updateQualityBadges();
+
+        // Storage event listener to live-sync specs and rates updated from Admin panel or Cloud Sync
+        window.addEventListener('storage', (e) => {
+            if (!e.key || e.key === 'pks_item_specs' || e.key === 'pks_custom_materials' || e.key === 'pks_rates' || e.key === 'pks_materials_db') {
+                ITEMS = getFullItemsList();
+                renderItemsGrid();
+                if (typeof updateCalc === 'function') {
+                    updateCalc();
+                }
+            }
+        });
     </script>
