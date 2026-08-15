@@ -1090,39 +1090,13 @@
         /* ---------- Base Materials & Defaults ---------- */
         const DEFAULT_RATES = {
             "Marine Ply – Lamination": 450,
-            "Marine Ply – Lamination (Box Type)": 450,
-            "Marine Ply – Lamination (Door Type)": 450,
-            "Marine Ply – Lamination (Door Only)": 450,
-            "Marine Ply – Lamination (Partition Type)": 450,
-            "Marine Ply – Lamination (Framed)": 450,
-            "Marine Ply – Lamination (Box)": 450,
-            "Marine Ply (Box Type)": 450,
-            "Marine Ply (Door Type)": 450,
-
             "Marine Ply – Acrylic": 650,
-            "Marine Ply – Acrylic (Box Type)": 650,
-            "Marine Ply – Acrylic (Door Type)": 650,
-            "Marine Ply – Acrylic (Door Only)": 650,
-            "Marine Ply – Acrylic (Partition Type)": 650,
-            "Marine Ply – Acrylic (Framed)": 650,
-            "Marine Ply – Acrylic (Box)": 650,
-
             "WPC": 550,
-            "WPC (Box Type)": 550,
-            "WPC (Door Type)": 550,
-            "WPC (Door Only)": 550,
-            "WPC (Partition Type)": 550,
-            "WPC (Framed)": 550,
-            "WPC (Box)": 550,
             "PVC": 300,
             "Lamination": 250,
             "Charcoal": 400,
             "Marine Plane": 350,
             "Engineering Wood": 280,
-            "Engineering Wood (Box Type)": 280,
-            "Engineering Wood (Door Type)": 280,
-            "Engineering Wood (Door Only)": 280,
-            "Engineering Wood (Partition Type)": 280,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1131,6 +1105,9 @@
             "PU Paint": 600,
             "Gypsum Board": 110,
             "POP": 120,
+            "Box Type": 1500,
+            "Door Only": 850,
+            "Partition Type": 1600,
             "Basket": 0,
             "Tandom Box": 0,
             "Oil Pull Out": 0,
@@ -1468,6 +1445,20 @@
             return str.toLowerCase().replace(/[^a-z0-9]/g, '');
         }
 
+        function cleanRateMaterialName(name, roomId) {
+            if (!name) return '';
+            const trimmed = name.trim();
+            if (roomId === 'full_teak_wood' || roomId === 'half_teak_wood') {
+                return trimmed;
+            }
+            if (trimmed.includes('Direct Price')) {
+                return trimmed;
+            }
+            // Strip any subtype in parentheses such as (Box Type), (Door Type), (Door Only), (Partition Type), (Framed), (Box)
+            const base = trimmed.replace(/\s*\((Box Type|Door Type|Door Only|Partition Type|Framed|Box)\)/gi, '').trim();
+            return base || trimmed;
+        }
+
         function renderRatesTable() {
             const body = document.getElementById('ratesTableBody');
             body.innerHTML = '';
@@ -1478,19 +1469,28 @@
 
             // 1. Get standard item options for this room based on current pricing mode
             const activeOpts = getActiveRoomOptions();
-            activeOpts.forEach(opt => roomMaterials.add(opt));
+            activeOpts.forEach(opt => {
+                const clean = cleanRateMaterialName(opt, selectedRoom);
+                if (clean) roomMaterials.add(clean);
+            });
 
-            // 3. Add custom materials added to standard items in this room
+            // 2. Add custom materials added to standard items in this room
             const items = ROOM_ITEMS[selectedRoom] || [];
             items.forEach(item => {
                 const customList = customMaterials[item.id] || [];
-                customList.forEach(m => roomMaterials.add(m.label));
+                customList.forEach(m => {
+                    const clean = cleanRateMaterialName(m.label, selectedRoom);
+                    if (clean) roomMaterials.add(clean);
+                });
             });
 
-            // 4. Add custom items created for this room
+            // 3. Add custom items created for this room
             if (selectedRoom !== 'accessories') {
                 customItems.forEach(item => {
-                    item.options.forEach(opt => roomMaterials.add(opt.label));
+                    item.options.forEach(opt => {
+                        const clean = cleanRateMaterialName(opt.label, selectedRoom);
+                        if (clean) roomMaterials.add(clean);
+                    });
                 });
             }
 
@@ -1538,6 +1538,11 @@
                 const mat = input.dataset.material;
                 const val = parseFloat(input.value) || 0;
                 ratesObj[mat] = val;
+                // Also set common variant keys so any direct lookup matches the updated rate
+                const subtypes = ['(Box Type)', '(Door Type)', '(Door Only)', '(Partition Type)', '(Framed)', '(Box)'];
+                subtypes.forEach(sub => {
+                    ratesObj[`${mat} ${sub}`] = val;
+                });
             });
             localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
             currentRates = ratesObj;
