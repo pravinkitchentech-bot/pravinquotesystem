@@ -600,6 +600,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-sync.js"></script>
 </head>
 
 <body>
@@ -619,7 +622,9 @@
             </div>
         </div>
         <div class="nav-actions">
-            <span class="cloud-sync-badge role-badge" style="cursor:pointer; background:var(--surface2);" onclick="switchTab('cloud-sync', document.querySelector('.tab-btn[onclick*=\'cloud-sync\']'))">⚪ Local Mode</span>
+            <span class="cloud-sync-badge role-badge" style="cursor:pointer; background:var(--surface2);"
+                onclick="switchTab('cloud-sync', document.querySelector('.tab-btn[onclick*=\'cloud-sync\']'))">⚪ Local
+                Mode</span>
             <button class="nav-btn" onclick="location.href='employee.html'">Go to Employee Panel</button>
             <button class="nav-btn" onclick="logout()">Logout</button>
         </div>
@@ -815,11 +820,13 @@
             <div id="settings" class="tab-panel">
                 <h2>Item &amp; Material Specifications</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">
-                    Customize the exact specifications for each item and material. Any edits saved here are immediately updated in the Employee Panel and Quote calculations.
+                    Customize the exact specifications for each item and material. Any edits saved here are immediately
+                    updated in the Employee Panel and Quote calculations.
                 </p>
 
                 <!-- Specific Item & Material Specs Editor Form -->
-                <div class="sub-form" style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 25px;">
+                <div class="sub-form"
+                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 25px;">
                     <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
                         <div class="form-group" style="flex: 1; min-width: 180px;">
                             <label for="specsSelectRoom">Select Room</label>
@@ -842,20 +849,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="specsEditorText" style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="specsEditorText"
+                            style="display: flex; justify-content: space-between; align-items: center;">
                             <span>Specifications (Line by line / bullet format)</span>
-                            <span id="specsEditorTargetBadge" style="font-size: 0.75rem; color: var(--accent); font-weight: 600;"></span>
+                            <span id="specsEditorTargetBadge"
+                                style="font-size: 0.75rem; color: var(--accent); font-weight: 600;"></span>
                         </label>
-                        <textarea id="specsEditorText" rows="6" placeholder="e.g.&#10;MARINE PLY THICKNESS-16MM&#10;LAMINATION THICKNESS 0.8MM&#10;HINGES-BRAND SLEEK&#10;KITCHEN HINGES SOFT CLOSING&#10;KITCHEN HANDLE PROFILE"
+                        <textarea id="specsEditorText" rows="6"
+                            placeholder="e.g.&#10;MARINE PLY THICKNESS-16MM&#10;LAMINATION THICKNESS 0.8MM&#10;HINGES-BRAND SLEEK&#10;KITCHEN HINGES SOFT CLOSING&#10;KITCHEN HANDLE PROFILE"
                             style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
                     </div>
-                    <div class="action-row" style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-                        <button class="btn-danger" style="background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 16px;" onclick="resetSelectedMaterialSpecs()">Reset to Default</button>
+                    <div class="action-row"
+                        style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                        <button class="btn-danger"
+                            style="background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 16px;"
+                            onclick="resetSelectedMaterialSpecs()">Reset to Default</button>
                         <button class="btn-primary" onclick="saveSelectedMaterialSpecs()">Save Specifications</button>
                     </div>
                 </div>
 
-                <h3 style="margin-top: 25px; margin-bottom: 12px; font-size: 1.05rem; color: var(--accent); display: flex; align-items: center; justify-content: space-between;">
+                <h3
+                    style="margin-top: 25px; margin-bottom: 12px; font-size: 1.05rem; color: var(--accent); display: flex; align-items: center; justify-content: space-between;">
                     <span>Current Materials &amp; Specifications for <span id="specsRoomNameTitle">Kitchen</span></span>
                 </h3>
                 <div class="item-list-container" id="specsOverviewList">
@@ -896,53 +910,82 @@
             <div id="cloud-sync" class="tab-panel">
                 <h2>Realtime Cloud Sync (All Devices)</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">
-                    Connect to a free Firebase Cloud Database so all rates, specifications, and quotes update across all employees' laptops, tablets, and phones automatically in real-time.
+                    Connect to a free Firebase Cloud Database so all rates, specifications, and quotes update across all
+                    employees' laptops, tablets, and phones automatically in real-time.
                 </p>
 
-                <div class="sub-form" style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 25px; margin-bottom: 25px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <div class="sub-form"
+                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 25px; margin-bottom: 25px;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
                         <span style="font-weight: 700; font-size: 1rem; color: var(--text);">Connection Status</span>
-                        <span class="cloud-sync-badge role-badge" style="background: rgba(0,0,0,0.3);">⚪ Local Mode</span>
+                        <span class="cloud-sync-badge role-badge" style="background: rgba(0,0,0,0.3);">⚪ Local
+                            Mode</span>
                     </div>
 
                     <div class="form-group">
                         <label for="firebaseDbUrlInput">Firebase Realtime Database URL / Project Config</label>
-                        <input type="text" id="firebaseDbUrlInput" placeholder="e.g. https://your-project-id-default-rtdb.firebaseio.com" style="margin-bottom: 8px;">
+                        <input type="text" id="firebaseDbUrlInput"
+                            placeholder="e.g. https://your-project-id-default-rtdb.firebaseio.com"
+                            style="margin-bottom: 8px;">
                         <p style="font-size: 0.75rem; color: var(--muted);">
-                            Enter your Firebase Realtime Database URL (e.g., <code>https://your-project-default-rtdb.firebaseio.com</code>) or paste the complete Firebase Config JSON.
+                            Enter your Firebase Realtime Database URL (e.g.,
+                            <code>https://your-project-default-rtdb.firebaseio.com</code>) or paste the complete
+                            Firebase Config JSON.
                         </p>
                     </div>
 
                     <div class="action-row" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-primary" id="btnConnectCloud" onclick="connectFirebaseCloud()">⚡ Connect &amp; Enable Realtime Sync</button>
-                        <button class="btn-danger" style="background: transparent; border: 1px solid var(--border); color: var(--muted);" onclick="disconnectFirebaseCloud()">Disconnect</button>
+                        <button class="btn-primary" id="btnConnectCloud" onclick="connectFirebaseCloud()">⚡ Connect
+                            &amp; Enable Realtime Sync</button>
+                        <button class="btn-danger"
+                            style="background: transparent; border: 1px solid var(--border); color: var(--muted);"
+                            onclick="disconnectFirebaseCloud()">Disconnect</button>
                     </div>
-                    <div id="cloudConnectionMsg" style="margin-top: 12px; font-size: 0.85rem; font-weight: 500; display: none;"></div>
+                    <div id="cloudConnectionMsg"
+                        style="margin-top: 12px; font-size: 0.85rem; font-weight: 500; display: none;"></div>
                 </div>
 
                 <!-- One-Click Quick Actions -->
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;">
-                    <div style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 18px; border-radius: 12px;">
-                        <h4 style="color: var(--accent); margin-bottom: 6px;">⬆️ Push Local Rates &amp; Specs to Cloud</h4>
-                        <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Overwrites the cloud database with all rates, custom materials, and specifications currently on this computer.</p>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="pushAllToCloud()">Push to Cloud Now</button>
+                    <div
+                        style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 18px; border-radius: 12px;">
+                        <h4 style="color: var(--accent); margin-bottom: 6px;">⬆️ Push Local Rates &amp; Specs to Cloud
+                        </h4>
+                        <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Overwrites the cloud
+                            database with all rates, custom materials, and specifications currently on this computer.
+                        </p>
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;"
+                            onclick="pushAllToCloud()">Push to Cloud Now</button>
                     </div>
 
-                    <div style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 18px; border-radius: 12px;">
+                    <div
+                        style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 18px; border-radius: 12px;">
                         <h4 style="color: var(--accent); margin-bottom: 6px;">⬇️ Pull Rates &amp; Specs from Cloud</h4>
-                        <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Downloads the latest rates and specifications from the cloud onto this device.</p>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; background: var(--surface2); color: var(--text);" onclick="pullAllFromCloud()">Pull from Cloud</button>
+                        <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Downloads the latest
+                            rates and specifications from the cloud onto this device.</p>
+                        <button class="btn-primary"
+                            style="padding: 6px 14px; font-size: 0.8rem; background: var(--surface2); color: var(--text);"
+                            onclick="pullAllFromCloud()">Pull from Cloud</button>
                     </div>
                 </div>
 
                 <!-- 2-Minute Free Firebase Setup Guide -->
-                <div style="background: rgba(18, 36, 23, 0.4); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;">
-                    <h3 style="font-size: 1rem; color: var(--accent); margin-bottom: 10px;">📖 2-Minute Free Firebase Setup Guide</h3>
+                <div
+                    style="background: rgba(18, 36, 23, 0.4); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;">
+                    <h3 style="font-size: 1rem; color: var(--accent); margin-bottom: 10px;">📖 2-Minute Free Firebase
+                        Setup Guide</h3>
                     <ol style="font-size: 0.82rem; color: var(--text); line-height: 1.6; padding-left: 20px;">
-                        <li>Go to <a href="https://console.firebase.google.com" target="_blank" style="color: var(--accent); font-weight: bold;">Firebase Console (console.firebase.google.com)</a> and click <b>Add Project</b> (e.g. <i>Pravin-Quotes</i>).</li>
-                        <li>In the left menu, click <b>Build</b> &gt; <b>Realtime Database</b> &gt; <b>Create Database</b>.</li>
-                        <li>Select <b>Start in test mode</b> (or set rules: <code>{".read": true, ".write": true}</code>) and click <b>Enable</b>.</li>
-                        <li>Copy the Database URL shown at the top (e.g., <code>https://pravin-quotes-default-rtdb.firebaseio.com/</code>).</li>
+                        <li>Go to <a href="https://console.firebase.google.com" target="_blank"
+                                style="color: var(--accent); font-weight: bold;">Firebase Console
+                                (console.firebase.google.com)</a> and click <b>Add Project</b> (e.g.
+                            <i>Pravin-Quotes</i>).</li>
+                        <li>In the left menu, click <b>Build</b> &gt; <b>Realtime Database</b> &gt; <b>Create
+                                Database</b>.</li>
+                        <li>Select <b>Start in test mode</b> (or set rules:
+                            <code>{".read": true, ".write": true}</code>) and click <b>Enable</b>.</li>
+                        <li>Copy the Database URL shown at the top (e.g.,
+                            <code>https://pravin-quotes-default-rtdb.firebaseio.com/</code>).</li>
                         <li>Paste that URL in the box above and click <b>Connect &amp; Enable Realtime Sync</b>!</li>
                     </ol>
                 </div>
@@ -2248,7 +2291,7 @@
             const roomSelect = document.getElementById('specsSelectRoom');
             const targetRoomId = roomSelect ? roomSelect.value : selectedRoom;
             const targetRoomObj = ROOMS.find(r => r.id === targetRoomId) || { name: 'Kitchen' };
-            
+
             const titleEl = document.getElementById('specsRoomNameTitle');
             if (titleEl) titleEl.textContent = targetRoomObj.name;
 
