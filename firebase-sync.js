@@ -1,6 +1,7 @@
 /**
  * Pravin Kitchens & Interiors - Realtime Firebase Cloud Sync
  * Automatically syncs rates, specifications, custom materials, custom items, divisions, deleted configurations, and saved quotes across all devices.
+ * High-performance edition: debounced cloud pushes, loop prevention, and optimized memory footprint.
  */
 
 const DEFAULT_FIREBASE_CONFIG_KEY = 'pks_firebase_config';
@@ -9,8 +10,10 @@ const DEFAULT_FIREBASE_DB_URL = 'https://pravin-quotes-default-rtdb.firebaseio.c
 window.PKSSync = {
     db: null,
     isInitialized: false,
+    isSyncing: false,
     dbUrl: DEFAULT_FIREBASE_DB_URL,
     pollInterval: null,
+    pushDebounceTimer: null,
 
     getConfig() {
         const stored = localStorage.getItem(DEFAULT_FIREBASE_CONFIG_KEY);
@@ -107,112 +110,45 @@ window.PKSSync = {
         });
     },
 
+    // Safely update localStorage from remote cloud without triggering outbound echo
+    setLocalItemSilently(key, cloudStr) {
+        const local = localStorage.getItem(key);
+        if (local !== cloudStr) {
+            this.isSyncing = true;
+            try {
+                localStorage.setItem(key, cloudStr);
+            } finally {
+                setTimeout(() => { this.isSyncing = false; }, 50);
+            }
+            return true;
+        }
+        return false;
+    },
+
     attachRealtimeListeners() {
         if (!this.db) return;
         try {
-            // 1. Rates Sync
-            this.db.ref('pks/rates').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && typeof data === 'object') {
-                    const local = localStorage.getItem('pks_rates');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_rates', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
+            const syncKey = (path, storageKey) => {
+                this.db.ref(path).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data !== null && data !== undefined) {
+                        const cloudStr = typeof data === 'string' ? data : JSON.stringify(data);
+                        if (this.setLocalItemSilently(storageKey, cloudStr)) {
+                            window.dispatchEvent(new CustomEvent('pks_cloud_synced', { detail: { key: storageKey } }));
+                        }
                     }
-                }
-            });
+                });
+            };
 
-            // 2. Specifications Sync
-            this.db.ref('pks/item_specs').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && typeof data === 'object') {
-                    const local = localStorage.getItem('pks_item_specs');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_item_specs', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 3. Custom Materials Sync
-            this.db.ref('pks/custom_materials').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && typeof data === 'object') {
-                    const local = localStorage.getItem('pks_custom_materials');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_custom_materials', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 4. Custom Items Sync
-            this.db.ref('pks/custom_items').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    const local = localStorage.getItem('pks_custom_items');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_custom_items', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 5. Divisions Sync
-            this.db.ref('pks/divisions').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    const local = localStorage.getItem('pks_divisions');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_divisions', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 6. Saved Quotes Sync
-            this.db.ref('pks/saved_quotes').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    const local = localStorage.getItem('pks_saved_quotes');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_saved_quotes', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 7. Deleted Standard Materials Sync
-            this.db.ref('pks/deleted_standard_materials').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    const local = localStorage.getItem('pks_deleted_standard_materials');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_deleted_standard_materials', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
-
-            // 8. Deleted Standard Items Sync
-            this.db.ref('pks/deleted_standard_items').on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    const local = localStorage.getItem('pks_deleted_standard_items');
-                    const cloudStr = JSON.stringify(data);
-                    if (local !== cloudStr) {
-                        localStorage.setItem('pks_deleted_standard_items', cloudStr);
-                        window.dispatchEvent(new Event('storage'));
-                    }
-                }
-            });
+            syncKey('pks/rates', 'pks_rates');
+            syncKey('pks/item_specs', 'pks_item_specs');
+            syncKey('pks/custom_specs_by_id', 'pks_custom_specs_by_id');
+            syncKey('pks/custom_materials', 'pks_custom_materials');
+            syncKey('pks/custom_items', 'pks_custom_items');
+            syncKey('pks/divisions', 'pks_divisions');
+            syncKey('pks/saved_quotes', 'pks_saved_quotes');
+            syncKey('pks/deleted_standard_materials', 'pks_deleted_standard_materials');
+            syncKey('pks/deleted_standard_items', 'pks_deleted_standard_items');
         } catch (e) {
             console.warn("Realtime listener attachment notice:", e.message);
         }
@@ -220,9 +156,13 @@ window.PKSSync = {
 
     startRestPolling() {
         if (this.pollInterval) clearInterval(this.pollInterval);
+        // Only run polling if Firebase SDK is NOT active
+        if (this.db) return;
         this.pollInterval = setInterval(() => {
-            this.pullAllRest(false);
-        }, 15000);
+            if (!this.db) {
+                this.pullAllRest(false);
+            }
+        }, 30000);
     },
 
     syncInitialData() {
@@ -237,6 +177,9 @@ window.PKSSync = {
                 }
                 if (!data.item_specs && localStorage.getItem('pks_item_specs')) {
                     try { updates['pks/item_specs'] = JSON.parse(localStorage.getItem('pks_item_specs')); } catch(e){}
+                }
+                if (!data.custom_specs_by_id && localStorage.getItem('pks_custom_specs_by_id')) {
+                    try { updates['pks/custom_specs_by_id'] = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch(e){}
                 }
                 if (!data.custom_materials && localStorage.getItem('pks_custom_materials')) {
                     try { updates['pks/custom_materials'] = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch(e){}
@@ -264,6 +207,16 @@ window.PKSSync = {
                 console.warn("Initial sync access notice:", err.message);
             });
         } catch (e) {}
+    },
+
+    debouncedPush(delayMs = 1200) {
+        if (this.isSyncing) return;
+        if (this.pushDebounceTimer) {
+            clearTimeout(this.pushDebounceTimer);
+        }
+        this.pushDebounceTimer = setTimeout(() => {
+            this.pushAllData().catch(() => {});
+        }, delayMs);
     },
 
     pushRates(ratesObj) {
@@ -363,12 +316,16 @@ window.PKSSync = {
     },
 
     async pushAllData() {
+        if (this.isSyncing) return;
         const payload = {};
         if (localStorage.getItem('pks_rates')) {
             try { payload.rates = JSON.parse(localStorage.getItem('pks_rates')); } catch(e){}
         }
         if (localStorage.getItem('pks_item_specs')) {
             try { payload.item_specs = JSON.parse(localStorage.getItem('pks_item_specs')); } catch(e){}
+        }
+        if (localStorage.getItem('pks_custom_specs_by_id')) {
+            try { payload.custom_specs_by_id = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch(e){}
         }
         if (localStorage.getItem('pks_custom_materials')) {
             try { payload.custom_materials = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch(e){}
@@ -399,7 +356,7 @@ window.PKSSync = {
         }
 
         if (this.dbUrl) {
-            await fetch(`${this.dbUrl}/pks.json`, { method: 'PUT', body: JSON.stringify(payload) });
+            await fetch(`${this.dbUrl}/pks.json`, { method: 'PUT', body: JSON.stringify(payload) }).catch(()=>{});
         }
         return true;
     },
@@ -411,16 +368,19 @@ window.PKSSync = {
             if (!res.ok) return null;
             const data = await res.json();
             if (data && typeof data === 'object') {
-                if (data.rates) localStorage.setItem('pks_rates', JSON.stringify(data.rates));
-                if (data.item_specs) localStorage.setItem('pks_item_specs', JSON.stringify(data.item_specs));
-                if (data.custom_materials) localStorage.setItem('pks_custom_materials', JSON.stringify(data.custom_materials));
-                if (data.custom_items) localStorage.setItem('pks_custom_items', JSON.stringify(data.custom_items));
-                if (data.divisions) localStorage.setItem('pks_divisions', JSON.stringify(data.divisions));
-                if (data.saved_quotes) localStorage.setItem('pks_saved_quotes', JSON.stringify(data.saved_quotes));
-                if (data.deleted_standard_materials) localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(data.deleted_standard_materials));
-                if (data.deleted_standard_items) localStorage.setItem('pks_deleted_standard_items', JSON.stringify(data.deleted_standard_items));
-                if (triggerNotify) {
-                    window.dispatchEvent(new Event('storage'));
+                let changed = false;
+                if (data.rates && this.setLocalItemSilently('pks_rates', JSON.stringify(data.rates))) changed = true;
+                if (data.item_specs && this.setLocalItemSilently('pks_item_specs', JSON.stringify(data.item_specs))) changed = true;
+                if (data.custom_specs_by_id && this.setLocalItemSilently('pks_custom_specs_by_id', JSON.stringify(data.custom_specs_by_id))) changed = true;
+                if (data.custom_materials && this.setLocalItemSilently('pks_custom_materials', JSON.stringify(data.custom_materials))) changed = true;
+                if (data.custom_items && this.setLocalItemSilently('pks_custom_items', JSON.stringify(data.custom_items))) changed = true;
+                if (data.divisions && this.setLocalItemSilently('pks_divisions', JSON.stringify(data.divisions))) changed = true;
+                if (data.saved_quotes && this.setLocalItemSilently('pks_saved_quotes', JSON.stringify(data.saved_quotes))) changed = true;
+                if (data.deleted_standard_materials && this.setLocalItemSilently('pks_deleted_standard_materials', JSON.stringify(data.deleted_standard_materials))) changed = true;
+                if (data.deleted_standard_items && this.setLocalItemSilently('pks_deleted_standard_items', JSON.stringify(data.deleted_standard_items))) changed = true;
+
+                if (changed && triggerNotify) {
+                    window.dispatchEvent(new CustomEvent('pks_cloud_synced', { detail: { all: true } }));
                 }
             }
             return data;
