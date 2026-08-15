@@ -2611,21 +2611,10 @@
                 const btn = document.createElement('button');
                 btn.className = 'opt-btn';
                 btn.textContent = opt.label;
-                btn.style.cssText = 'width: 100%; text-align: left; padding-right: 36px;';
+                btn.style.cssText = 'width: 100%; text-align: left;';
                 btn.onclick = () => selectMaterial(buildId, itemId, idx, btn, optRow);
 
-                const delBtn = document.createElement('span');
-                delBtn.innerHTML = '&times;';
-                delBtn.style.cssText = 'position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.1rem; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; transition: all 0.2s ease;';
-                delBtn.onmouseover = () => { delBtn.style.color = '#ff4d4d'; delBtn.style.background = 'rgba(255, 77, 77, 0.1)'; };
-                delBtn.onmouseout = () => { delBtn.style.color = 'var(--muted)'; delBtn.style.background = 'none'; };
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteMaterialOption(buildId, itemId, idx);
-                };
-
                 btnWrap.appendChild(btn);
-                btnWrap.appendChild(delBtn);
                 itemBlock.appendChild(btnWrap);
 
                 const optSizeContainer = document.createElement('div');
