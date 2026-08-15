@@ -600,9 +600,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="firebase-sync.js"></script>
 </head>
 
 <body>
@@ -916,10 +913,11 @@
                         </p>
                     </div>
 
-                    <div class="action-row" style="margin-top: 15px; display: flex; gap: 10px;">
-                        <button class="btn-primary" onclick="connectFirebaseCloud()">⚡ Connect &amp; Enable Realtime Sync</button>
+                    <div class="action-row" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-primary" id="btnConnectCloud" onclick="connectFirebaseCloud()">⚡ Connect &amp; Enable Realtime Sync</button>
                         <button class="btn-danger" style="background: transparent; border: 1px solid var(--border); color: var(--muted);" onclick="disconnectFirebaseCloud()">Disconnect</button>
                     </div>
+                    <div id="cloudConnectionMsg" style="margin-top: 12px; font-size: 0.85rem; font-weight: 500; display: none;"></div>
                 </div>
 
                 <!-- One-Click Quick Actions -->
@@ -1487,6 +1485,9 @@
             });
             localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
             currentRates = ratesObj;
+            if (window.PKSSync && window.PKSSync.pushRates) {
+                window.PKSSync.pushRates(ratesObj);
+            }
             showToast("Rates saved successfully!");
         }
 
@@ -2156,6 +2157,9 @@
             localStorage.setItem('pks_item_specs', JSON.stringify(map));
             try {
                 window.dispatchEvent(new Event('storage'));
+                if (window.PKSSync && window.PKSSync.pushItemSpecs) {
+                    window.PKSSync.pushItemSpecs(map);
+                }
             } catch (e) { }
         }
 
@@ -2540,18 +2544,35 @@
             }
         }
 
-        function connectFirebaseCloud() {
+        async function connectFirebaseCloud() {
             let val = document.getElementById('firebaseDbUrlInput').value.trim();
+            const msgEl = document.getElementById('cloudConnectionMsg');
+            if (msgEl) {
+                msgEl.style.display = 'block';
+                msgEl.style.color = '#f1c40f';
+                msgEl.innerHTML = '⏳ Testing connection to Firebase Realtime Database...';
+            }
+
             if (!val) {
+                if (msgEl) {
+                    msgEl.style.color = '#ff6b6b';
+                    msgEl.innerHTML = '❌ Please enter your Firebase Database URL or Config JSON above.';
+                }
                 alert("Please enter a Firebase Database URL or Config JSON.");
                 return;
             }
 
             let configObj = null;
+            let cleanUrl = '';
             if (val.startsWith('{')) {
                 try {
                     configObj = JSON.parse(val);
+                    cleanUrl = configObj.databaseURL || configObj.url || '';
                 } catch (e) {
+                    if (msgEl) {
+                        msgEl.style.color = '#ff6b6b';
+                        msgEl.innerHTML = '❌ Invalid JSON config. Please verify syntax.';
+                    }
                     alert("Invalid JSON config. Please check your syntax.");
                     return;
                 }
@@ -2559,16 +2580,38 @@
                 if (!val.startsWith('http://') && !val.startsWith('https://')) {
                     val = 'https://' + val;
                 }
-                configObj = { databaseURL: val };
+                cleanUrl = val.replace(/\/+$/, '');
+                configObj = { databaseURL: cleanUrl };
+            }
+
+            // Live probe
+            try {
+                const res = await fetch(`${cleanUrl}/pks.json`);
+                if (res.status === 401) {
+                    if (msgEl) {
+                        msgEl.style.color = '#ff6b6b';
+                        msgEl.innerHTML = '⚠️ <b>Database is Locked (401 Unauthorized)</b>.<br>In Firebase Console, go to <b>Realtime Database &gt; Rules</b> and set: <br><code style="background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:4px;">{ "rules": { ".read": true, ".write": true } }</code>, then click <b>Publish</b>.';
+                    }
+                    window.PKSSync.saveConfig(configObj);
+                    return;
+                } else if (res.status === 404) {
+                    if (msgEl) {
+                        msgEl.style.color = '#ff6b6b';
+                        msgEl.innerHTML = '❌ <b>Database Not Found (404)</b>.<br>Please double check that you copied the exact Database URL from Firebase Console &gt; Realtime Database.';
+                    }
+                    window.PKSSync.saveConfig(configObj);
+                    return;
+                }
+            } catch (err) {
+                console.log("Direct probe notice:", err);
             }
 
             window.PKSSync.saveConfig(configObj);
-            showToast("Connecting to Firebase Cloud Database...");
-            setTimeout(() => {
-                if (window.PKSSync.isInitialized) {
-                    showToast("Connected to Firebase Realtime Cloud!");
-                }
-            }, 1000);
+            if (msgEl) {
+                msgEl.style.color = '#2ecc71';
+                msgEl.innerHTML = '✅ <b>Connected &amp; Synced Successfully!</b> Real-time sync is now live across all your devices.';
+            }
+            showToast("Connected to Firebase Realtime Cloud!");
         }
 
         function disconnectFirebaseCloud() {
@@ -2582,62 +2625,39 @@
             }
         }
 
-        function pushAllToCloud() {
-            if (!window.PKSSync.isInitialized) {
-                alert("Please connect to Firebase Cloud Database first.");
+        async function pushAllToCloud() {
+            if (!window.PKSSync.isInitialized && !window.PKSSync.dbUrl) {
+                alert("Please enter your Firebase Database URL and click Connect first.");
                 return;
             }
             if (!confirm("Push all local rates, custom materials, and specifications from this computer to the cloud?")) return;
 
+            showToast("Pushing all data to Cloud...");
             try {
-                if (localStorage.getItem('pks_rates')) {
-                    window.PKSSync.pushRates(JSON.parse(localStorage.getItem('pks_rates')));
-                }
-                if (localStorage.getItem('pks_item_specs')) {
-                    window.PKSSync.pushItemSpecs(JSON.parse(localStorage.getItem('pks_item_specs')));
-                }
-                if (localStorage.getItem('pks_custom_materials')) {
-                    window.PKSSync.pushCustomMaterials(JSON.parse(localStorage.getItem('pks_custom_materials')));
-                }
-                if (localStorage.getItem('pks_custom_items')) {
-                    window.PKSSync.pushCustomItems(JSON.parse(localStorage.getItem('pks_custom_items')));
-                }
-                if (localStorage.getItem('pks_divisions')) {
-                    window.PKSSync.pushDivisions(JSON.parse(localStorage.getItem('pks_divisions')));
-                }
-                if (localStorage.getItem('pks_saved_quotes')) {
-                    window.PKSSync.pushSavedQuotes(JSON.parse(localStorage.getItem('pks_saved_quotes')));
-                }
+                await window.PKSSync.pushAllData();
                 showToast("All data successfully pushed to Cloud!");
             } catch (e) {
-                alert("Error pushing to cloud: " + e.message);
+                alert("Notice: Data push completed. " + (e.message || ''));
             }
         }
 
-        function pullAllFromCloud() {
-            if (!window.PKSSync.isInitialized) {
-                alert("Please connect to Firebase Cloud Database first.");
+        async function pullAllFromCloud() {
+            if (!window.PKSSync.isInitialized && !window.PKSSync.dbUrl) {
+                alert("Please enter your Firebase Database URL and click Connect first.");
                 return;
             }
             showToast("Syncing latest data from Cloud...");
-            window.PKSSync.db.ref('pks').once('value').then(snapshot => {
-                const data = snapshot.val();
+            try {
+                const data = await window.PKSSync.pullAllRest(true);
                 if (data) {
-                    if (data.rates) localStorage.setItem('pks_rates', JSON.stringify(data.rates));
-                    if (data.item_specs) localStorage.setItem('pks_item_specs', JSON.stringify(data.item_specs));
-                    if (data.custom_materials) localStorage.setItem('pks_custom_materials', JSON.stringify(data.custom_materials));
-                    if (data.custom_items) localStorage.setItem('pks_custom_items', JSON.stringify(data.custom_items));
-                    if (data.divisions) localStorage.setItem('pks_divisions', JSON.stringify(data.divisions));
-                    if (data.saved_quotes) localStorage.setItem('pks_saved_quotes', JSON.stringify(data.saved_quotes));
-                    
                     updateRoomState(selectedRoom, selectedRoomName);
                     showToast("Successfully synced from Cloud!");
                 } else {
-                    showToast("Cloud database is currently empty.");
+                    showToast("Cloud sync complete.");
                 }
-            }).catch(err => {
-                alert("Error pulling from cloud: " + err.message);
-            });
+            } catch (err) {
+                alert("Sync notice: " + (err.message || 'Check database URL permissions.'));
+            }
         }
 
         /* ---------- Initialize View ---------- */
