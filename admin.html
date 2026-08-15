@@ -996,15 +996,14 @@
     <div class="toast" id="toast">Saved successfully!</div>
 
     <script>
-        // Auto-sync localStorage changes starting with pks_ to Cloud Database
+        // Debounced Cloud Sync for localStorage changes starting with pks_
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
-            if (key.startsWith('pks_') && key !== 'pks_firebase_config' && key !== 'pks_admin_auth') {
+            if (key && key.startsWith('pks_') && key !== 'pks_firebase_config' && key !== 'pks_admin_auth' && key !== 'pks_materials_db' && key !== 'pks_materials_db_version') {
                 try {
-                    window.dispatchEvent(new Event('storage'));
-                    if (window.PKSSync && window.PKSSync.pushAllData) {
-                        window.PKSSync.pushAllData().catch(()=>{});
+                    if (window.PKSSync && window.PKSSync.debouncedPush && !window.PKSSync.isSyncing) {
+                        window.PKSSync.debouncedPush();
                     }
                 } catch (e) {}
             }
@@ -2768,11 +2767,26 @@
         updateQualityBadges();
         updateRoomState(selectedRoom, selectedRoomName);
 
-        // Sync updates from other devices automatically
-        window.addEventListener('storage', (e) => {
-            if (!e.key || e.key === 'pks_item_specs' || e.key === 'pks_custom_materials' || e.key === 'pks_rates' || e.key === 'pks_materials_db') {
+        // Sync updates from other devices / Cloud Sync automatically
+        function handleAdminExternalSync(key) {
+            if (!key || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_custom_materials' || key === 'pks_rates' || key === 'pks_custom_items' || key === 'pks_divisions' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
                 updateRoomState(selectedRoom, selectedRoomName);
+                const activeTab = document.querySelector('.tab-btn.active');
+                if (activeTab) {
+                    const match = activeTab.getAttribute('onclick').match(/switchTab\('([^']+)'/);
+                    if (match && match[1]) {
+                        renderTabContent(match[1]);
+                    }
+                }
             }
+        }
+
+        window.addEventListener('storage', (e) => {
+            handleAdminExternalSync(e.key);
+        });
+
+        window.addEventListener('pks_cloud_synced', (e) => {
+            handleAdminExternalSync(e.detail && e.detail.key);
         });
     </script>
 </body>
