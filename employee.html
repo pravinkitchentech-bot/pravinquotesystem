@@ -2374,14 +2374,32 @@
                 }
             });
 
-            // Apply custom edited specifications overrides
+            // Apply custom edited specifications overrides from pks_item_specs & pks_custom_specs_by_id
+            let itemSpecsMap = {};
+            const storedItemSpecs = localStorage.getItem('pks_item_specs');
+            if (storedItemSpecs) {
+                try { itemSpecsMap = JSON.parse(storedItemSpecs) || {}; } catch(e) {}
+            }
+
             let customSpecs = {};
             const storedCustom = localStorage.getItem('pks_custom_specs_by_id');
             if (storedCustom) {
-                try { customSpecs = JSON.parse(storedCustom); } catch (e) { }
+                try { customSpecs = JSON.parse(storedCustom) || {}; } catch (e) { }
             }
+
             db.forEach(m => {
-                if (customSpecs[m.id] !== undefined) {
+                const stdItemId = getStandardItemId(m.roomId, m.itemName);
+                const specKey1 = `${m.roomId}_${stdItemId}_${m.constructionType}`;
+                const specKey2 = `${m.roomId}_${m.constructionType}`;
+                const specKey3 = m.constructionType;
+
+                if (itemSpecsMap[specKey1] !== undefined && itemSpecsMap[specKey1] !== '') {
+                    m.specifications = itemSpecsMap[specKey1];
+                } else if (itemSpecsMap[specKey2] !== undefined && itemSpecsMap[specKey2] !== '') {
+                    m.specifications = itemSpecsMap[specKey2];
+                } else if (itemSpecsMap[specKey3] !== undefined && itemSpecsMap[specKey3] !== '') {
+                    m.specifications = itemSpecsMap[specKey3];
+                } else if (customSpecs[m.id] !== undefined) {
                     m.specifications = customSpecs[m.id];
                 }
             });
@@ -2908,6 +2926,23 @@
                         }
                         if (specsMap[materialLabel] !== undefined && specsMap[materialLabel] !== null && specsMap[materialLabel] !== '') {
                             return specsMap[materialLabel];
+                        }
+                    }
+                } catch (e) { }
+            }
+
+            // Check custom specs by DB ID or room-material identifier
+            const storedCustomSpecs = localStorage.getItem('pks_custom_specs_by_id');
+            if (storedCustomSpecs) {
+                try {
+                    const customSpecs = JSON.parse(storedCustomSpecs);
+                    if (customSpecs) {
+                        const roomMatKey = `mat_${roomId}_${materialLabel}`;
+                        if (customSpecs[roomMatKey]) return customSpecs[roomMatKey];
+                        for (const key in customSpecs) {
+                            if (key.includes(roomId) && key.includes((materialLabel || '').replace(/\s+/g, '_').toLowerCase())) {
+                                return customSpecs[key];
+                            }
                         }
                     }
                 } catch (e) { }
@@ -4381,48 +4416,66 @@
 
             opt.specifications = inputVal;
 
-            // Get active quality
-            const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
-            let activeQual = 'Premium';
-            if (pMode === 'medium') activeQual = 'Middle / Standard';
-            else if (pMode === 'economy') activeQual = 'Economy';
+            // 1. Save to pks_item_specs map (Cloud-synced across all devices)
+            let specsMap = {};
+            const storedSpecs = localStorage.getItem('pks_item_specs');
+            if (storedSpecs) {
+                try { specsMap = JSON.parse(storedSpecs) || {}; } catch(e) {}
+            }
+            const specificKey = `${selectedRoom}_${itemId}_${opt.label}`;
+            const roomMatKey = `${selectedRoom}_${opt.label}`;
+            specsMap[specificKey] = inputVal;
+            specsMap[roomMatKey] = inputVal;
+            localStorage.setItem('pks_item_specs', JSON.stringify(specsMap));
 
-            // Save to localStorage database
+            // 2. Save in custom_specs_by_id map (Cloud-synced)
+            let customSpecs = {};
+            const storedCustom = localStorage.getItem('pks_custom_specs_by_id');
+            if (storedCustom) {
+                try { customSpecs = JSON.parse(storedCustom) || {}; } catch (e) { }
+            }
+            if (opt.id || opt.dbId) {
+                customSpecs[opt.id || opt.dbId] = inputVal;
+            }
+            customSpecs[`mat_${selectedRoom}_${opt.label}`] = inputVal;
+            localStorage.setItem('pks_custom_specs_by_id', JSON.stringify(customSpecs));
+
+            // 3. Save to localStorage database
             let stored = localStorage.getItem('pks_materials_db');
             if (stored) {
                 try {
                     let db = JSON.parse(stored);
-                    const match = db.find(m =>
-                        m.quality === activeQual &&
-                        m.roomId === selectedRoom &&
-                        m.itemName === item.name &&
-                        m.constructionType === opt.label
-                    );
-                    if (match) {
-                        match.specifications = inputVal;
-                        localStorage.setItem('pks_materials_db', JSON.stringify(db));
-                    }
+                    db.forEach(m => {
+                        if (m.roomId === selectedRoom && (m.itemName === item.name || m.itemName.toUpperCase() === item.name.toUpperCase()) && m.constructionType === opt.label) {
+                            m.specifications = inputVal;
+                        }
+                    });
+                    localStorage.setItem('pks_materials_db', JSON.stringify(db));
                 } catch (e) { }
             }
 
-            // Save in the custom specs by ID map
-            let customSpecs = {};
-            const storedCustom = localStorage.getItem('pks_custom_specs_by_id');
-            if (storedCustom) {
-                try { customSpecs = JSON.parse(storedCustom); } catch (e) { }
-            }
-            if (opt.id || opt.dbId) {
-                customSpecs[opt.id || opt.dbId] = inputVal;
-                localStorage.setItem('pks_custom_specs_by_id', JSON.stringify(customSpecs));
-            }
-
             invalidateMaterialsCache();
+            ITEMS = getFullItemsList();
 
             // Restore display view
             const specsTextBlock = document.getElementById(`${buildId}-specs-text`);
             if (specsTextBlock) {
                 specsTextBlock.textContent = formatSpecificationsText(opt.specifications, selectedRoom, opt.label) || "No specifications added. Click edit icon to add.";
             }
+
+            // Immediately broadcast & push to Firebase Realtime Database
+            try {
+                if (window.PKSSync) {
+                    if (window.PKSSync.pushItemSpecs) {
+                        window.PKSSync.pushItemSpecs(specsMap);
+                    }
+                    if (window.PKSSync.debouncedPush) {
+                        window.PKSSync.debouncedPush(100);
+                    }
+                }
+            } catch(e) {}
+
+            showToast("Specifications saved & synced to all devices!");
         }
 
         function cancelInlineSpecs(buildId, itemId, optIdx) {
@@ -4541,7 +4594,7 @@
 
         // Consolidated live-sync listener for updates from Admin panel or Cloud Sync
         function handleExternalDataSync(key) {
-            if (!key || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
+            if (!key || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
                 invalidateMaterialsCache();
                 ITEMS = getFullItemsList();
                 const activeBuilders = document.querySelectorAll('.builder');
