@@ -1,6 +1,6 @@
 /**
  * Pravin Kitchens & Interiors - Realtime Firebase Cloud Sync
- * Automatically syncs rates, specifications, custom materials, divisions, and saved quotes across all devices.
+ * Automatically syncs rates, specifications, custom materials, custom items, divisions, deleted configurations, and saved quotes across all devices.
  */
 
 const DEFAULT_FIREBASE_CONFIG_KEY = 'pks_firebase_config';
@@ -187,6 +187,32 @@ window.PKSSync = {
                     }
                 }
             });
+
+            // 7. Deleted Standard Materials Sync
+            this.db.ref('pks/deleted_standard_materials').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && Array.isArray(data)) {
+                    const local = localStorage.getItem('pks_deleted_standard_materials');
+                    const cloudStr = JSON.stringify(data);
+                    if (local !== cloudStr) {
+                        localStorage.setItem('pks_deleted_standard_materials', cloudStr);
+                        window.dispatchEvent(new Event('storage'));
+                    }
+                }
+            });
+
+            // 8. Deleted Standard Items Sync
+            this.db.ref('pks/deleted_standard_items').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && Array.isArray(data)) {
+                    const local = localStorage.getItem('pks_deleted_standard_items');
+                    const cloudStr = JSON.stringify(data);
+                    if (local !== cloudStr) {
+                        localStorage.setItem('pks_deleted_standard_items', cloudStr);
+                        window.dispatchEvent(new Event('storage'));
+                    }
+                }
+            });
         } catch (e) {
             console.warn("Realtime listener attachment notice:", e.message);
         }
@@ -223,6 +249,12 @@ window.PKSSync = {
                 }
                 if (!data.saved_quotes && localStorage.getItem('pks_saved_quotes')) {
                     try { updates['pks/saved_quotes'] = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch(e){}
+                }
+                if (!data.deleted_standard_materials && localStorage.getItem('pks_deleted_standard_materials')) {
+                    try { updates['pks/deleted_standard_materials'] = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch(e){}
+                }
+                if (!data.deleted_standard_items && localStorage.getItem('pks_deleted_standard_items')) {
+                    try { updates['pks/deleted_standard_items'] = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch(e){}
                 }
 
                 if (Object.keys(updates).length > 0) {
@@ -306,6 +338,30 @@ window.PKSSync = {
         }
     },
 
+    pushDeletedStandardMaterials(delMatsArr) {
+        try {
+            if (this.db) {
+                this.db.ref('pks/deleted_standard_materials').set(delMatsArr);
+                return;
+            }
+        } catch (e) {}
+        if (this.dbUrl) {
+            fetch(`${this.dbUrl}/pks/deleted_standard_materials.json`, { method: 'PUT', body: JSON.stringify(delMatsArr) }).catch(()=>{});
+        }
+    },
+
+    pushDeletedStandardItems(delItemsArr) {
+        try {
+            if (this.db) {
+                this.db.ref('pks/deleted_standard_items').set(delItemsArr);
+                return;
+            }
+        } catch (e) {}
+        if (this.dbUrl) {
+            fetch(`${this.dbUrl}/pks/deleted_standard_items.json`, { method: 'PUT', body: JSON.stringify(delItemsArr) }).catch(()=>{});
+        }
+    },
+
     async pushAllData() {
         const payload = {};
         if (localStorage.getItem('pks_rates')) {
@@ -325,6 +381,12 @@ window.PKSSync = {
         }
         if (localStorage.getItem('pks_saved_quotes')) {
             try { payload.saved_quotes = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch(e){}
+        }
+        if (localStorage.getItem('pks_deleted_standard_materials')) {
+            try { payload.deleted_standard_materials = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch(e){}
+        }
+        if (localStorage.getItem('pks_deleted_standard_items')) {
+            try { payload.deleted_standard_items = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch(e){}
         }
 
         try {
@@ -355,6 +417,8 @@ window.PKSSync = {
                 if (data.custom_items) localStorage.setItem('pks_custom_items', JSON.stringify(data.custom_items));
                 if (data.divisions) localStorage.setItem('pks_divisions', JSON.stringify(data.divisions));
                 if (data.saved_quotes) localStorage.setItem('pks_saved_quotes', JSON.stringify(data.saved_quotes));
+                if (data.deleted_standard_materials) localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(data.deleted_standard_materials));
+                if (data.deleted_standard_items) localStorage.setItem('pks_deleted_standard_items', JSON.stringify(data.deleted_standard_items));
                 if (triggerNotify) {
                     window.dispatchEvent(new Event('storage'));
                 }
