@@ -996,6 +996,20 @@
     <div class="toast" id="toast">Saved successfully!</div>
 
     <script>
+        // Auto-sync localStorage changes starting with pks_ to Cloud Database
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            if (key.startsWith('pks_') && key !== 'pks_firebase_config' && key !== 'pks_admin_auth') {
+                try {
+                    window.dispatchEvent(new Event('storage'));
+                    if (window.PKSSync && window.PKSSync.pushAllData) {
+                        window.PKSSync.pushAllData().catch(()=>{});
+                    }
+                } catch (e) {}
+            }
+        };
+
         // Check admin session
         if (sessionStorage.getItem('pks_admin_auth') !== 'true') {
             location.href = 'index.html';
