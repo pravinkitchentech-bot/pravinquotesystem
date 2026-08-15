@@ -2523,8 +2523,19 @@
         });
 
         function openBuilder(itemId) {
-            const item = ITEMS.find(i => i.id === itemId);
             const container = document.getElementById(`builders-${itemId}`);
+            if (!container) return;
+
+            // If already open, toggle it closed to prevent repeated panels
+            if (container.children.length > 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = ''; // Ensure clean single instance
+
+            const item = ITEMS.find(i => i.id === itemId);
+            if (!item) return;
             const buildId = `b${itemId}-${Date.now()}`;
             const wrap = document.createElement('div');
             wrap.className = 'builder';
