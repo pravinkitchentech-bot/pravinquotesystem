@@ -1463,6 +1463,10 @@
             const body = document.getElementById('ratesTableBody');
             body.innerHTML = '';
 
+            customMaterials = getCustomMaterials();
+            customItems = getCustomItems();
+            currentRates = getRates();
+
             // Get all unique material labels used in the selectedRoom
             const roomMaterials = new Set();
             const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
@@ -1479,10 +1483,25 @@
             items.forEach(item => {
                 const customList = customMaterials[item.id] || [];
                 customList.forEach(m => {
-                    const clean = cleanRateMaterialName(m.label, selectedRoom);
-                    if (clean) roomMaterials.add(clean);
+                    if (m && m.label) {
+                        const clean = cleanRateMaterialName(m.label, selectedRoom);
+                        if (clean) roomMaterials.add(clean);
+                    }
                 });
             });
+
+            // Also check all entries in customMaterials map for this room
+            for (const key in customMaterials) {
+                const list = customMaterials[key];
+                if (Array.isArray(list)) {
+                    list.forEach(m => {
+                        if (m && m.label) {
+                            const clean = cleanRateMaterialName(m.label, selectedRoom);
+                            if (clean) roomMaterials.add(clean);
+                        }
+                    });
+                }
+            }
 
             // 3. Add custom items created for this room
             if (selectedRoom !== 'accessories') {
@@ -1492,6 +1511,20 @@
                         if (clean) roomMaterials.add(clean);
                     });
                 });
+            }
+
+            // 4. Add any materials added from Employee Panel stored in pks_materials_db
+            let storedDb = localStorage.getItem('pks_materials_db');
+            if (storedDb) {
+                try {
+                    let db = JSON.parse(storedDb);
+                    db.forEach(m => {
+                        if ((m.roomId || '').toLowerCase() === (selectedRoom || '').toLowerCase() && m.constructionType) {
+                            const clean = cleanRateMaterialName(m.constructionType, selectedRoom);
+                            if (clean) roomMaterials.add(clean);
+                        }
+                    });
+                } catch (e) { }
             }
 
             function resolveMatRate(mat) {
