@@ -2805,21 +2805,10 @@
                 const btn = document.createElement('button');
                 btn.className = 'opt-btn';
                 btn.textContent = opt.label;
-                btn.style.cssText = 'width: 100%; text-align: left; padding-right: 36px;';
+                btn.style.cssText = 'width: 100%; text-align: left;';
                 btn.onclick = () => selectMaterial(buildId, itemId, idx, btn, optRow);
 
-                const delBtn = document.createElement('button');
-                delBtn.type = 'button';
-                delBtn.title = 'Delete Material Option';
-                delBtn.innerHTML = '🗑️';
-                delBtn.style.cssText = 'position: absolute; right: 8px; background: transparent; border: none; font-size: 0.85rem; cursor: pointer; opacity: 0.7; padding: 4px; z-index: 2;';
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteMaterialOption(buildId, itemId, idx);
-                };
-
                 btnWrap.appendChild(btn);
-                btnWrap.appendChild(delBtn);
                 itemBlock.appendChild(btnWrap);
 
                 const optSizeContainer = document.createElement('div');
