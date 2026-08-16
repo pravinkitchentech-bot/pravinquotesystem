@@ -2400,11 +2400,6 @@
             }
         }
 
-        let _itemsListCache = {};
-        function invalidateMaterialsCache() {
-            _itemsListCache = {};
-        }
-
         function getFullItemsList() {
             const cacheKey = `${(selectedRoom || '').toLowerCase()}__${(modeLabel || '').toLowerCase()}`;
             if (_itemsListCache[cacheKey]) {
