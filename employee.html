@@ -4860,7 +4860,7 @@
 
         // Consolidated live-sync listener for updates from Admin panel or Cloud Sync
         function handleExternalDataSync(key) {
-            if (!key || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
+            if (!key || key === 'pks_materials_db' || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
                 invalidateMaterialsCache();
                 ITEMS = getFullItemsList();
                 const activeBuilders = document.querySelectorAll('.builder');
