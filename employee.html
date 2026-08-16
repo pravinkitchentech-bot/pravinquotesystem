@@ -504,7 +504,14 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        button, input, select, textarea, .room-card, .option-card, .back-btn, .action-btn {
+        button,
+        input,
+        select,
+        textarea,
+        .room-card,
+        .option-card,
+        .back-btn,
+        .action-btn {
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
             will-change: transform;
             backface-visibility: hidden;
@@ -512,7 +519,9 @@
             transform: translateZ(0);
         }
 
-        button:hover, .room-card:hover, .option-card:hover {
+        button:hover,
+        .room-card:hover,
+        .option-card:hover {
             transform: translateY(-1px) translateZ(0);
         }
 
@@ -520,7 +529,8 @@
             transform: translateY(0) scale(0.98) translateZ(0);
         }
 
-        div[style*="overflow-y: auto"], div[style*="overflow-x: auto"] {
+        div[style*="overflow-y: auto"],
+        div[style*="overflow-x: auto"] {
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
         }
@@ -1153,6 +1163,29 @@
         <div class="items-grid" id="itemsGrid"></div>
 
         <div class="quote-wrap">
+            <!-- Mode Switcher Bar above Quote Summary -->
+            <div class="no-print"
+                style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; background: var(--surface2); padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <div
+                        style="font-size: 0.82rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Quote Mode:
+                    </div>
+                    <div
+                        style="display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 8px;">
+                        <button type="button" class="mode-tab-btn" id="summaryModeBtnPremium"
+                            onclick="switchPricingMode('premium')"
+                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">✨ Premium</button>
+                        <button type="button" class="mode-tab-btn" id="summaryModeBtnMedium"
+                            onclick="switchPricingMode('medium')"
+                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">⚖️ Middle /
+                            Standard</button>
+                        <button type="button" class="mode-tab-btn" id="summaryModeBtnEconomy"
+                            onclick="switchPricingMode('economy')"
+                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">💡 Economy</button>
+                    </div>
+                </div>
+            </div>
             <div class="quote-title">
                 <h2>Quote Summary</h2>
                 <div class="no-print"
@@ -4623,24 +4656,37 @@
             const roomDb = getOrInitMaterialsDb();
 
             quoteLines.forEach(line => {
+                const normRoomId = (line.roomId || '').toLowerCase();
+                const normItemName = (line.itemName || '').toUpperCase().trim();
+
+                // Find matching material in roomDb for target quality mode
                 const match = roomDb.find(m =>
-                    (m.roomId || '').toLowerCase() === (line.roomId || '').toLowerCase() &&
+                    (m.roomId || '').toLowerCase() === normRoomId &&
                     (m.quality || '').toLowerCase() === targetQual.toLowerCase() &&
-                    (m.itemName || '').toUpperCase() === (line.itemName || '').toUpperCase()
+                    (m.itemName || '').toUpperCase().trim() === normItemName
                 );
-                if (match) {
-                    let rawRate = resolveRate(adminRates, match.constructionType, match.materialType, line.roomId || match.roomId, selectedDivision, targetQual);
-                    let finalRate = (rawRate !== undefined && rawRate !== null && rawRate > 0) ? parseFloat(rawRate) : (match.baseAmount || 0);
-                    if (finalRate > 0) {
-                        line.rate = finalRate;
-                        line.amount = line.sqft * finalRate;
+
+                let matName = match ? (match.constructionType || line.material) : line.material;
+                let matType = match ? (match.materialType || line.materialType) : line.materialType;
+
+                line.material = matName;
+                if (matType) line.materialType = matType;
+
+                let rawRate = resolveRate(adminRates, matName, matType || '', line.roomId, selectedDivision, targetQual);
+                if (rawRate === undefined || rawRate === null || parseFloat(rawRate) <= 0) {
+                    if (match && match.baseAmount) {
+                        rawRate = match.baseAmount;
                     }
-                    if (match.constructionType) {
-                        line.material = match.constructionType;
-                    }
-                    if (match.specifications) {
-                        line.specifications = formatSpecificationsText(match.specifications, line.roomId, match.constructionType);
-                    }
+                }
+
+                if (rawRate !== undefined && rawRate !== null && parseFloat(rawRate) > 0) {
+                    line.rate = parseFloat(rawRate);
+                    line.amount = line.sqft * line.rate;
+                }
+
+                const effSpecs = getEffectiveSpecs(line.roomId, line.stdItemId || 0, matName, (match ? match.specifications : line.specifications), targetQual);
+                if (effSpecs) {
+                    line.specifications = formatSpecificationsText(effSpecs, line.roomId, matName);
                 }
             });
 
