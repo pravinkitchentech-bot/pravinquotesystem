@@ -3025,7 +3025,7 @@
 
         // Sync updates from other devices / Cloud Sync automatically
         function handleAdminExternalSync(key) {
-            if (!key || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_custom_materials' || key === 'pks_rates' || key === 'pks_custom_items' || key === 'pks_divisions' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
+            if (!key || key === 'pks_materials_db' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_custom_materials' || key === 'pks_rates' || key === 'pks_custom_items' || key === 'pks_divisions' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
                 updateRoomState(selectedRoom, selectedRoomName);
                 const activeTab = document.querySelector('.tab-btn.active');
                 if (activeTab) {
