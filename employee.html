@@ -2983,9 +2983,50 @@
         function addCustomMaterialOption(buildId, itemId) {
             const matName = prompt("Enter new material name (e.g. Teak Wood (Box Type)):");
             if (!matName || !matName.trim()) return;
+            
             const rateStr = prompt("Enter rate (₹):");
             if (!rateStr) return;
             const rate = parseFloat(rateStr) || 0;
+
+            const formulaChoice = prompt(
+                "Select Formula Type for calculation:\n" +
+                "1 = (L + W) * H / 144  (Cabinet / Box Type)\n" +
+                "2 = L * H / 144  (Door / Wall Panel Type)\n" +
+                "3 = L * W / 144  (Ceiling / Ledge Type)\n" +
+                "4 = Direct Sq.Ft\n" +
+                "5 = Quantity / Per Piece",
+                "1"
+            );
+            if (!formulaChoice) return;
+
+            let chosenFormula = "(L+W)*H/144";
+            let formulaType = "(L+W)*H";
+            let fields = ["L", "W", "H"];
+            let note = "(L+W)×H";
+
+            const fVal = formulaChoice.trim();
+            if (fVal === "2") {
+                chosenFormula = "L*H/144";
+                formulaType = "L*H";
+                fields = ["L", "H"];
+                note = "L×H";
+            } else if (fVal === "3") {
+                chosenFormula = "L*W/144";
+                formulaType = "L*W";
+                fields = ["L", "W"];
+                note = "L×W";
+            } else if (fVal === "4") {
+                chosenFormula = "1";
+                formulaType = "SQFT";
+                fields = ["SQFT"];
+                note = "direct sq.ft";
+            } else if (fVal === "5") {
+                chosenFormula = "1";
+                formulaType = "QTY";
+                fields = ["QTY"];
+                note = "qty";
+            }
+
             const specs = prompt("Enter specifications (optional):") || "";
 
             const item = ITEMS.find(i => i.id === itemId);
@@ -3010,12 +3051,15 @@
                     itemName: item.name,
                     constructionType: cleanMatName,
                     specifications: specs || firstOpt.specifications || "",
-                    formula: firstOpt.formula || "(L+W)*H/144",
+                    formula: chosenFormula,
+                    formulaType: formulaType,
+                    fields: fields,
+                    note: note,
                     baseAmount: rate,
                     offerPrice: rate,
                     discountPercentage: 0,
                     amountIncreasePercentage: 0,
-                    showSqft: firstOpt.showSqft !== undefined ? firstOpt.showSqft : true,
+                    showSqft: (formulaType !== 'QTY'),
                     status: 'ON'
                 };
 
@@ -3046,7 +3090,7 @@
                     if (!customMats[targetKey]) {
                         customMats[targetKey] = [];
                     }
-                    customMats[targetKey].push({ label: cleanMatName, rate: rate, specifications: specs });
+                    customMats[targetKey].push({ label: cleanMatName, rate: rate, specifications: specs, formulaType, fields, note });
                     localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
                 }
 
