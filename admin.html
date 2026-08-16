@@ -606,7 +606,6 @@
 </head>
 
 <body>
-
     <header>
         <div style="display: flex; align-items: center; gap: 15px;">
             <img src="logo.jpg" alt="Pravin Kitchens &amp; Interiors Logo"
@@ -629,12 +628,8 @@
             <button class="nav-btn" onclick="logout()">Logout</button>
         </div>
     </header>
-
-    <!-- Room Selector Tabs -->
     <div class="room-tabs-container-wrapper"
         style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
-
-
         <div class="room-tabs-container">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
@@ -654,14 +649,14 @@
                         <div style="display: flex; flex-direction: column; gap: 3px;">
                             <label
                                 style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room
-                                No.</label>
-                            <select id="roomNoSelector"
-                                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
-                                onchange="updateRoomState(selectedRoom, selectedRoomName)">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
+                                No:/label>
+                                <select id="roomNoSelector"
+                                    style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
+                                    onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
                         </div>
                     </div>
                 </div>
@@ -669,7 +664,6 @@
             <div class="room-tabs" id="roomTabs"></div>
         </div>
     </div>
-
     <div class="layout">
         <div class="sidebar">
             <button class="tab-btn active" onclick="switchTab('rates', this)">Rates Management</button>
@@ -835,34 +829,16 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 15px;">
-                        <div id="specsEditorTargetBadge" style="font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px;"></div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-                            <div class="form-group">
-                                <label for="specsEditorTextPremium" style="font-weight: 700; color: #2ecc71; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                                    <span>✨ Premium Specifications</span>
-                                </label>
-                                <textarea id="specsEditorTextPremium" rows="7"
-                                    placeholder="Enter specifications for Premium mode..."
-                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(46, 204, 113, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="specsEditorTextMedium" style="font-weight: 700; color: #3498db; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                                    <span>⚖️ Middle / Standard Specifications</span>
-                                </label>
-                                <textarea id="specsEditorTextMedium" rows="7"
-                                    placeholder="Enter specifications for Middle / Standard mode..."
-                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(52, 152, 219, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="specsEditorTextEconomy" style="font-weight: 700; color: #f39c12; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                                    <span>💡 Economy Specifications</span>
-                                </label>
-                                <textarea id="specsEditorTextEconomy" rows="7"
-                                    placeholder="Enter specifications for Economy mode..."
-                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(243, 156, 18, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="specsEditorText"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Specifications (Line by line / bullet format)</span>
+                            <span id="specsEditorTargetBadge"
+                                style="font-size: 0.75rem; color: var(--accent); font-weight: 600;"></span>
+                        </label>
+                        <textarea id="specsEditorText" rows="6"
+                            placeholder="e.g.&#10;MARINE PLY THICKNESS-16MM&#10;LAMINATION THICKNESS 0.8MM&#10;HINGES-BRAND SLEEK&#10;KITCHEN HINGES SOFT CLOSING&#10;KITCHEN HANDLE PROFILE"
+                            style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
                     </div>
                     <div class="action-row"
                         style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
@@ -2381,23 +2357,8 @@
             return cleanSpecsForType(baseSpecs, materialLabel);
         }
 
-        function getEffectiveSpecsForAdmin(roomId, itemId, materialLabel, qual = 'premium') {
+        function getEffectiveSpecsForAdmin(roomId, itemId, materialLabel) {
             const specsMap = getItemSpecsMap();
-            const qualKey = qual.toLowerCase();
-
-            const specificKeyQual = `${roomId}_${itemId}_${materialLabel}_${qualKey}`;
-            if (specsMap[specificKeyQual] !== undefined && specsMap[specificKeyQual] !== null && specsMap[specificKeyQual] !== '') {
-                return specsMap[specificKeyQual];
-            }
-            const roomMatKeyQual = `${roomId}_${materialLabel}_${qualKey}`;
-            if (specsMap[roomMatKeyQual] !== undefined && specsMap[roomMatKeyQual] !== null && specsMap[roomMatKeyQual] !== '') {
-                return specsMap[roomMatKeyQual];
-            }
-            const matKeyQual = `${materialLabel}_${qualKey}`;
-            if (specsMap[matKeyQual] !== undefined && specsMap[matKeyQual] !== null && specsMap[matKeyQual] !== '') {
-                return specsMap[matKeyQual];
-            }
-
             const specificKey = `${roomId}_${itemId}_${materialLabel}`;
             if (specsMap[specificKey] !== undefined && specsMap[specificKey] !== null && specsMap[specificKey] !== '') {
                 return specsMap[specificKey];
@@ -2530,32 +2491,26 @@
             const roomSelect = document.getElementById('specsSelectRoom');
             const itemSelect = document.getElementById('specsSelectItem');
             const matSelect = document.getElementById('specsSelectMaterial');
-            const textPrem = document.getElementById('specsEditorTextPremium');
-            const textMid = document.getElementById('specsEditorTextMedium');
-            const textEco = document.getElementById('specsEditorTextEconomy');
+            const textEl = document.getElementById('specsEditorText');
             const badgeEl = document.getElementById('specsEditorTargetBadge');
-            if (!roomSelect || !itemSelect || !matSelect) return;
+            if (!roomSelect || !itemSelect || !matSelect || !textEl) return;
 
             const roomId = roomSelect.value;
             const itemVal = itemSelect.value;
             const matLabel = matSelect.value;
 
             if (!matLabel) {
-                if (textPrem) textPrem.value = '';
-                if (textMid) textMid.value = '';
-                if (textEco) textEco.value = '';
+                textEl.value = '';
                 if (badgeEl) badgeEl.textContent = '';
                 return;
             }
 
             const itemId = itemVal.startsWith('custom-') ? parseInt(itemVal.substring(7)) : parseInt(itemVal);
-            
-            if (textPrem) textPrem.value = getEffectiveSpecsForAdmin(roomId, itemId, matLabel, 'premium');
-            if (textMid) textMid.value = getEffectiveSpecsForAdmin(roomId, itemId, matLabel, 'medium');
-            if (textEco) textEco.value = getEffectiveSpecsForAdmin(roomId, itemId, matLabel, 'economy');
+            const currentSpecs = getEffectiveSpecsForAdmin(roomId, itemId, matLabel);
+            textEl.value = currentSpecs;
 
             if (badgeEl) {
-                badgeEl.textContent = `Editing Specifications for: ${matLabel}`;
+                badgeEl.textContent = `Editing: ${matLabel}`;
             }
         }
 
@@ -2563,46 +2518,27 @@
             const roomSelect = document.getElementById('specsSelectRoom');
             const itemSelect = document.getElementById('specsSelectItem');
             const matSelect = document.getElementById('specsSelectMaterial');
-            const textPrem = document.getElementById('specsEditorTextPremium');
-            const textMid = document.getElementById('specsEditorTextMedium');
-            const textEco = document.getElementById('specsEditorTextEconomy');
-            if (!roomSelect || !itemSelect || !matSelect) return;
+            const textEl = document.getElementById('specsEditorText');
+            if (!roomSelect || !itemSelect || !matSelect || !textEl) return;
 
             const roomId = roomSelect.value;
             const itemVal = itemSelect.value;
             const matLabel = matSelect.value;
+            const specs = textEl.value.trim();
 
             if (!matLabel) {
                 alert("Please select a valid material option first.");
                 return;
             }
 
-            const specsPrem = textPrem ? textPrem.value.trim() : '';
-            const specsMid = textMid ? textMid.value.trim() : '';
-            const specsEco = textEco ? textEco.value.trim() : '';
-
             const itemId = itemVal.startsWith('custom-') ? parseInt(itemVal.substring(7)) : parseInt(itemVal);
             const specsMap = getItemSpecsMap();
 
-            // Save Premium
-            specsMap[`${roomId}_${itemId}_${matLabel}_premium`] = specsPrem;
-            specsMap[`${roomId}_${matLabel}_premium`] = specsPrem;
-            specsMap[`${matLabel}_premium`] = specsPrem;
-
-            // Save Middle / Standard
-            specsMap[`${roomId}_${itemId}_${matLabel}_medium`] = specsMid;
-            specsMap[`${roomId}_${matLabel}_medium`] = specsMid;
-            specsMap[`${matLabel}_medium`] = specsMid;
-
-            // Save Economy
-            specsMap[`${roomId}_${itemId}_${matLabel}_economy`] = specsEco;
-            specsMap[`${roomId}_${matLabel}_economy`] = specsEco;
-            specsMap[`${matLabel}_economy`] = specsEco;
-
-            // Also update fallback base key with Premium specs
-            specsMap[`${roomId}_${itemId}_${matLabel}`] = specsPrem;
-            specsMap[`${roomId}_${matLabel}`] = specsPrem;
-            specsMap[matLabel] = specsPrem;
+            const specificKey = `${roomId}_${itemId}_${matLabel}`;
+            const roomMatKey = `${roomId}_${matLabel}`;
+            specsMap[specificKey] = specs;
+            specsMap[roomMatKey] = specs;
+            specsMap[matLabel] = specs;
 
             saveItemSpecsMap(specsMap);
 
@@ -2611,8 +2547,21 @@
             if (cMats[itemId]) {
                 const found = cMats[itemId].find(m => m.label === matLabel);
                 if (found) {
-                    found.specifications = specsPrem;
+                    found.specifications = specs;
                     localStorage.setItem('pks_custom_materials', JSON.stringify(cMats));
+                }
+            }
+
+            // Also update in custom items if exists
+            if (itemVal.startsWith('custom-')) {
+                const cItems = getCustomItems();
+                const foundItem = cItems.find(i => i.id === itemId);
+                if (foundItem && foundItem.options) {
+                    const optObj = foundItem.options.find(o => (o.label || o) === matLabel);
+                    if (optObj && typeof optObj === 'object') {
+                        optObj.specifications = specs;
+                        localStorage.setItem('pks_custom_items', JSON.stringify(cItems));
+                    }
                 }
             }
 
@@ -2624,10 +2573,8 @@
             const roomSelect = document.getElementById('specsSelectRoom');
             const itemSelect = document.getElementById('specsSelectItem');
             const matSelect = document.getElementById('specsSelectMaterial');
-            const textPrem = document.getElementById('specsEditorTextPremium');
-            const textMid = document.getElementById('specsEditorTextMedium');
-            const textEco = document.getElementById('specsEditorTextEconomy');
-            if (!roomSelect || !itemSelect || !matSelect) return;
+            const textEl = document.getElementById('specsEditorText');
+            if (!roomSelect || !itemSelect || !matSelect || !textEl) return;
 
             const roomId = roomSelect.value;
             const itemVal = itemSelect.value;
@@ -2638,20 +2585,13 @@
 
             const itemId = itemVal.startsWith('custom-') ? parseInt(itemVal.substring(7)) : parseInt(itemVal);
             const specsMap = getItemSpecsMap();
-
-            ['premium', 'medium', 'economy', ''].forEach(suffix => {
-                const keySuf = suffix ? `_${suffix}` : '';
-                delete specsMap[`${roomId}_${itemId}_${matLabel}${keySuf}`];
-                delete specsMap[`${roomId}_${matLabel}${keySuf}`];
-                delete specsMap[`${matLabel}${keySuf}`];
-            });
+            delete specsMap[`${roomId}_${itemId}_${matLabel}`];
+            delete specsMap[`${roomId}_${matLabel}`];
+            delete specsMap[matLabel];
             saveItemSpecsMap(specsMap);
 
             const defaultSpecs = getDefaultSpecsForMaterial(roomId, matLabel);
-            if (textPrem) textPrem.value = defaultSpecs;
-            if (textMid) textMid.value = defaultSpecs;
-            if (textEco) textEco.value = defaultSpecs;
-
+            textEl.value = defaultSpecs;
             renderSpecsOverviewList(roomId);
             showToast(`Specifications reset to default for ${matLabel}`);
         }
@@ -2680,25 +2620,15 @@
                 }
 
                 let matRowsHtml = optionsList.map(matLabel => {
-                    const specsPrem = getEffectiveSpecsForAdmin(roomId, item.id, matLabel, 'premium');
-                    const specsMid = getEffectiveSpecsForAdmin(roomId, item.id, matLabel, 'medium');
-                    const specsEco = getEffectiveSpecsForAdmin(roomId, item.id, matLabel, 'economy');
-
-                    const dispPrem = specsPrem ? specsPrem.replace(/\n/g, ' • ') : '<i style="color:var(--muted)">None</i>';
-                    const dispMid = specsMid ? specsMid.replace(/\n/g, ' • ') : '<i style="color:var(--muted)">None</i>';
-                    const dispEco = specsEco ? specsEco.replace(/\n/g, ' • ') : '<i style="color:var(--muted)">None</i>';
-
+                    const specs = getEffectiveSpecsForAdmin(roomId, item.id, matLabel);
+                    const displaySpecs = specs ? specs.replace(/\n/g, ' • ') : '<i style="color:var(--muted)">No specifications set</i>';
                     return `
-                        <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text);">${matLabel}</div>
-                                <button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;" onclick="loadSpecsIntoEditor('${roomId}', '${item.id}', '${matLabel.replace(/'/g, "\\'")}')">✏️ Edit Specs</button>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 8px 10px; background: rgba(0,0,0,0.25); border-radius: 6px; border: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.85rem; color: var(--text); margin-bottom: 3px;">${matLabel}</div>
+                                <div style="font-size: 0.76rem; color: var(--muted); line-height: 1.3; font-family: var(--sans);">${displaySpecs}</div>
                             </div>
-                            <div style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 3px; font-family: var(--sans);">
-                                <div><strong style="color:#2ecc71;">Premium:</strong> ${dispPrem}</div>
-                                <div><strong style="color:#3498db;">Middle:</strong> ${dispMid}</div>
-                                <div><strong style="color:#f39c12;">Economy:</strong> ${dispEco}</div>
-                            </div>
+                            <button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap; align-self: center;" onclick="loadSpecsIntoEditor('${roomId}', '${item.id}', '${matLabel.replace(/'/g, "\\'")}')">✏️ Edit Specs</button>
                         </div>
                     `;
                 }).join('');
