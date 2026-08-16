@@ -3041,29 +3041,54 @@
                 if (pMode === 'medium') qual = 'Middle / Standard';
                 else if (pMode === 'economy') qual = 'Economy';
 
-                const cleanMatName = matName.trim();
-                const newId = 'mat_custom_' + Date.now();
-                const newEntry = {
-                    id: newId,
-                    roomId: selectedRoom,
-                    materialType: firstOpt.materialType || 'Standard',
-                    quality: qual,
-                    itemName: item.name,
-                    constructionType: cleanMatName,
-                    specifications: specs || firstOpt.specifications || "",
-                    formula: chosenFormula,
-                    formulaType: formulaType,
-                    fields: fields,
-                    note: note,
-                    baseAmount: rate,
-                    offerPrice: rate,
-                    discountPercentage: 0,
-                    amountIncreasePercentage: 0,
-                    showSqft: (formulaType !== 'QTY'),
-                    status: 'ON'
-                };
+                // Add custom material entry for ALL items in this room across Premium, Middle, and Economy modes
+                const roomItems = (ITEMS && ITEMS.length > 0) ? ITEMS : (ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen || []);
 
-                db.push(newEntry);
+                roomItems.forEach(rItem => {
+                    const itemName = rItem.name;
+                    const stdItemId = getStandardItemId(selectedRoom, itemName) || rItem.id;
+                    const firstOpt = rItem.options ? (rItem.options[0] || {}) : {};
+
+                    ['Premium', 'Middle / Standard', 'Economy'].forEach(qual => {
+                        const exists = db.some(m =>
+                            (m.roomId || '').toLowerCase() === selectedRoom.toLowerCase() &&
+                            (m.itemName || '').toUpperCase() === itemName.toUpperCase() &&
+                            (m.constructionType || '').toUpperCase() === cleanMatName.toUpperCase() &&
+                            (m.quality || '').toLowerCase() === qual.toLowerCase()
+                        );
+                        if (!exists) {
+                            const newId = 'mat_custom_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+                            db.push({
+                                id: newId,
+                                roomId: selectedRoom,
+                                materialType: firstOpt.materialType || 'Standard',
+                                quality: qual,
+                                itemName: itemName,
+                                constructionType: cleanMatName,
+                                specifications: specs || firstOpt.specifications || "",
+                                formula: chosenFormula,
+                                formulaType: formulaType,
+                                fields: fields,
+                                note: note,
+                                baseAmount: rate,
+                                offerPrice: rate,
+                                discountPercentage: 0,
+                                amountIncreasePercentage: 0,
+                                showSqft: (formulaType !== 'QTY'),
+                                status: 'ON'
+                            });
+                        }
+                    });
+
+                    if (stdItemId) {
+                        if (!customMats[stdItemId]) customMats[stdItemId] = [];
+                        const existsCustom = customMats[stdItemId].some(m => (m.label || '').toUpperCase() === cleanMatName.toUpperCase());
+                        if (!existsCustom) {
+                            customMats[stdItemId].push({ label: cleanMatName, rate: rate, specifications: specs, formulaType, fields, note });
+                        }
+                    }
+                });
+
                 localStorage.setItem('pks_materials_db', JSON.stringify(db));
 
                 // 1. Save rate in pks_rates with room and mode keys
@@ -3078,21 +3103,8 @@
                 rates[cleanMatName] = rate;
                 localStorage.setItem('pks_rates', JSON.stringify(rates));
 
-                // 2. Save in pks_custom_materials so Admin Panel sees it immediately
-                const stdItemId = getStandardItemId(selectedRoom, item.name);
-                const targetKey = stdItemId || itemId;
-                let customMats = {};
-                if (targetKey) {
-                    const storedCustom = localStorage.getItem('pks_custom_materials');
-                    if (storedCustom) {
-                        try { customMats = JSON.parse(storedCustom) || {}; } catch (e) { }
-                    }
-                    if (!customMats[targetKey]) {
-                        customMats[targetKey] = [];
-                    }
-                    customMats[targetKey].push({ label: cleanMatName, rate: rate, specifications: specs, formulaType, fields, note });
-                    localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
-                }
+                // 2. Save custom_materials to localStorage
+                localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
 
                 // 3. Save specs in pks_item_specs
                 let specsMap = {};
