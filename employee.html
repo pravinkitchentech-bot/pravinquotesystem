@@ -2428,11 +2428,26 @@
 
             db.forEach(m => {
                 const stdItemId = getStandardItemId(m.roomId, m.itemName);
+                const normQ = (m.quality || '').toLowerCase();
+                let qualKey = 'premium';
+                if (normQ.includes('middle') || normQ.includes('medium') || normQ.includes('standard')) qualKey = 'medium';
+                else if (normQ.includes('economy')) qualKey = 'economy';
+
+                const specKeyQual1 = `${m.roomId}_${stdItemId}_${m.constructionType}_${qualKey}`;
+                const specKeyQual2 = `${m.roomId}_${m.constructionType}_${qualKey}`;
+                const specKeyQual3 = `${m.constructionType}_${qualKey}`;
+
                 const specKey1 = `${m.roomId}_${stdItemId}_${m.constructionType}`;
                 const specKey2 = `${m.roomId}_${m.constructionType}`;
                 const specKey3 = m.constructionType;
 
-                if (itemSpecsMap[specKey1] !== undefined && itemSpecsMap[specKey1] !== '') {
+                if (itemSpecsMap[specKeyQual1] !== undefined && itemSpecsMap[specKeyQual1] !== '') {
+                    m.specifications = itemSpecsMap[specKeyQual1];
+                } else if (itemSpecsMap[specKeyQual2] !== undefined && itemSpecsMap[specKeyQual2] !== '') {
+                    m.specifications = itemSpecsMap[specKeyQual2];
+                } else if (itemSpecsMap[specKeyQual3] !== undefined && itemSpecsMap[specKeyQual3] !== '') {
+                    m.specifications = itemSpecsMap[specKeyQual3];
+                } else if (itemSpecsMap[specKey1] !== undefined && itemSpecsMap[specKey1] !== '') {
                     m.specifications = itemSpecsMap[specKey1];
                 } else if (itemSpecsMap[specKey2] !== undefined && itemSpecsMap[specKey2] !== '') {
                     m.specifications = itemSpecsMap[specKey2];
@@ -4566,7 +4581,6 @@
                     (m.quality || '').toLowerCase() === targetQual.toLowerCase() &&
                     (m.itemName || '').toUpperCase() === (line.itemName || '').toUpperCase()
                 );
-
                 if (match) {
                     let rawRate = resolveRate(adminRates, match.constructionType, match.materialType, line.roomId || match.roomId, selectedDivision, targetQual);
                     let finalRate = (rawRate !== undefined && rawRate !== null && rawRate > 0) ? parseFloat(rawRate) : (match.baseAmount || 0);
