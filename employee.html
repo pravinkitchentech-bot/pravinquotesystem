@@ -4653,10 +4653,12 @@
             if (storedSpecs) {
                 try { specsMap = JSON.parse(storedSpecs) || {}; } catch (e) { }
             }
-            const specificKey = `${selectedRoom}_${itemId}_${opt.label}`;
-            const roomMatKey = `${selectedRoom}_${opt.label}`;
-            specsMap[specificKey] = inputVal;
-            specsMap[roomMatKey] = inputVal;
+            specsMap[`${selectedRoom}_${itemId}_${opt.label}_${modeLabel}`] = inputVal;
+            specsMap[`${selectedRoom}_${opt.label}_${modeLabel}`] = inputVal;
+            specsMap[`${selectedRoom}_${itemId}_${opt.label}`] = inputVal;
+            specsMap[`${selectedRoom}_${opt.label}`] = inputVal;
+            specsMap[`${opt.label}_${modeLabel}`] = inputVal;
+            specsMap[opt.label] = inputVal;
             localStorage.setItem('pks_item_specs', JSON.stringify(specsMap));
 
             // 2. Save in custom_specs_by_id map (Cloud-synced)
@@ -4669,15 +4671,17 @@
                 customSpecs[opt.id || opt.dbId] = inputVal;
             }
             customSpecs[`mat_${selectedRoom}_${opt.label}`] = inputVal;
+            customSpecs[`${selectedRoom}_${opt.label}`] = inputVal;
             localStorage.setItem('pks_custom_specs_by_id', JSON.stringify(customSpecs));
 
             // 3. Save to localStorage database
+            let db = [];
             let stored = localStorage.getItem('pks_materials_db');
             if (stored) {
                 try {
-                    let db = JSON.parse(stored);
+                    db = JSON.parse(stored);
                     db.forEach(m => {
-                        if (m.roomId === selectedRoom && (m.itemName === item.name || m.itemName.toUpperCase() === item.name.toUpperCase()) && m.constructionType === opt.label) {
+                        if (m.constructionType === opt.label || (m.roomId === selectedRoom && m.itemName === item.name)) {
                             m.specifications = inputVal;
                         }
                     });
@@ -4697,12 +4701,10 @@
             // Immediately broadcast & push to Firebase Realtime Database
             try {
                 if (window.PKSSync) {
-                    if (window.PKSSync.pushItemSpecs) {
-                        window.PKSSync.pushItemSpecs(specsMap);
-                    }
-                    if (window.PKSSync.debouncedPush) {
-                        window.PKSSync.debouncedPush(100);
-                    }
+                    if (window.PKSSync.pushItemSpecs) window.PKSSync.pushItemSpecs(specsMap);
+                    if (window.PKSSync.pushCustomSpecsById) window.PKSSync.pushCustomSpecsById(customSpecs);
+                    if (window.PKSSync.pushMaterialsDb) window.PKSSync.pushMaterialsDb(db);
+                    if (window.PKSSync.debouncedPush) window.PKSSync.debouncedPush(50);
                 }
             } catch (e) { }
 
@@ -4848,6 +4850,18 @@
                 const activeBuilders = document.querySelectorAll('.builder');
                 if (activeBuilders.length === 0) {
                     renderItemsGrid();
+                } else {
+                    document.querySelectorAll('[id$="-specs-text"]').forEach(block => {
+                        const buildId = block.id.replace('-specs-text', '');
+                        const itemId = parseInt(buildId.split('-')[0]) || null;
+                        if (itemId) {
+                            const item = ITEMS.find(i => i.id === itemId);
+                            if (item && item.options && item.options[0]) {
+                                const effSpecs = getEffectiveSpecs(selectedRoom, itemId, item.options[0].label, item.options[0].specifications);
+                                block.textContent = formatSpecificationsText(effSpecs, selectedRoom, item.options[0].label) || "No specifications added. Click edit icon to add.";
+                            }
+                        }
+                    });
                 }
             }
         }
