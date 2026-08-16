@@ -829,16 +829,34 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="specsEditorText"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>Specifications (Line by line / bullet format)</span>
-                            <span id="specsEditorTargetBadge"
-                                style="font-size: 0.75rem; color: var(--accent); font-weight: 600;"></span>
-                        </label>
-                        <textarea id="specsEditorText" rows="6"
-                            placeholder="e.g.&#10;MARINE PLY THICKNESS-16MM&#10;LAMINATION THICKNESS 0.8MM&#10;HINGES-BRAND SLEEK&#10;KITCHEN HINGES SOFT CLOSING&#10;KITCHEN HANDLE PROFILE"
-                            style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
+                    <div style="margin-bottom: 15px;">
+                        <div id="specsEditorTargetBadge" style="font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px;"></div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                            <div class="form-group">
+                                <label for="specsEditorTextPremium" style="font-weight: 700; color: #2ecc71; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                    <span>✨ Premium Specifications</span>
+                                </label>
+                                <textarea id="specsEditorTextPremium" rows="7"
+                                    placeholder="Enter specifications for Premium mode..."
+                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(46, 204, 113, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="specsEditorTextMedium" style="font-weight: 700; color: #3498db; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                    <span>⚖️ Middle / Standard Specifications</span>
+                                </label>
+                                <textarea id="specsEditorTextMedium" rows="7"
+                                    placeholder="Enter specifications for Middle / Standard mode..."
+                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(52, 152, 219, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="specsEditorTextEconomy" style="font-weight: 700; color: #f39c12; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                    <span>💡 Economy Specifications</span>
+                                </label>
+                                <textarea id="specsEditorTextEconomy" rows="7"
+                                    placeholder="Enter specifications for Economy mode..."
+                                    style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(243, 156, 18, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
+                            </div>
+                        </div>
                     </div>
                     <div class="action-row"
                         style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
