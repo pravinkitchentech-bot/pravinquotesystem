@@ -257,6 +257,18 @@ window.PKSSync = {
         }
     },
 
+    pushCustomSpecsById(customSpecsObj) {
+        try {
+            if (this.db) {
+                this.db.ref('pks/custom_specs_by_id').set(customSpecsObj);
+                return;
+            }
+        } catch (e) { }
+        if (this.dbUrl) {
+            fetch(`${this.dbUrl}/pks/custom_specs_by_id.json`, { method: 'PUT', body: JSON.stringify(customSpecsObj) }).catch(() => { });
+        }
+    },
+
     pushCustomMaterials(customMatsObj) {
         try {
             if (this.db) {
