@@ -2455,7 +2455,8 @@
 
             db.forEach(m => {
                 const stdItemId = getStandardItemId(m.roomId, m.itemName);
-                const normQ = (m.quality || '').toLowerCase();
+                const rawQ = m.quality || (typeof activeQuality !== 'undefined' ? activeQuality : '') || sessionStorage.getItem('pks_pricing_mode') || 'premium';
+                const normQ = rawQ.toLowerCase();
                 let qualKey = 'premium';
                 if (normQ.includes('middle') || normQ.includes('medium') || normQ.includes('standard')) qualKey = 'medium';
                 else if (normQ.includes('economy')) qualKey = 'economy';
@@ -3015,12 +3016,31 @@
             openMaterialSelector(buildId, itemId);
         }
 
-        function getEffectiveSpecs(roomId, itemId, materialLabel, defaultSpecs) {
+        function getEffectiveSpecs(roomId, itemId, materialLabel, defaultSpecs, qual) {
+            const curQual = qual || (typeof activeQuality !== 'undefined' ? activeQuality : '') || sessionStorage.getItem('pks_pricing_mode') || 'premium';
+            const normQ = curQual.toLowerCase();
+            let qualKey = 'premium';
+            if (normQ.includes('middle') || normQ.includes('medium') || normQ.includes('standard')) qualKey = 'medium';
+            else if (normQ.includes('economy')) qualKey = 'economy';
+
             const stored = localStorage.getItem('pks_item_specs');
             if (stored) {
                 try {
                     const specsMap = JSON.parse(stored);
                     if (specsMap) {
+                        const specificKeyQual = `${roomId}_${itemId}_${materialLabel}_${qualKey}`;
+                        if (specsMap[specificKeyQual] !== undefined && specsMap[specificKeyQual] !== null && specsMap[specificKeyQual] !== '') {
+                            return specsMap[specificKeyQual];
+                        }
+                        const roomMatKeyQual = `${roomId}_${materialLabel}_${qualKey}`;
+                        if (specsMap[roomMatKeyQual] !== undefined && specsMap[roomMatKeyQual] !== null && specsMap[roomMatKeyQual] !== '') {
+                            return specsMap[roomMatKeyQual];
+                        }
+                        const matKeyQual = `${materialLabel}_${qualKey}`;
+                        if (specsMap[matKeyQual] !== undefined && specsMap[matKeyQual] !== null && specsMap[matKeyQual] !== '') {
+                            return specsMap[matKeyQual];
+                        }
+
                         const specificKey = `${roomId}_${itemId}_${materialLabel}`;
                         if (specsMap[specificKey] !== undefined && specsMap[specificKey] !== null && specsMap[specificKey] !== '') {
                             return specsMap[specificKey];
