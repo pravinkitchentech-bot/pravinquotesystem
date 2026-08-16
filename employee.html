@@ -1074,9 +1074,6 @@
                 <span class="cloud-sync-badge role-badge"
                     style="background: rgba(255,255,255,0.08); font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">⚪
                     Local Mode</span>
-                <button id="adminPanelNavBtn" class="back-btn"
-                    style="display:none; padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: var(--accent); border: none; color: #ffffff !important;"
-                    onclick="location.href='admin.html'">Admin Panel</button>
                 <button class="back-btn"
                     style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
                     onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
@@ -1433,9 +1430,6 @@
                             <th>No.</th>
                             <th>Type</th>
                             <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Division</th>
-                            <th>Room</th>
                             <th>Material</th>
                             <th>Amount</th>
                             <th style="text-align: center;">Actions</th>
@@ -1479,10 +1473,6 @@
         const role = sessionStorage.getItem('pks_role');
         if (!role) {
             location.href = 'index.html';
-        }
-        if (role === 'admin') {
-            const adminBtn = document.getElementById('adminPanelNavBtn');
-            if (adminBtn) adminBtn.style.display = 'inline-flex';
         }
         const showRate = (role === 'admin');
 
@@ -4434,9 +4424,6 @@
                     <td>${q.quoteNo}</td>
                     <td>${q.docType}</td>
                     <td>${q.custName || '—'}</td>
-                    <td>${q.custPhone || '—'}</td>
-                    <td>${q.divisionName}</td>
-                    <td>${uniqueRooms}</td>
                     <td>${uniqueMaterials}</td>
                     <td>₹${q.totalAmount.toFixed(2)}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
