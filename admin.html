@@ -1825,11 +1825,25 @@
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
 
-                let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
+                const deletedMats = getDeletedStandardMaterials();
+                let filteredOptions = (item.options || []).filter(o => !deletedMats.includes(`${item.id}-${o}`));
+
+                let matTags = filteredOptions.map(opt => `
+                    <span class="tag-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin: 3px;">
+                        <span>${opt}</span>
+                        <button type="button" onclick="deleteMaterialOptionFromAdmin('${selectedRoom}', ${item.id}, '${opt.replace(/'/g, "\\'")}', false)" 
+                            title="Delete material option" 
+                            style="background: rgba(255, 68, 68, 0.15); border: 1px solid rgba(255, 68, 68, 0.4); color: #ff6b6b; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; padding: 0; cursor: pointer; line-height: 1;">✕</button>
+                    </span>
+                `).join('');
+
                 const customList = customMaterials[item.id] || [];
                 let customTags = customList.map((m, index) => `
-                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${m.label}
+                    <span class="tag-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin: 3px; border: 1px solid var(--accent); color: var(--accent);">
+                        <span>${m.label}</span>
+                        <button type="button" onclick="deleteMaterialOptionFromAdmin('${selectedRoom}', ${item.id}, '${m.label.replace(/'/g, "\\'")}', true, ${index})" 
+                            title="Delete material option" 
+                            style="background: rgba(255, 68, 68, 0.15); border: 1px solid rgba(255, 68, 68, 0.4); color: #ff6b6b; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; padding: 0; cursor: pointer; line-height: 1;">✕</button>
                     </span>
                 `).join('');
 
@@ -1838,7 +1852,7 @@
                         <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px;">Standard</span></div>
                         <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteStandardItem(${item.id})">Delete Card</button>
                     </div>
-                    <div class="tags-row" style="margin-bottom: 10px;">
+                    <div class="tags-row" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px;">
                         ${matTags}
                         ${customTags}
                     </div>
@@ -1852,9 +1866,12 @@
                     const div = document.createElement('div');
                     div.className = 'item-manage-card';
 
-                    let optTags = item.options.map((opt, optIdx) => `
-                        <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                            ${opt.label}
+                    let optTags = (item.options || []).map((opt, optIdx) => `
+                        <span class="tag-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin: 3px; border: 1px solid var(--accent); color: var(--accent);">
+                            <span>${opt.label || opt}</span>
+                            <button type="button" onclick="deleteCustomItemMaterialFromAdmin(${item.id}, ${optIdx})" 
+                                title="Delete material option" 
+                                style="background: rgba(255, 68, 68, 0.15); border: 1px solid rgba(255, 68, 68, 0.4); color: #ff6b6b; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; padding: 0; cursor: pointer; line-height: 1;">✕</button>
                         </span>
                     `).join('');
 
@@ -1863,7 +1880,7 @@
                             <div class="item-manage-card-title">${item.id}. ${item.name.toUpperCase()} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
                             <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
                         </div>
-                        <div class="tags-row" style="margin-bottom: 10px;">
+                        <div class="tags-row" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px;">
                             ${optTags || '<span style="font-size: 0.8rem; color: var(--muted); font-style: italic;">No materials added yet</span>'}
                         </div>
                     `;
@@ -1946,6 +1963,69 @@
                 renderCustomItemsList();
                 showToast("Material option removed.");
             }
+        }
+
+        function deleteMaterialOptionFromAdmin(roomId, itemId, materialLabel, isCustom, customIndex) {
+            if (!confirm(`Delete material option "${materialLabel}"?`)) return;
+
+            if (isCustom) {
+                if (customMaterials[itemId]) {
+                    customMaterials[itemId] = customMaterials[itemId].filter(m => m.label !== materialLabel);
+                    if (customMaterials[itemId].length === 0) delete customMaterials[itemId];
+                    localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
+                }
+            } else {
+                let deletedMats = getDeletedStandardMaterials();
+                const matKey = `${itemId}-${materialLabel}`;
+                if (!deletedMats.includes(matKey)) {
+                    deletedMats.push(matKey);
+                    localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedMats));
+                }
+            }
+
+            // Remove from pks_materials_db if present
+            let storedDb = localStorage.getItem('pks_materials_db');
+            if (storedDb) {
+                try {
+                    let db = JSON.parse(storedDb);
+                    db = db.filter(m => !(m.roomId === roomId && m.constructionType === materialLabel));
+                    localStorage.setItem('pks_materials_db', JSON.stringify(db));
+                } catch (e) { }
+            }
+
+            // Broadcast cloud sync update
+            try {
+                if (window.PKSSync) {
+                    if (window.PKSSync.pushCustomMaterials) window.PKSSync.pushCustomMaterials(customMaterials);
+                    if (window.PKSSync.pushDeletedStandardMaterials) window.PKSSync.pushDeletedStandardMaterials(getDeletedStandardMaterials());
+                    if (window.PKSSync.debouncedPush) window.PKSSync.debouncedPush(50);
+                }
+            } catch (e) { }
+
+            renderItemsList();
+            initSpecsTab();
+            showToast(`Material "${materialLabel}" deleted!`);
+        }
+
+        function deleteCustomItemMaterialFromAdmin(itemId, optIdx) {
+            const item = customItems.find(i => i.id === itemId);
+            if (!item || !item.options || !item.options[optIdx]) return;
+            const matLabel = item.options[optIdx].label || item.options[optIdx];
+            if (!confirm(`Delete material "${matLabel}" from "${item.name}"?`)) return;
+
+            item.options.splice(optIdx, 1);
+            localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+
+            try {
+                if (window.PKSSync) {
+                    if (window.PKSSync.pushCustomItems) window.PKSSync.pushCustomItems(customItems);
+                    if (window.PKSSync.debouncedPush) window.PKSSync.debouncedPush(50);
+                }
+            } catch (e) { }
+
+            renderItemsList();
+            initSpecsTab();
+            showToast(`Material "${matLabel}" deleted!`);
         }
 
         function getStandardFormulaInfo(itemId, optName) {
