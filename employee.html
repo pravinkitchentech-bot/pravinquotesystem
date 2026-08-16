@@ -2400,6 +2400,11 @@
             }
         }
 
+        let _itemsListCache = {};
+        function invalidateMaterialsCache() {
+            _itemsListCache = {};
+        }
+
         function getFullItemsList() {
             const cacheKey = `${(selectedRoom || '').toLowerCase()}__${(modeLabel || '').toLowerCase()}`;
             if (_itemsListCache[cacheKey]) {
@@ -3049,8 +3054,8 @@
                     try { customMats = JSON.parse(storedCustom) || {}; } catch (e) { }
                 }
 
-                // Add custom material entry for ALL items in this room across Premium, Middle, and Economy modes
-                const roomItems = (ITEMS && ITEMS.length > 0) ? ITEMS : (ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen || []);
+                // Add custom material entry for items across Premium, Middle, and Economy modes
+                const roomItems = (ITEMS && ITEMS.length > 0) ? ITEMS : [item];
 
                 roomItems.forEach(rItem => {
                     const itemName = rItem.name;
