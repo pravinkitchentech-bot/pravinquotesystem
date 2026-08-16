@@ -498,6 +498,33 @@
             color: var(--danger);
         }
 
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        button, input, select, textarea, .room-card, .option-card, .back-btn, .action-btn {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        button:hover, .room-card:hover, .option-card:hover {
+            transform: translateY(-1px) translateZ(0);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.98) translateZ(0);
+        }
+
+        div[style*="overflow-y: auto"], div[style*="overflow-x: auto"] {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
         .back-btn {
             background: transparent;
             border: 1px solid var(--border);
