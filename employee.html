@@ -3041,6 +3041,14 @@
                 if (pMode === 'medium') qual = 'Middle / Standard';
                 else if (pMode === 'economy') qual = 'Economy';
 
+                const cleanMatName = matName.trim();
+
+                let customMats = {};
+                const storedCustom = localStorage.getItem('pks_custom_materials');
+                if (storedCustom) {
+                    try { customMats = JSON.parse(storedCustom) || {}; } catch (e) { }
+                }
+
                 // Add custom material entry for ALL items in this room across Premium, Middle, and Economy modes
                 const roomItems = (ITEMS && ITEMS.length > 0) ? ITEMS : (ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen || []);
 
@@ -3049,12 +3057,12 @@
                     const stdItemId = getStandardItemId(selectedRoom, itemName) || rItem.id;
                     const firstOpt = rItem.options ? (rItem.options[0] || {}) : {};
 
-                    ['Premium', 'Middle / Standard', 'Economy'].forEach(qual => {
+                    ['Premium', 'Middle / Standard', 'Economy'].forEach(qVal => {
                         const exists = db.some(m =>
                             (m.roomId || '').toLowerCase() === selectedRoom.toLowerCase() &&
                             (m.itemName || '').toUpperCase() === itemName.toUpperCase() &&
                             (m.constructionType || '').toUpperCase() === cleanMatName.toUpperCase() &&
-                            (m.quality || '').toLowerCase() === qual.toLowerCase()
+                            (m.quality || '').toLowerCase() === qVal.toLowerCase()
                         );
                         if (!exists) {
                             const newId = 'mat_custom_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
@@ -3062,7 +3070,7 @@
                                 id: newId,
                                 roomId: selectedRoom,
                                 materialType: firstOpt.materialType || 'Standard',
-                                quality: qual,
+                                quality: qVal,
                                 itemName: itemName,
                                 constructionType: cleanMatName,
                                 specifications: specs || firstOpt.specifications || "",
