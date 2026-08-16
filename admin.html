@@ -1550,25 +1550,33 @@
                     }
 
                     const candidates = [];
+                    // 1. Room + Mode candidates
                     if (curDiv && curRoom && mat) candidates.push(`${curDiv}_${curRoom}_${mat}_${qualKey}`);
                     if (curRoom && mat) candidates.push(`${curRoom}_${mat}_${qualKey}`);
-                    if (curDiv && mat) candidates.push(`${curDiv}_${mat}_${qualKey}`);
-                    if (mat) candidates.push(`${mat}_${qualKey}`);
-
                     if (curDiv && curRoom && normBase) candidates.push(`${curDiv}_${curRoom}_${normBase}_${qualKey}`);
                     if (curRoom && normBase) candidates.push(`${curRoom}_${normBase}_${qualKey}`);
+
+                    // 2. Room Base candidates (only for premium)
+                    if (qualKey === 'premium') {
+                        if (curDiv && curRoom && mat) candidates.push(`${curDiv}_${curRoom}_${mat}`);
+                        if (curRoom && mat) candidates.push(`${curRoom}_${mat}`);
+                        if (curDiv && curRoom && normBase) candidates.push(`${curDiv}_${curRoom}_${normBase}`);
+                        if (curRoom && normBase) candidates.push(`${curRoom}_${normBase}`);
+                    }
+
+                    // 3. Global Mode candidates
+                    if (curDiv && mat) candidates.push(`${curDiv}_${mat}_${qualKey}`);
+                    if (mat) candidates.push(`${mat}_${qualKey}`);
                     if (curDiv && normBase) candidates.push(`${curDiv}_${normBase}_${qualKey}`);
                     if (normBase) candidates.push(`${normBase}_${qualKey}`);
 
-                    if (curDiv && curRoom && mat) candidates.push(`${curDiv}_${curRoom}_${mat}`);
-                    if (curRoom && mat) candidates.push(`${curRoom}_${mat}`);
-                    if (curDiv && mat) candidates.push(`${curDiv}_${mat}`);
-                    if (mat) candidates.push(mat);
-
-                    if (curDiv && curRoom && normBase) candidates.push(`${curDiv}_${curRoom}_${normBase}`);
-                    if (curRoom && normBase) candidates.push(`${curRoom}_${normBase}`);
-                    if (curDiv && normBase) candidates.push(`${curDiv}_${normBase}`);
-                    if (normBase) candidates.push(normBase);
+                    // 4. Global Base candidates (only for premium)
+                    if (qualKey === 'premium') {
+                        if (curDiv && mat) candidates.push(`${curDiv}_${mat}`);
+                        if (mat) candidates.push(mat);
+                        if (curDiv && normBase) candidates.push(`${curDiv}_${normBase}`);
+                        if (normBase) candidates.push(normBase);
+                    }
 
                     for (const cand of candidates) {
                         const k = normalizeKey(cand);
@@ -1580,8 +1588,10 @@
                 let v = checkObj(currentRates);
                 if (v !== undefined) return v;
 
-                v = checkObj(DEFAULT_RATES);
-                if (v !== undefined) return v;
+                if (qualKey === 'premium') {
+                    v = checkObj(DEFAULT_RATES);
+                    if (v !== undefined) return v;
+                }
 
                 return undefined;
             }
@@ -1629,10 +1639,11 @@
                             if (curDiv) ratesObj[`${curDiv}_${curRoom}_${baseName}${keySuffix}`] = val;
                             ratesObj[`${curRoom}_${baseName}${keySuffix}`] = val;
                         }
+                    } else {
+                        ratesObj[`${mat}${keySuffix}`] = val;
+                        const baseName = mat.replace(/\s*\([^)]*\)/g, '').trim();
+                        if (baseName) ratesObj[`${baseName}${keySuffix}`] = val;
                     }
-                    ratesObj[`${mat}${keySuffix}`] = val;
-                    const baseName = mat.replace(/\s*\([^)]*\)/g, '').trim();
-                    if (baseName) ratesObj[`${baseName}${keySuffix}`] = val;
                 }
             });
             localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
