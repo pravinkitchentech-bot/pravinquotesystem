@@ -363,10 +363,6 @@
                             <th>No.</th>
                             <th>Type</th>
                             <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Division</th>
-                            <th>Room</th>
-                            <th>Material</th>
                             <th>Amount</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
@@ -597,10 +593,6 @@
                     <td>${q.quoteNo}</td>
                     <td>${q.docType}</td>
                     <td>${q.custName || '—'}</td>
-                    <td>${q.custPhone || '—'}</td>
-                    <td>${q.divisionName}</td>
-                    <td>${uniqueRooms}</td>
-                    <td>${uniqueMaterials}</td>
                     <td>₹${q.totalAmount.toFixed(2)}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
                         <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none;" onclick="loadSavedQuote('${q.id}')">Edit</button>
