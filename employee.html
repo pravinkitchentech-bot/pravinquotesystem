@@ -3123,6 +3123,7 @@
                 // 4. Broadcast & Push immediately to Firebase Realtime Database Backend
                 try {
                     if (window.PKSSync) {
+                        if (window.PKSSync.pushMaterialsDb) window.PKSSync.pushMaterialsDb(db);
                         if (window.PKSSync.pushCustomMaterials) window.PKSSync.pushCustomMaterials(customMats);
                         if (window.PKSSync.pushRates) window.PKSSync.pushRates(rates);
                         if (window.PKSSync.pushItemSpecs) window.PKSSync.pushItemSpecs(specsMap);
