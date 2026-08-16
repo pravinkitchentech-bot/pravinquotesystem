@@ -3,10 +3,8 @@
  * Automatically syncs rates, specifications, custom materials, custom items, divisions, deleted configurations, and saved quotes across all devices.
  * High-performance edition: debounced cloud pushes, loop prevention, and optimized memory footprint.
  */
-
 const DEFAULT_FIREBASE_CONFIG_KEY = 'pks_firebase_config';
 const DEFAULT_FIREBASE_DB_URL = 'https://pravin-quotes-default-rtdb.firebaseio.com';
-
 window.PKSSync = {
     db: null,
     isInitialized: false,
@@ -20,7 +18,7 @@ window.PKSSync = {
         if (stored) {
             try {
                 return JSON.parse(stored);
-            } catch (e) {}
+            } catch (e) { }
         }
         return { databaseURL: DEFAULT_FIREBASE_DB_URL };
     },
@@ -141,6 +139,7 @@ window.PKSSync = {
             };
 
             syncKey('pks/rates', 'pks_rates');
+            syncKey('pks/materials_db', 'pks_materials_db');
             syncKey('pks/item_specs', 'pks_item_specs');
             syncKey('pks/custom_specs_by_id', 'pks_custom_specs_by_id');
             syncKey('pks/custom_materials', 'pks_custom_materials');
@@ -173,31 +172,34 @@ window.PKSSync = {
                 const updates = {};
 
                 if (!data.rates && localStorage.getItem('pks_rates')) {
-                    try { updates['pks/rates'] = JSON.parse(localStorage.getItem('pks_rates')); } catch(e){}
+                    try { updates['pks/rates'] = JSON.parse(localStorage.getItem('pks_rates')); } catch (e) { }
+                }
+                if (!data.materials_db && localStorage.getItem('pks_materials_db')) {
+                    try { updates['pks/materials_db'] = JSON.parse(localStorage.getItem('pks_materials_db')); } catch (e) { }
                 }
                 if (!data.item_specs && localStorage.getItem('pks_item_specs')) {
-                    try { updates['pks/item_specs'] = JSON.parse(localStorage.getItem('pks_item_specs')); } catch(e){}
+                    try { updates['pks/item_specs'] = JSON.parse(localStorage.getItem('pks_item_specs')); } catch (e) { }
                 }
                 if (!data.custom_specs_by_id && localStorage.getItem('pks_custom_specs_by_id')) {
-                    try { updates['pks/custom_specs_by_id'] = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch(e){}
+                    try { updates['pks/custom_specs_by_id'] = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch (e) { }
                 }
                 if (!data.custom_materials && localStorage.getItem('pks_custom_materials')) {
-                    try { updates['pks/custom_materials'] = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch(e){}
+                    try { updates['pks/custom_materials'] = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch (e) { }
                 }
                 if (!data.custom_items && localStorage.getItem('pks_custom_items')) {
-                    try { updates['pks/custom_items'] = JSON.parse(localStorage.getItem('pks_custom_items')); } catch(e){}
+                    try { updates['pks/custom_items'] = JSON.parse(localStorage.getItem('pks_custom_items')); } catch (e) { }
                 }
                 if (!data.divisions && localStorage.getItem('pks_divisions')) {
-                    try { updates['pks/divisions'] = JSON.parse(localStorage.getItem('pks_divisions')); } catch(e){}
+                    try { updates['pks/divisions'] = JSON.parse(localStorage.getItem('pks_divisions')); } catch (e) { }
                 }
                 if (!data.saved_quotes && localStorage.getItem('pks_saved_quotes')) {
-                    try { updates['pks/saved_quotes'] = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch(e){}
+                    try { updates['pks/saved_quotes'] = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch (e) { }
                 }
                 if (!data.deleted_standard_materials && localStorage.getItem('pks_deleted_standard_materials')) {
-                    try { updates['pks/deleted_standard_materials'] = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch(e){}
+                    try { updates['pks/deleted_standard_materials'] = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch (e) { }
                 }
                 if (!data.deleted_standard_items && localStorage.getItem('pks_deleted_standard_items')) {
-                    try { updates['pks/deleted_standard_items'] = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch(e){}
+                    try { updates['pks/deleted_standard_items'] = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch (e) { }
                 }
 
                 if (Object.keys(updates).length > 0) {
@@ -206,7 +208,7 @@ window.PKSSync = {
             }).catch(err => {
                 console.warn("Initial sync access notice:", err.message);
             });
-        } catch (e) {}
+        } catch (e) { }
     },
 
     debouncedPush(delayMs = 1200) {
@@ -215,7 +217,7 @@ window.PKSSync = {
             clearTimeout(this.pushDebounceTimer);
         }
         this.pushDebounceTimer = setTimeout(() => {
-            this.pushAllData().catch(() => {});
+            this.pushAllData().catch(() => { });
         }, delayMs);
     },
 
@@ -225,9 +227,21 @@ window.PKSSync = {
                 this.db.ref('pks/rates').set(ratesObj);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/rates.json`, { method: 'PUT', body: JSON.stringify(ratesObj) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/rates.json`, { method: 'PUT', body: JSON.stringify(ratesObj) }).catch(() => { });
+        }
+    },
+
+    pushMaterialsDb(materialsDbArr) {
+        try {
+            if (this.db) {
+                this.db.ref('pks/materials_db').set(materialsDbArr);
+                return;
+            }
+        } catch (e) { }
+        if (this.dbUrl) {
+            fetch(`${this.dbUrl}/pks/materials_db.json`, { method: 'PUT', body: JSON.stringify(materialsDbArr) }).catch(() => { });
         }
     },
 
@@ -237,9 +251,9 @@ window.PKSSync = {
                 this.db.ref('pks/item_specs').set(specsObj);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/item_specs.json`, { method: 'PUT', body: JSON.stringify(specsObj) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/item_specs.json`, { method: 'PUT', body: JSON.stringify(specsObj) }).catch(() => { });
         }
     },
 
@@ -249,9 +263,9 @@ window.PKSSync = {
                 this.db.ref('pks/custom_materials').set(customMatsObj);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/custom_materials.json`, { method: 'PUT', body: JSON.stringify(customMatsObj) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/custom_materials.json`, { method: 'PUT', body: JSON.stringify(customMatsObj) }).catch(() => { });
         }
     },
 
@@ -261,9 +275,9 @@ window.PKSSync = {
                 this.db.ref('pks/custom_items').set(customItemsArr);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/custom_items.json`, { method: 'PUT', body: JSON.stringify(customItemsArr) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/custom_items.json`, { method: 'PUT', body: JSON.stringify(customItemsArr) }).catch(() => { });
         }
     },
 
@@ -273,9 +287,9 @@ window.PKSSync = {
                 this.db.ref('pks/divisions').set(divisionsArr);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/divisions.json`, { method: 'PUT', body: JSON.stringify(divisionsArr) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/divisions.json`, { method: 'PUT', body: JSON.stringify(divisionsArr) }).catch(() => { });
         }
     },
 
@@ -285,9 +299,9 @@ window.PKSSync = {
                 this.db.ref('pks/saved_quotes').set(quotesArr);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/saved_quotes.json`, { method: 'PUT', body: JSON.stringify(quotesArr) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/saved_quotes.json`, { method: 'PUT', body: JSON.stringify(quotesArr) }).catch(() => { });
         }
     },
 
@@ -297,9 +311,9 @@ window.PKSSync = {
                 this.db.ref('pks/deleted_standard_materials').set(delMatsArr);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/deleted_standard_materials.json`, { method: 'PUT', body: JSON.stringify(delMatsArr) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/deleted_standard_materials.json`, { method: 'PUT', body: JSON.stringify(delMatsArr) }).catch(() => { });
         }
     },
 
@@ -309,9 +323,9 @@ window.PKSSync = {
                 this.db.ref('pks/deleted_standard_items').set(delItemsArr);
                 return;
             }
-        } catch (e) {}
+        } catch (e) { }
         if (this.dbUrl) {
-            fetch(`${this.dbUrl}/pks/deleted_standard_items.json`, { method: 'PUT', body: JSON.stringify(delItemsArr) }).catch(()=>{});
+            fetch(`${this.dbUrl}/pks/deleted_standard_items.json`, { method: 'PUT', body: JSON.stringify(delItemsArr) }).catch(() => { });
         }
     },
 
@@ -319,31 +333,34 @@ window.PKSSync = {
         if (this.isSyncing) return;
         const payload = {};
         if (localStorage.getItem('pks_rates')) {
-            try { payload.rates = JSON.parse(localStorage.getItem('pks_rates')); } catch(e){}
+            try { payload.rates = JSON.parse(localStorage.getItem('pks_rates')); } catch (e) { }
+        }
+        if (localStorage.getItem('pks_materials_db')) {
+            try { payload.materials_db = JSON.parse(localStorage.getItem('pks_materials_db')); } catch (e) { }
         }
         if (localStorage.getItem('pks_item_specs')) {
-            try { payload.item_specs = JSON.parse(localStorage.getItem('pks_item_specs')); } catch(e){}
+            try { payload.item_specs = JSON.parse(localStorage.getItem('pks_item_specs')); } catch (e) { }
         }
         if (localStorage.getItem('pks_custom_specs_by_id')) {
-            try { payload.custom_specs_by_id = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch(e){}
+            try { payload.custom_specs_by_id = JSON.parse(localStorage.getItem('pks_custom_specs_by_id')); } catch (e) { }
         }
         if (localStorage.getItem('pks_custom_materials')) {
-            try { payload.custom_materials = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch(e){}
+            try { payload.custom_materials = JSON.parse(localStorage.getItem('pks_custom_materials')); } catch (e) { }
         }
         if (localStorage.getItem('pks_custom_items')) {
-            try { payload.custom_items = JSON.parse(localStorage.getItem('pks_custom_items')); } catch(e){}
+            try { payload.custom_items = JSON.parse(localStorage.getItem('pks_custom_items')); } catch (e) { }
         }
         if (localStorage.getItem('pks_divisions')) {
-            try { payload.divisions = JSON.parse(localStorage.getItem('pks_divisions')); } catch(e){}
+            try { payload.divisions = JSON.parse(localStorage.getItem('pks_divisions')); } catch (e) { }
         }
         if (localStorage.getItem('pks_saved_quotes')) {
-            try { payload.saved_quotes = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch(e){}
+            try { payload.saved_quotes = JSON.parse(localStorage.getItem('pks_saved_quotes')); } catch (e) { }
         }
         if (localStorage.getItem('pks_deleted_standard_materials')) {
-            try { payload.deleted_standard_materials = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch(e){}
+            try { payload.deleted_standard_materials = JSON.parse(localStorage.getItem('pks_deleted_standard_materials')); } catch (e) { }
         }
         if (localStorage.getItem('pks_deleted_standard_items')) {
-            try { payload.deleted_standard_items = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch(e){}
+            try { payload.deleted_standard_items = JSON.parse(localStorage.getItem('pks_deleted_standard_items')); } catch (e) { }
         }
 
         try {
@@ -356,7 +373,7 @@ window.PKSSync = {
         }
 
         if (this.dbUrl) {
-            await fetch(`${this.dbUrl}/pks.json`, { method: 'PUT', body: JSON.stringify(payload) }).catch(()=>{});
+            await fetch(`${this.dbUrl}/pks.json`, { method: 'PUT', body: JSON.stringify(payload) }).catch(() => { });
         }
         return true;
     },
@@ -370,6 +387,7 @@ window.PKSSync = {
             if (data && typeof data === 'object') {
                 let changed = false;
                 if (data.rates && this.setLocalItemSilently('pks_rates', JSON.stringify(data.rates))) changed = true;
+                if (data.materials_db && this.setLocalItemSilently('pks_materials_db', JSON.stringify(data.materials_db))) changed = true;
                 if (data.item_specs && this.setLocalItemSilently('pks_item_specs', JSON.stringify(data.item_specs))) changed = true;
                 if (data.custom_specs_by_id && this.setLocalItemSilently('pks_custom_specs_by_id', JSON.stringify(data.custom_specs_by_id))) changed = true;
                 if (data.custom_materials && this.setLocalItemSilently('pks_custom_materials', JSON.stringify(data.custom_materials))) changed = true;
