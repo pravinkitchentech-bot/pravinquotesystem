@@ -1572,7 +1572,15 @@
             return str.toLowerCase().replace(/[^a-z0-9]/g, '');
         }
 
-        function resolveRate(ratesObj, constType, matType) {
+        function resolveRate(ratesObj, constType, matType, roomId, divId, qual) {
+            const curRoom = (roomId || selectedRoom || '').toLowerCase();
+            const curDiv = (divId || selectedDivision || '').toLowerCase();
+            const rawQual = qual || (typeof activeQuality !== 'undefined' ? activeQuality : '') || sessionStorage.getItem('pks_pricing_mode') || 'premium';
+            let qualKey = 'premium';
+            const normQ = rawQual.toLowerCase();
+            if (normQ.includes('middle') || normQ.includes('medium') || normQ.includes('standard')) qualKey = 'medium';
+            else if (normQ.includes('economy')) qualKey = 'economy';
+
             function singleLookup(obj) {
                 if (!obj) return undefined;
 
@@ -1583,18 +1591,45 @@
                     }
                 }
 
-                // 1. Check exact constType
-                const k1 = normalizeKey(constType);
-                if (normMap[k1] !== undefined) return normMap[k1];
-
-                // 2. Check base constType (without parentheses)
                 const baseName = constType ? constType.replace(/\s*\([^)]*\)/g, '').trim() : '';
-                const k2 = normalizeKey(baseName);
-                if (k2 && normMap[k2] !== undefined) return normMap[k2];
 
-                // 3. Check matType
-                const k3 = normalizeKey(matType);
-                if (k3 && normMap[k3] !== undefined) return normMap[k3];
+                const candidateStrings = [];
+                // Check mode-specific candidate keys first
+                if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}_${qualKey}`);
+                if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}_${qualKey}`);
+                if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}_${qualKey}`);
+                if (constType) candidateStrings.push(`${constType}_${qualKey}`);
+
+                if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}_${qualKey}`);
+                if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}_${qualKey}`);
+                if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}_${qualKey}`);
+                if (baseName) candidateStrings.push(`${baseName}_${qualKey}`);
+
+                if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}_${qualKey}`);
+                if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}_${qualKey}`);
+                if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}_${qualKey}`);
+                if (matType) candidateStrings.push(`${matType}_${qualKey}`);
+
+                // Check base candidate keys (fallback)
+                if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}`);
+                if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}`);
+                if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}`);
+                if (constType) candidateStrings.push(constType);
+
+                if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}`);
+                if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}`);
+                if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}`);
+                if (baseName) candidateStrings.push(baseName);
+
+                if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}`);
+                if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}`);
+                if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}`);
+                if (matType) candidateStrings.push(matType);
+
+                for (const cand of candidateStrings) {
+                    const k = normalizeKey(cand);
+                    if (normMap[k] !== undefined) return normMap[k];
+                }
 
                 return undefined;
             }
@@ -2066,24 +2101,7 @@
                 });
             }
 
-            // Sync/override rates, custom materials, custom items, and deletions from localStorage
-            const adminRates = getRates();
-
-            // 1. Sync custom rates (from admin Rates Management)
-            db.forEach(m => {
-                const targetRate = resolveRate(adminRates, m.constructionType, m.materialType);
-                if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
-                    let factor = 1.0;
-                    if (adminRates[m.constructionType] === undefined) {
-                        if (m.quality === 'Middle / Standard') factor = 0.85;
-                        else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
-                    }
-                    m.baseAmount = Math.round(parseFloat(targetRate) * factor);
-                    m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
-                }
-            });
-
-            // 2. Merge custom materials added by admin to standard items
+            // 1. Merge custom materials added by admin to standard items
             const customMats = localStorage.getItem('pks_custom_materials');
             if (customMats) {
                 try {
@@ -2117,9 +2135,9 @@
                                         else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
                                         else { fields = ["L", "W", "H"]; formula = "(L+W)*H/144"; }
 
-                                        const rate = rates[opt.label] !== undefined ? rates[opt.label] : (opt.rate || 0);
+                                        const qualRate = resolveRate(rates, opt.label, matType, room, selectedDivision, qual) || opt.rate || 0;
 
-                                        addMat(room, matType, qual, itemName, opt.label, opt.specifications || "", formula, rate);
+                                        addMat(room, matType, qual, itemName, opt.label, opt.specifications || "", formula, qualRate);
                                     }
                                 });
                             });
@@ -2128,7 +2146,7 @@
                 } catch (e) { console.error("Error merging custom materials: ", e); }
             }
 
-            // 3. Merge custom items created by admin
+            // 2. Merge custom items created by admin
             const customItemsStr = localStorage.getItem('pks_custom_items');
             if (customItemsStr) {
                 try {
@@ -2153,8 +2171,8 @@
                                             e.constructionType === m.label
                                         );
                                         if (!exists) {
-                                            const rate = rates[m.label] !== undefined ? rates[m.label] : m.base;
-                                            addMat(room, 'Standard', qual, item.name, m.label, "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS", m.formula, rate);
+                                            const qualRate = resolveRate(rates, m.label, 'Standard', room, selectedDivision, qual) || m.base || 0;
+                                            addMat(room, 'Standard', qual, item.name, m.label, "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS", m.formula, qualRate);
                                         }
                                     });
                                     return;
@@ -2176,9 +2194,9 @@
                                         else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
                                         else { fields = ["L", "W", "H"]; formula = "(L+W)*H/144"; }
 
-                                        const rate = rates[opt.label] !== undefined ? rates[opt.label] : (opt.rate || 0);
+                                        const qualRate = resolveRate(rates, opt.label, 'Standard', room, selectedDivision, qual) || opt.rate || 0;
 
-                                        addMat(room, 'Standard', qual, item.name, opt.label, opt.specifications || "", formula, rate);
+                                        addMat(room, 'Standard', qual, item.name, opt.label, opt.specifications || "", formula, qualRate);
                                     }
                                 });
                             });
@@ -2186,6 +2204,16 @@
                     });
                 } catch (e) { console.error("Error merging custom items: ", e); }
             }
+
+            // 3. Sync/override rates from admin Rates Management across all DB entries
+            const adminRates = getRates();
+            db.forEach(m => {
+                const targetRate = resolveRate(adminRates, m.constructionType, m.materialType, m.roomId, selectedDivision, m.quality);
+                if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
+                    m.baseAmount = parseFloat(targetRate);
+                    m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
+                }
+            });
 
             // 4. Filter out deleted standard items
             const deletedItemsStr = localStorage.getItem('pks_deleted_standard_items');
@@ -2406,13 +2434,11 @@
             // Apply admin-set rates to all DB entries
             const adminRates = getRates();
             db.forEach(m => {
-                const targetRate = resolveRate(adminRates, m.constructionType, m.materialType);
+                const targetRate = resolveRate(adminRates, m.constructionType, m.materialType, m.roomId, selectedDivision);
                 if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
                     let factor = 1.0;
-                    if (adminRates[m.constructionType] === undefined) {
-                        if (m.quality === 'Middle / Standard') factor = 0.85;
-                        else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
-                    }
+                    if (m.quality === 'Middle / Standard') factor = 0.85;
+                    else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
                     m.baseAmount = Math.round(parseFloat(targetRate) * factor);
                     m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
                 }
@@ -2465,7 +2491,9 @@
                     dbId: m.id,
                     roomId: m.roomId,
                     materialType: m.materialType,
-                    constructionType: m.constructionType
+                    constructionType: m.constructionType,
+                    quality: m.quality,
+                    itemName: m.itemName
                 });
             });
 
@@ -2878,12 +2906,13 @@
                     db.push(newEntry);
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
 
-                    // 1. Save rate in pks_rates
+                    // 1. Save rate in pks_rates with mode key
                     const storedRates = localStorage.getItem('pks_rates');
                     let rates = {};
                     if (storedRates) {
                         try { rates = JSON.parse(storedRates); } catch (e) { }
                     }
+                    rates[`${matName.trim()}_${pMode}`] = rate;
                     rates[matName.trim()] = rate;
                     localStorage.setItem('pks_rates', JSON.stringify(rates));
 
@@ -3051,21 +3080,22 @@
 
         function getFinalRateForOption(opt) {
             if (!opt) return 0;
+            const qual = opt.quality || modeLabel || 'Premium';
             // Always read rates live from localStorage pks_rates so admin changes show immediately
             let liveRate = null;
             const globalStored = localStorage.getItem('pks_rates');
             if (globalStored) {
                 try {
                     const globalRates = JSON.parse(globalStored);
-                    const resolved = resolveRate(globalRates, opt.constructionType, opt.materialType);
+                    const resolved = resolveRate(globalRates, opt.constructionType, opt.materialType, opt.roomId || selectedRoom, selectedDivision, qual);
                     if (resolved !== undefined && resolved !== null && resolved !== '') {
                         liveRate = parseFloat(resolved);
                     }
                 } catch (e) { }
             }
 
-            const baseAmount = (liveRate !== null) ? liveRate : (opt.baseAmount || 0);
-            const increasedRate = baseAmount * (1 + (opt.amountIncreasePercentage || 0) / 100);
+            let baseRate = (liveRate !== null) ? liveRate : (opt.baseAmount || 0);
+            const increasedRate = baseRate * (1 + (opt.amountIncreasePercentage || 0) / 100);
             const discountPct = opt.discountPercentage || 0;
             const finalRate = discountPct > 0 ? (increasedRate * (1 - discountPct / 100)) : increasedRate;
             return finalRate;
@@ -4526,19 +4556,12 @@
                 );
 
                 if (match) {
-                    let rate = resolveRate(adminRates, match.constructionType, match.materialType);
-                    if (rate === undefined || rate === null || rate === 0) {
-                        rate = match.baseAmount;
-                    }
-                    if (rate > 0) {
-                        let factor = 1.0;
-                        if (adminRates[match.constructionType] === undefined) {
-                            if (targetQual === 'Middle / Standard') factor = 0.85;
-                            else if (targetQual === 'Economy' && match.itemName !== 'BED') factor = 0.70;
-                        }
-                        const finalRate = Math.round(rate * factor);
+                    let rawRate = resolveRate(adminRates, match.constructionType, match.materialType, line.roomId || match.roomId, selectedDivision, targetQual);
+                    let finalRate = (rawRate !== undefined && rawRate !== null && rawRate > 0) ? parseFloat(rawRate) : (match.baseAmount || 0);
+                    if (finalRate > 0) {
                         line.rate = finalRate;
                         line.amount = line.sqft * finalRate;
+                    }
                         if (match.constructionType) {
                             line.material = match.constructionType;
                         }
