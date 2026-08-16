@@ -887,6 +887,7 @@
                 width: 100% !important;
                 box-sizing: border-box;
             }
+
             .print-only-cover-page img {
                 width: 98% !important;
                 max-width: 98% !important;
@@ -900,6 +901,7 @@
             .print-only-terms-pages {
                 display: block !important;
             }
+
             .print-terms-page {
                 page-break-before: always;
                 break-before: page;
@@ -911,6 +913,7 @@
                 width: 100% !important;
                 box-sizing: border-box;
             }
+
             .print-terms-page img {
                 width: 98% !important;
                 max-width: 98% !important;
@@ -1013,7 +1016,9 @@
 
             <!-- Top Right Page Actions -->
             <div style="display: flex; gap: 10px; align-items: center;">
-                <span class="cloud-sync-badge role-badge" style="background: rgba(255,255,255,0.08); font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">⚪ Local Mode</span>
+                <span class="cloud-sync-badge role-badge"
+                    style="background: rgba(255,255,255,0.08); font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">⚪
+                    Local Mode</span>
                 <button id="adminPanelNavBtn" class="back-btn"
                     style="display:none; padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: var(--accent); border: none; color: #ffffff !important;"
                     onclick="location.href='admin.html'">Admin Panel</button>
@@ -1050,11 +1055,13 @@
 
             <!-- Last Saved Quote No & Current Quote No Badges -->
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                <div
+                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; color: var(--muted); display: flex; align-items: center; gap: 6px;">
                     <span>Last Saved:</span>
                     <strong id="lastSavedQuoteBadge" style="color: var(--accent); font-weight: 700;">—</strong>
                 </div>
-                <div style="background: rgba(176,125,46,0.15); border: 1px solid rgba(176,125,46,0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; color: #f0ebe2; display: flex; align-items: center; gap: 6px;">
+                <div
+                    style="background: rgba(176,125,46,0.15); border: 1px solid rgba(176,125,46,0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; color: #f0ebe2; display: flex; align-items: center; gap: 6px;">
                     <span style="color: var(--accent);">Current:</span>
                     <strong id="currentQuoteBadge" style="color: #fff; font-weight: 700;">—</strong>
                 </div>
@@ -1369,14 +1376,14 @@
         const LOGO_BASE64 = "data:image/jpeg;base64,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";
         // Debounced Cloud Sync for localStorage changes starting with pks_
         const originalSetItem = localStorage.setItem;
-        localStorage.setItem = function(key, value) {
+        localStorage.setItem = function (key, value) {
             originalSetItem.apply(this, arguments);
             if (key && key.startsWith('pks_') && key !== 'pks_firebase_config' && key !== 'pks_admin_auth' && key !== 'pks_materials_db' && key !== 'pks_materials_db_version') {
                 try {
                     if (window.PKSSync && window.PKSSync.debouncedPush && !window.PKSSync.isSyncing) {
                         window.PKSSync.debouncedPush();
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
         };
 
@@ -1594,37 +1601,40 @@
                 const baseName = constType ? constType.replace(/\s*\([^)]*\)/g, '').trim() : '';
 
                 const candidateStrings = [];
-                // Check mode-specific candidate keys first
+                // 1. Room + Mode candidates
                 if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}_${qualKey}`);
                 if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}_${qualKey}`);
-                if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}_${qualKey}`);
-                if (constType) candidateStrings.push(`${constType}_${qualKey}`);
-
                 if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}_${qualKey}`);
                 if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}_${qualKey}`);
-                if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}_${qualKey}`);
-                if (baseName) candidateStrings.push(`${baseName}_${qualKey}`);
-
                 if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}_${qualKey}`);
                 if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}_${qualKey}`);
+
+                // 2. Room Base candidates (only for premium)
+                if (qualKey === 'premium') {
+                    if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}`);
+                    if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}`);
+                    if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}`);
+                    if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}`);
+                    if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}`);
+                    if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}`);
+                }
+                // 3. Global Mode candidates
+                if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}_${qualKey}`);
+                if (constType) candidateStrings.push(`${constType}_${qualKey}`);
+                if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}_${qualKey}`);
+                if (baseName) candidateStrings.push(`${baseName}_${qualKey}`);
                 if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}_${qualKey}`);
                 if (matType) candidateStrings.push(`${matType}_${qualKey}`);
 
-                // Check base candidate keys (fallback)
-                if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}`);
-                if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}`);
-                if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}`);
-                if (constType) candidateStrings.push(constType);
-
-                if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}`);
-                if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}`);
-                if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}`);
-                if (baseName) candidateStrings.push(baseName);
-
-                if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}`);
-                if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}`);
-                if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}`);
-                if (matType) candidateStrings.push(matType);
+                // 4. Global Base candidates (only for premium)
+                if (qualKey === 'premium') {
+                    if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}`);
+                    if (constType) candidateStrings.push(constType);
+                    if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}`);
+                    if (baseName) candidateStrings.push(baseName);
+                    if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}`);
+                    if (matType) candidateStrings.push(matType);
+                }
 
                 for (const cand of candidateStrings) {
                     const k = normalizeKey(cand);
@@ -1638,7 +1648,7 @@
             let rateVal = singleLookup(ratesObj);
             if (rateVal !== undefined) return rateVal;
 
-            // 2. Fallback to global pks_rates (rates added in admin panel previously)
+            // 2. Fallback to global pks_rates
             const globalStored = localStorage.getItem('pks_rates');
             if (globalStored) {
                 try {
@@ -1648,9 +1658,11 @@
                 } catch (e) { }
             }
 
-            // 3. Fallback to DEFAULT_RATES
-            rateVal = singleLookup(DEFAULT_RATES);
-            if (rateVal !== undefined) return rateVal;
+            // 3. Fallback to DEFAULT_RATES (only for premium)
+            if (qualKey === 'premium') {
+                rateVal = singleLookup(DEFAULT_RATES);
+                if (rateVal !== undefined) return rateVal;
+            }
 
             return undefined;
         }
@@ -2261,7 +2273,7 @@
                 try {
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
                     localStorage.setItem('pks_materials_db_version', currentDbVersion);
-                } catch(e) {}
+                } catch (e) { }
             }
 
             _materialsDbCache = db;
@@ -2405,7 +2417,7 @@
             let itemSpecsMap = {};
             const storedItemSpecs = localStorage.getItem('pks_item_specs');
             if (storedItemSpecs) {
-                try { itemSpecsMap = JSON.parse(storedItemSpecs) || {}; } catch(e) {}
+                try { itemSpecsMap = JSON.parse(storedItemSpecs) || {}; } catch (e) { }
             }
 
             let customSpecs = {};
@@ -2937,7 +2949,7 @@
                         let specsMap = {};
                         const storedSpecs = localStorage.getItem('pks_item_specs');
                         if (storedSpecs) {
-                            try { specsMap = JSON.parse(storedSpecs) || {}; } catch(e) {}
+                            try { specsMap = JSON.parse(storedSpecs) || {}; } catch (e) { }
                         }
                         specsMap[`${selectedRoom}_${itemId}_${matName.trim()}`] = specs;
                         specsMap[`${selectedRoom}_${matName.trim()}`] = specs;
@@ -4472,7 +4484,7 @@
             let specsMap = {};
             const storedSpecs = localStorage.getItem('pks_item_specs');
             if (storedSpecs) {
-                try { specsMap = JSON.parse(storedSpecs) || {}; } catch(e) {}
+                try { specsMap = JSON.parse(storedSpecs) || {}; } catch (e) { }
             }
             const specificKey = `${selectedRoom}_${itemId}_${opt.label}`;
             const roomMatKey = `${selectedRoom}_${opt.label}`;
@@ -4525,7 +4537,7 @@
                         window.PKSSync.debouncedPush(100);
                     }
                 }
-            } catch(e) {}
+            } catch (e) { }
 
             showToast("Specifications saved & synced to all devices!");
         }
@@ -4562,12 +4574,11 @@
                         line.rate = finalRate;
                         line.amount = line.sqft * finalRate;
                     }
-                        if (match.constructionType) {
-                            line.material = match.constructionType;
-                        }
-                        if (match.specifications) {
-                            line.specifications = formatSpecificationsText(match.specifications, line.roomId, match.constructionType);
-                        }
+                    if (match.constructionType) {
+                        line.material = match.constructionType;
+                    }
+                    if (match.specifications) {
+                        line.specifications = formatSpecificationsText(match.specifications, line.roomId, match.constructionType);
                     }
                 }
             });
