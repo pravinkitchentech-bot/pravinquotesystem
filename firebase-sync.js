@@ -1,5 +1,5 @@
 /**
- * Pravin Kitchens & Interiors - Realtime Firebase Cloud Sync
+ * Pravin Kitchen & Interiors - Realtime Firebase Cloud Sync
  * Automatically syncs rates, specifications, custom materials, custom items, divisions, deleted configurations, and saved quotes across all devices.
  * High-performance edition: debounced cloud pushes, loop prevention, and optimized memory footprint.
  */
