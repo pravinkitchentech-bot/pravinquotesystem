@@ -698,8 +698,8 @@
         <div class="content">
             <!-- Rates Management Tab -->
             <div id="rates" class="tab-panel active">
-                <h2>Default &amp; Custom Rates</h2>
-                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
+                <h2 id="ratesHeader">Default &amp; Custom Rates</h2>
+                <p id="ratesSubtext" style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
                     Set standard pricing per square foot for all materials. These rates will automatically lock on the
                     employee screen.
                 </p>
@@ -708,11 +708,12 @@
                         <thead>
                             <tr>
                                 <th>Material Name</th>
-                                <th>Rate (₹)</th>
+                                <th>Premium Rate (₹)</th>
+                                <th>Middle / Standard Rate (₹)</th>
+                                <th>Economy Rate (₹)</th>
                             </tr>
                         </thead>
                         <tbody id="ratesTableBody">
-                            <!-- populated by js -->
                         </tbody>
                     </table>
                 </div>
@@ -979,13 +980,16 @@
                         <li>Go to <a href="https://console.firebase.google.com" target="_blank"
                                 style="color: var(--accent); font-weight: bold;">Firebase Console
                                 (console.firebase.google.com)</a> and click <b>Add Project</b> (e.g.
-                            <i>Pravin-Quotes</i>).</li>
+                            <i>Pravin-Quotes</i>).
+                        </li>
                         <li>In the left menu, click <b>Build</b> &gt; <b>Realtime Database</b> &gt; <b>Create
                                 Database</b>.</li>
                         <li>Select <b>Start in test mode</b> (or set rules:
-                            <code>{".read": true, ".write": true}</code>) and click <b>Enable</b>.</li>
+                            <code>{".read": true, ".write": true}</code>) and click <b>Enable</b>.
+                        </li>
                         <li>Copy the Database URL shown at the top (e.g.,
-                            <code>https://pravin-quotes-default-rtdb.firebaseio.com/</code>).</li>
+                            <code>https://pravin-quotes-default-rtdb.firebaseio.com/</code>).
+                        </li>
                         <li>Paste that URL in the box above and click <b>Connect &amp; Enable Realtime Sync</b>!</li>
                     </ol>
                 </div>
@@ -998,14 +1002,14 @@
     <script>
         // Debounced Cloud Sync for localStorage changes starting with pks_
         const originalSetItem = localStorage.setItem;
-        localStorage.setItem = function(key, value) {
+        localStorage.setItem = function (key, value) {
             originalSetItem.apply(this, arguments);
             if (key && key.startsWith('pks_') && key !== 'pks_firebase_config' && key !== 'pks_admin_auth' && key !== 'pks_materials_db' && key !== 'pks_materials_db_version') {
                 try {
                     if (window.PKSSync && window.PKSSync.debouncedPush && !window.PKSSync.isSyncing) {
                         window.PKSSync.debouncedPush();
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
         };
 
@@ -1152,11 +1156,11 @@
                 { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
                 { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
-                { id: 4, name: "Kitchen – Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 5, name: "Kitchen – Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
-                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination"] },
-                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 4, name: "Kitchen Island Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 5, name: "Kitchen Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 6, name: "Breakfast Table Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 7, name: "Breakfast Table Beam Covering", options: ["Lamination"] },
+                { id: 8, name: "Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
@@ -1467,79 +1471,108 @@
             customItems = getCustomItems();
             currentRates = getRates();
 
-            // Get all unique material labels used in the selectedRoom
-            const roomMaterials = new Set();
-            const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
+            // Normalized map to guarantee absolutely zero duplicate entries
+            const materialMap = new Map();
 
-            // 1. Get standard item options for this room based on current pricing mode
+            function addMaterial(label) {
+                if (!label || typeof label !== 'string') return;
+                const clean = label.trim();
+                const norm = normalizeKey(clean);
+                if (!norm) return;
+
+                if (!materialMap.has(norm)) {
+                    materialMap.set(norm, clean);
+                } else {
+                    const current = materialMap.get(norm);
+                    if (current === current.toUpperCase() && clean !== clean.toUpperCase()) {
+                        materialMap.set(norm, clean);
+                    } else if (current.includes('-') && clean.includes('–')) {
+                        materialMap.set(norm, clean);
+                    }
+                }
+            }
+
+            // 1. Get standard item options for this room
             const activeOpts = getActiveRoomOptions();
-            activeOpts.forEach(opt => {
-                const clean = cleanRateMaterialName(opt, selectedRoom);
-                if (clean) roomMaterials.add(clean);
-            });
+            activeOpts.forEach(opt => addMaterial(opt));
 
             // 2. Add custom materials added to standard items in this room
             const items = ROOM_ITEMS[selectedRoom] || [];
             items.forEach(item => {
                 const customList = customMaterials[item.id] || [];
                 customList.forEach(m => {
-                    if (m && m.label) {
-                        const clean = cleanRateMaterialName(m.label, selectedRoom);
-                        if (clean) roomMaterials.add(clean);
-                    }
+                    if (m && m.label) addMaterial(m.label);
                 });
             });
-
-            // Also check all entries in customMaterials map for this room
-            for (const key in customMaterials) {
-                const list = customMaterials[key];
-                if (Array.isArray(list)) {
-                    list.forEach(m => {
-                        if (m && m.label) {
-                            const clean = cleanRateMaterialName(m.label, selectedRoom);
-                            if (clean) roomMaterials.add(clean);
-                        }
-                    });
-                }
-            }
 
             // 3. Add custom items created for this room
             if (selectedRoom !== 'accessories') {
                 customItems.forEach(item => {
-                    item.options.forEach(opt => {
-                        const clean = cleanRateMaterialName(opt.label, selectedRoom);
-                        if (clean) roomMaterials.add(clean);
+                    (item.options || []).forEach(opt => {
+                        const lbl = opt.label || opt;
+                        if (lbl) addMaterial(lbl);
                     });
                 });
             }
 
-            // 4. Add any materials added from Employee Panel stored in pks_materials_db
+            // 4. Add any custom materials from Employee Panel stored in pks_materials_db for this room
             let storedDb = localStorage.getItem('pks_materials_db');
             if (storedDb) {
                 try {
                     let db = JSON.parse(storedDb);
                     db.forEach(m => {
                         if ((m.roomId || '').toLowerCase() === (selectedRoom || '').toLowerCase() && m.constructionType) {
-                            const clean = cleanRateMaterialName(m.constructionType, selectedRoom);
-                            if (clean) roomMaterials.add(clean);
+                            addMaterial(m.constructionType);
                         }
                     });
                 } catch (e) { }
             }
 
-            function resolveMatRate(mat) {
+            const ratesH2 = document.getElementById('ratesHeader');
+            if (ratesH2) ratesH2.textContent = `Rates for ${selectedRoomName || selectedRoom}`;
+            const ratesP = document.getElementById('ratesSubtext');
+            if (ratesP) ratesP.textContent = `Set room-specific rates per square foot for ${selectedRoomName || selectedRoom}. These rates apply specifically to this room without overriding other rooms.`;
+
+            function resolveMatRate(mat, qual = 'premium') {
                 const normMat = normalizeKey(mat);
                 const normBase = normalizeKey(mat.replace(/\s*\([^)]*\)/g, '').trim());
+                const curRoom = (selectedRoom || '').toLowerCase();
+                const curDiv = (selectedDivision || '').toLowerCase();
+                const qualKey = qual.toLowerCase();
 
                 function checkObj(obj) {
                     if (!obj) return undefined;
+                    const normMap = {};
                     for (const k in obj) {
                         if (obj[k] !== undefined && obj[k] !== null && obj[k] !== '' && parseFloat(obj[k]) > 0) {
-                            const nk = normalizeKey(k);
-                            if (nk === normMat || nk === normBase) {
-                                return parseFloat(obj[k]);
-                            }
+                            normMap[normalizeKey(k)] = parseFloat(obj[k]);
                         }
+                    }
+
+                    const candidates = [];
+                    if (curDiv && curRoom && mat) candidates.push(`${curDiv}_${curRoom}_${mat}_${qualKey}`);
+                    if (curRoom && mat) candidates.push(`${curRoom}_${mat}_${qualKey}`);
+                    if (curDiv && mat) candidates.push(`${curDiv}_${mat}_${qualKey}`);
+                    if (mat) candidates.push(`${mat}_${qualKey}`);
+
+                    if (curDiv && curRoom && normBase) candidates.push(`${curDiv}_${curRoom}_${normBase}_${qualKey}`);
+                    if (curRoom && normBase) candidates.push(`${curRoom}_${normBase}_${qualKey}`);
+                    if (curDiv && normBase) candidates.push(`${curDiv}_${normBase}_${qualKey}`);
+                    if (normBase) candidates.push(`${normBase}_${qualKey}`);
+
+                    if (curDiv && curRoom && mat) candidates.push(`${curDiv}_${curRoom}_${mat}`);
+                    if (curRoom && mat) candidates.push(`${curRoom}_${mat}`);
+                    if (curDiv && mat) candidates.push(`${curDiv}_${mat}`);
+                    if (mat) candidates.push(mat);
+
+                    if (curDiv && curRoom && normBase) candidates.push(`${curDiv}_${curRoom}_${normBase}`);
+                    if (curRoom && normBase) candidates.push(`${curRoom}_${normBase}`);
+                    if (curDiv && normBase) candidates.push(`${curDiv}_${normBase}`);
+                    if (normBase) candidates.push(normBase);
+
+                    for (const cand of candidates) {
+                        const k = normalizeKey(cand);
+                        if (normMap[k] !== undefined) return normMap[k];
                     }
                     return undefined;
                 }
@@ -1550,15 +1583,20 @@
                 v = checkObj(DEFAULT_RATES);
                 if (v !== undefined) return v;
 
-                return 0;
+                return undefined;
             }
 
-            Array.from(roomMaterials).sort().forEach(mat => {
+            const uniqueMaterials = Array.from(materialMap.values()).sort((a, b) => a.localeCompare(b));
+            uniqueMaterials.forEach(mat => {
                 const tr = document.createElement('tr');
-                const rateVal = resolveMatRate(mat);
+                const premVal = resolveMatRate(mat, 'premium');
+                const midVal = resolveMatRate(mat, 'medium');
+                const ecoVal = resolveMatRate(mat, 'economy');
                 tr.innerHTML = `
-                    <td>${mat}</td>
-                    <td><input type="number" data-material="${mat}" value="${rateVal}"></td>
+                    <td style="font-weight: 500;">${mat}</td>
+                    <td><input type="number" data-material="${mat}" data-qual="premium" value="${premVal !== undefined ? premVal : ''}" placeholder="Premium ₹"></td>
+                    <td><input type="number" data-material="${mat}" data-qual="medium" value="${midVal !== undefined ? midVal : ''}" placeholder="Middle ₹"></td>
+                    <td><input type="number" data-material="${mat}" data-qual="economy" value="${ecoVal !== undefined ? ecoVal : ''}" placeholder="Economy ₹"></td>
                 `;
                 body.appendChild(tr);
             });
@@ -1567,22 +1605,42 @@
         function saveRates() {
             const inputs = document.querySelectorAll('#ratesTableBody input');
             const ratesObj = { ...currentRates };
+            const curRoom = (selectedRoom || '').toLowerCase();
+            const curDiv = (selectedDivision || '').toLowerCase();
+
             inputs.forEach(input => {
                 const mat = input.dataset.material;
-                const val = parseFloat(input.value) || 0;
-                ratesObj[mat] = val;
-                // Also set common variant keys so any direct lookup matches the updated rate
-                const subtypes = ['(Box Type)', '(Door Type)', '(Door Only)', '(Partition Type)', '(Framed)', '(Box)'];
-                subtypes.forEach(sub => {
-                    ratesObj[`${mat} ${sub}`] = val;
-                });
+                const qual = input.dataset.qual;
+                const valStr = input.value.trim();
+                if (!mat) return;
+
+                const val = parseFloat(valStr);
+                const keySuffix = qual ? `_${qual}` : '';
+
+                if (!isNaN(val)) {
+                    if (curRoom) {
+                        if (curDiv) {
+                            ratesObj[`${curDiv}_${curRoom}_${mat}${keySuffix}`] = val;
+                        }
+                        ratesObj[`${curRoom}_${mat}${keySuffix}`] = val;
+
+                        const baseName = mat.replace(/\s*\([^)]*\)/g, '').trim();
+                        if (baseName) {
+                            if (curDiv) ratesObj[`${curDiv}_${curRoom}_${baseName}${keySuffix}`] = val;
+                            ratesObj[`${curRoom}_${baseName}${keySuffix}`] = val;
+                        }
+                    }
+                    ratesObj[`${mat}${keySuffix}`] = val;
+                    const baseName = mat.replace(/\s*\([^)]*\)/g, '').trim();
+                    if (baseName) ratesObj[`${baseName}${keySuffix}`] = val;
+                }
             });
             localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
             currentRates = ratesObj;
             if (window.PKSSync && window.PKSSync.pushRates) {
                 window.PKSSync.pushRates(ratesObj);
             }
-            showToast("Rates saved & synced to all devices!");
+            showToast(`Rates saved for ${selectedRoomName || selectedRoom}!`);
         }
 
         function resetAllDefaults() {
@@ -1645,6 +1703,11 @@
         function renderCurrentItemsList() {
             const container = document.getElementById('currentItemsList');
             container.innerHTML = '';
+
+            customMaterials = getCustomMaterials();
+            customItems = getCustomItems();
+            deletedStandardMaterials = getDeletedStandardMaterials();
+            deletedStandardItems = getDeletedStandardItems();
 
             // Render Standard items with custom modifications
             BASE_ITEMS.forEach(item => {
@@ -1716,6 +1779,11 @@
         function renderCustomItemsList() {
             const container = document.getElementById('customCreatedItemsList');
             container.innerHTML = '';
+
+            customMaterials = getCustomMaterials();
+            customItems = getCustomItems();
+            deletedStandardMaterials = getDeletedStandardMaterials();
+            deletedStandardItems = getDeletedStandardItems();
 
             // 1. Render Standard items that are NOT deleted
             BASE_ITEMS.forEach(item => {
