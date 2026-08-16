@@ -373,6 +373,24 @@
             font-family: var(--sans);
         }
 
+        .quote-mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .quote-mode-btn.active, .quote-mode-btn:hover {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
         /* Quote section */
         .quote-wrap {
             margin-top: 40px;
@@ -1163,8 +1181,8 @@
         <div class="items-grid" id="itemsGrid"></div>
 
         <div class="quote-wrap">
-            <!-- Mode Switcher Bar above Quote Summary -->
-            <div class="no-print"
+            <!-- Quote Mode Conversion Bar above Quote Summary -->
+            <div class="no-print" id="quoteModeTabsContainer"
                 style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; background: var(--surface2); padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border);">
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <div
@@ -1173,15 +1191,14 @@
                     </div>
                     <div
                         style="display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 8px;">
-                        <button type="button" class="mode-tab-btn" id="summaryModeBtnPremium"
-                            onclick="switchPricingMode('premium')"
+                        <button type="button" class="quote-mode-btn" id="quoteModeBtnPremium"
+                            onclick="convertQuoteSummaryMode('premium')"
                             style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">✨ Premium</button>
-                        <button type="button" class="mode-tab-btn" id="summaryModeBtnMedium"
-                            onclick="switchPricingMode('medium')"
-                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">⚖️ Middle /
-                            Standard</button>
-                        <button type="button" class="mode-tab-btn" id="summaryModeBtnEconomy"
-                            onclick="switchPricingMode('economy')"
+                        <button type="button" class="quote-mode-btn" id="quoteModeBtnMedium"
+                            onclick="convertQuoteSummaryMode('medium')"
+                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">⚖️ Middle / Standard</button>
+                        <button type="button" class="quote-mode-btn" id="quoteModeBtnEconomy"
+                            onclick="convertQuoteSummaryMode('economy')"
                             style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">💡 Economy</button>
                     </div>
                 </div>
@@ -4691,6 +4708,19 @@
             });
 
             renderQuote();
+        }
+
+        function convertQuoteSummaryMode(mode) {
+            document.querySelectorAll('.quote-mode-btn').forEach(btn => btn.classList.remove('active'));
+            let activeId = 'quoteModeBtnPremium';
+            if (mode === 'medium') activeId = 'quoteModeBtnMedium';
+            else if (mode === 'economy') activeId = 'quoteModeBtnEconomy';
+            
+            const btn = document.getElementById(activeId);
+            if (btn) btn.classList.add('active');
+
+            recalculateQuoteLinesForMode(mode);
+            showToast(`Quote Summary converted to ${mode === 'premium' ? 'Premium' : (mode === 'medium' ? 'Middle / Standard' : 'Economy')} mode!`);
         }
 
         function switchPricingMode(mode) {
