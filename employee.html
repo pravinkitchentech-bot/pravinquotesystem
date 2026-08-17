@@ -11,7 +11,7 @@
     <script src="firebase-sync.js"></script>
     <style>
         :root {
-            --bg: #f2ede6;
+            --bg: rgb(248, 240, 240);
             --surface: #ffffff;
             --surface2: #faf7f3;
             --border: #e0d6c8;
@@ -385,7 +385,8 @@
             transition: all 0.2s ease;
         }
 
-        .quote-mode-btn.active, .quote-mode-btn:hover {
+        .quote-mode-btn.active,
+        .quote-mode-btn:hover {
             background: var(--accent);
             color: #ffffff;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
@@ -1187,7 +1188,8 @@
                             style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">✨ Premium</button>
                         <button type="button" class="quote-mode-btn" id="quoteModeBtnMedium"
                             onclick="convertQuoteSummaryMode('medium')"
-                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">⚖️ Middle / Standard</button>
+                            style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">⚖️ Middle /
+                            Standard</button>
                         <button type="button" class="quote-mode-btn" id="quoteModeBtnEconomy"
                             onclick="convertQuoteSummaryMode('economy')"
                             style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700;">💡 Economy</button>
@@ -2955,7 +2957,7 @@
         function addCustomMaterialOption(buildId, itemId) {
             const matName = prompt("Enter new material name (e.g. Teak Wood (Box Type)):");
             if (!matName || !matName.trim()) return;
-            
+
             const rateStr = prompt("Enter rate (₹):");
             if (!rateStr) return;
             const rate = parseFloat(rateStr) || 0;
@@ -4766,7 +4768,7 @@
             let activeId = 'quoteModeBtnPremium';
             if (mode === 'medium') activeId = 'quoteModeBtnMedium';
             else if (mode === 'economy') activeId = 'quoteModeBtnEconomy';
-            
+
             const btn = document.getElementById(activeId);
             if (btn) btn.classList.add('active');
 
