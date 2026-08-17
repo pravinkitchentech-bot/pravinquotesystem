@@ -717,6 +717,7 @@
                                 <th>Premium Rate (₹)</th>
                                 <th>Middle / Standard Rate (₹)</th>
                                 <th>Economy Rate (₹)</th>
+                                <th style="text-align: center; width: 110px;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="ratesTableBody">
@@ -1621,16 +1622,26 @@
             }
 
             const uniqueMaterials = Array.from(materialMap.values()).sort((a, b) => a.localeCompare(b));
-            uniqueMaterials.forEach(mat => {
+            const deletedMats = getDeletedStandardMaterials();
+            const activeMaterials = uniqueMaterials.filter(mat => {
+                const normMat = normalizeKey(mat);
+                return !deletedMats.includes(mat) && !deletedMats.includes(normMat);
+            });
+
+            activeMaterials.forEach(mat => {
                 const tr = document.createElement('tr');
                 const premVal = resolveMatRate(mat, 'premium');
                 const midVal = resolveMatRate(mat, 'medium');
                 const ecoVal = resolveMatRate(mat, 'economy');
+                const safeMat = mat.replace(/'/g, "\\'");
                 tr.innerHTML = `
                     <td style="font-weight: 500;">${mat}</td>
                     <td><input type="number" data-material="${mat}" data-qual="premium" value="${premVal !== undefined ? premVal : ''}" placeholder="Premium ₹"></td>
                     <td><input type="number" data-material="${mat}" data-qual="medium" value="${midVal !== undefined ? midVal : ''}" placeholder="Middle ₹"></td>
                     <td><input type="number" data-material="${mat}" data-qual="economy" value="${ecoVal !== undefined ? ecoVal : ''}" placeholder="Economy ₹"></td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn-danger" style="padding: 5px 12px; font-size: 0.8rem; border-radius: 8px; background: rgba(255, 68, 68, 0.15); border: 1px solid rgba(255, 68, 68, 0.4); color: #ff6b6b; cursor: pointer; transition: all 0.2s; white-space: nowrap;" onclick="deleteMaterialGlobally('${safeMat}')" title="Delete ${mat} across all devices">🗑️ Delete</button>
+                    </td>
                 `;
                 body.appendChild(tr);
             });
@@ -1750,7 +1761,10 @@
                 div.className = 'item-manage-card';
 
                 // Get standard list (filter deleted)
-                let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
+                let filteredOptions = item.options.filter(opt => {
+                    const norm = normalizeKey(opt);
+                    return !deletedStandardMaterials.includes(opt) && !deletedStandardMaterials.includes(norm) && !deletedStandardMaterials.includes(`${item.id}-${opt}`);
+                });
                 let matTags = filteredOptions.map(opt => `
                     <span class="tag-pill">
                         ${opt}
@@ -1826,7 +1840,10 @@
                 div.className = 'item-manage-card';
 
                 const deletedMats = getDeletedStandardMaterials();
-                let filteredOptions = (item.options || []).filter(o => !deletedMats.includes(`${item.id}-${o}`));
+                let filteredOptions = (item.options || []).filter(o => {
+                    const norm = normalizeKey(o);
+                    return !deletedMats.includes(o) && !deletedMats.includes(norm) && !deletedMats.includes(`${item.id}-${o}`);
+                });
 
                 let matTags = filteredOptions.map(opt => `
                     <span class="tag-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin: 3px;">
@@ -2004,7 +2021,104 @@
 
             renderItemsList();
             initSpecsTab();
+            renderRatesTable();
             showToast(`Material "${materialLabel}" deleted!`);
+        }
+
+        function deleteMaterialGlobally(mat) {
+            if (!mat) return;
+            if (!confirm(`Are you sure you want to delete material "${mat}" across all devices?\n\nThis will permanently remove "${mat}" from rates, items, specs, and quotation calculations everywhere.`)) return;
+
+            const normMat = normalizeKey(mat);
+
+            // 1. Add material name and normalized form to pks_deleted_standard_materials
+            let deletedMats = getDeletedStandardMaterials();
+            if (!deletedMats.includes(mat)) deletedMats.push(mat);
+            if (normMat && !deletedMats.includes(normMat)) deletedMats.push(normMat);
+
+            // Also mark as deleted for every base item
+            BASE_ITEMS.forEach(item => {
+                const key = `${item.id}-${mat}`;
+                if (!deletedMats.includes(key)) deletedMats.push(key);
+            });
+            localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedMats));
+
+            // 2. Remove from customMaterials (pks_custom_materials)
+            let customMats = getCustomMaterials();
+            let customChanged = false;
+            for (const itemId in customMats) {
+                if (Array.isArray(customMats[itemId])) {
+                    const origLen = customMats[itemId].length;
+                    customMats[itemId] = customMats[itemId].filter(m => m.label !== mat && normalizeKey(m.label || '') !== normMat);
+                    if (customMats[itemId].length !== origLen) customChanged = true;
+                    if (customMats[itemId].length === 0) delete customMats[itemId];
+                }
+            }
+            if (customChanged) {
+                localStorage.setItem('pks_custom_materials', JSON.stringify(customMats));
+            }
+
+            // 3. Remove from customItems options if present
+            let customItemsArr = getCustomItems();
+            let customItemsChanged = false;
+            customItemsArr.forEach(item => {
+                if (Array.isArray(item.options)) {
+                    const origLen = item.options.length;
+                    item.options = item.options.filter(opt => {
+                        const lbl = typeof opt === 'string' ? opt : opt.label;
+                        return lbl !== mat && normalizeKey(lbl || '') !== normMat;
+                    });
+                    if (item.options.length !== origLen) customItemsChanged = true;
+                }
+            });
+            if (customItemsChanged) {
+                localStorage.setItem('pks_custom_items', JSON.stringify(customItemsArr));
+            }
+
+            // 4. Remove from pks_materials_db if present
+            let storedDb = localStorage.getItem('pks_materials_db');
+            if (storedDb) {
+                try {
+                    let db = JSON.parse(storedDb);
+                    db = db.filter(m => m.constructionType !== mat && normalizeKey(m.constructionType || '') !== normMat);
+                    localStorage.setItem('pks_materials_db', JSON.stringify(db));
+                } catch (e) { }
+            }
+
+            // 5. Remove stored rates from pks_rates (currentRates)
+            let rates = getRates();
+            let ratesChanged = false;
+            const matLower = mat.toLowerCase();
+            for (const k in rates) {
+                const kLower = k.toLowerCase();
+                if (kLower === matLower || kLower.endsWith(`_${matLower}`) || kLower.includes(`_${matLower}_`) || kLower.startsWith(`${matLower}_`)) {
+                    delete rates[k];
+                    ratesChanged = true;
+                }
+            }
+            if (ratesChanged) {
+                localStorage.setItem('pks_rates', JSON.stringify(rates));
+            }
+
+            // 6. Broadcast Realtime Cloud Sync across all devices
+            try {
+                if (window.PKSSync) {
+                    if (window.PKSSync.pushDeletedStandardMaterials) window.PKSSync.pushDeletedStandardMaterials(getDeletedStandardMaterials());
+                    if (window.PKSSync.pushCustomMaterials) window.PKSSync.pushCustomMaterials(getCustomMaterials());
+                    if (window.PKSSync.pushCustomItems) window.PKSSync.pushCustomItems(getCustomItems());
+                    if (window.PKSSync.pushRates) window.PKSSync.pushRates(getRates());
+                    let dbLatest = JSON.parse(localStorage.getItem('pks_materials_db') || '[]');
+                    if (window.PKSSync.pushMaterialsDb) window.PKSSync.pushMaterialsDb(dbLatest);
+                    if (window.PKSSync.debouncedPush) window.PKSSync.debouncedPush(50);
+                }
+            } catch (e) { }
+
+            // 7. Refresh all UI views in Admin Panel
+            renderRatesTable();
+            renderItemsList();
+            renderCustomItemsList();
+            if (typeof initSpecsTab === 'function') initSpecsTab();
+            showToast(`Material "${mat}" deleted across all devices!`);
         }
 
         function deleteCustomItemMaterialFromAdmin(itemId, optIdx) {
@@ -2759,7 +2873,10 @@
                 card.className = 'item-manage-card';
 
                 const deletedMats = getDeletedStandardMaterials();
-                let optionsList = (item.options || []).filter(o => !deletedMats.includes(`${item.id}-${o}`));
+                let optionsList = (item.options || []).filter(o => {
+                    const norm = normalizeKey(o);
+                    return !deletedMats.includes(o) && !deletedMats.includes(norm) && !deletedMats.includes(`${item.id}-${o}`);
+                });
 
                 const cMats = getCustomMaterials();
                 if (cMats[item.id]) {
