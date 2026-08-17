@@ -29,9 +29,11 @@
             --mono: 'JetBrains Mono', 'Courier New', monospace;
             --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
+
         * {
             box-sizing: border-box;
         }
+
         body {
             font-family: var(--sans);
             color: var(--text);
@@ -40,6 +42,7 @@
             padding: 0 0 60px 0;
             min-height: 100vh;
         }
+
         header {
             background: var(--header);
             padding: 14px 24px;
@@ -49,6 +52,7 @@
             z-index: 50;
             box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
         }
+
         .header-inner {
             max-width: 1100px;
             margin: 0 auto;
@@ -58,6 +62,7 @@
             flex-wrap: wrap;
             gap: 14px;
         }
+
         header h1 {
             margin: 0;
             font-size: 1.25rem;
@@ -65,9 +70,11 @@
             letter-spacing: .2px;
             color: #f0ebe2;
         }
+
         header h1 span {
             color: var(--accent);
         }
+
         header .tag {
             font-size: .7rem;
             color: #9a9186;
@@ -75,6 +82,7 @@
             text-transform: uppercase;
             margin-top: 2px;
         }
+
         .role-badge {
             background: rgba(176, 125, 46, .15);
             color: var(--accent);
@@ -89,11 +97,13 @@
             display: inline-block;
             vertical-align: middle;
         }
+
         .cust-row {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
+
         .cust-row input {
             background: rgba(255, 255, 255, .08);
             border: 1px solid rgba(255, 255, 255, .15);
@@ -104,13 +114,16 @@
             font-size: .82rem;
             width: 140px;
         }
+
         .cust-row input[type="date"] {
             width: 155px;
             color-scheme: dark;
         }
+
         .cust-row input::placeholder {
             color: #7a7065;
         }
+
         .cust-row input:focus {
             outline: none;
             border-color: var(--accent);
@@ -2294,17 +2307,18 @@
                 try {
                     const deletedMats = JSON.parse(deletedMatsStr);
                     db = db.filter(m => {
+                        if (deletedMats.includes(m.constructionType)) return false;
+                        const norm = normalizeKey(m.constructionType);
+                        if (norm && deletedMats.includes(norm)) return false;
                         const stdItemId = getStandardItemId(m.roomId, m.itemName);
                         if (stdItemId) {
                             const key = `${stdItemId}-${m.constructionType}`;
-                            return !deletedMats.includes(key);
+                            if (deletedMats.includes(key)) return false;
                         }
                         return true;
                     });
                 } catch (e) { }
             }
-
-            // 6. Strip non-Engineering-Wood options from TABLE items in Economy mode (catches cached entries)
             db = db.filter(m => {
                 if (m.quality !== 'Economy') return true;
                 const nameUpper = m.itemName.toUpperCase();
@@ -2317,24 +2331,19 @@
                     m.constructionType === 'Engineering Wood (Door Only)' ||
                     m.constructionType === 'Engineering Wood (Partition Type)';
             });
-
             if (!loadedFromStore) {
                 try {
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
                     localStorage.setItem('pks_materials_db_version', currentDbVersion);
                 } catch (e) { }
             }
-
             _materialsDbCache = db;
             return db;
         }
-
         const activeMaterialType = sessionStorage.getItem('pks_material_type') || 'Half Teak Wood';
         let activeQuality = 'Premium';
         if (pricingMode === 'medium') activeQuality = 'Middle / Standard';
         else if (pricingMode === 'economy') activeQuality = 'Economy';
-
-        // Formula Evaluator
         function evaluateFormula(formulaStr, values) {
             if (!formulaStr) return 0;
             let normalized = formulaStr.toUpperCase();
@@ -2344,7 +2353,6 @@
             normalized = normalized.replace(/\bDEPTH\b/g, 'D');
             normalized = normalized.replace(/\bSQFT\b/g, 'S');
             normalized = normalized.replace(/\bQTY\b/g, 'Q');
-
             const valMap = {
                 L: parseFloat(values && (values.L || values.Length) || 0) || 0,
                 W: parseFloat(values && (values.W || values.Width) || 0) || 0,
@@ -2353,7 +2361,6 @@
                 S: parseFloat(values && (values.SQFT || values.S) || 0) || 0,
                 Q: parseFloat(values && (values.QTY || values.Q) || 1) || 1
             };
-
             let evalStr = normalized;
             evalStr = evalStr.replace(/\bL\b/g, valMap.L);
             evalStr = evalStr.replace(/\bW\b/g, valMap.W);
@@ -2361,9 +2368,7 @@
             evalStr = evalStr.replace(/\bD\b/g, valMap.D);
             evalStr = evalStr.replace(/\bS\b/g, valMap.S);
             evalStr = evalStr.replace(/\bQ\b/g, valMap.Q);
-
             evalStr = evalStr.replace(/[^0-9+\-*/().\s]/g, '');
-
             try {
                 const res = Function(`"use strict"; return (${evalStr})`)();
                 return parseFloat(res) || 0;
@@ -2917,13 +2922,20 @@
             if (storedDb) {
                 try {
                     let db = JSON.parse(storedDb);
-                    db = db.filter(m => m.id !== opt.dbId);
+                    db = db.filter(m => m.id !== opt.dbId && m.constructionType !== opt.label);
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
                 } catch (e) { }
             }
 
             const stdItemId = getStandardItemId(selectedRoom, item.name);
+            let deletedMatsStr = localStorage.getItem('pks_deleted_standard_materials');
+            let deletedMats = deletedMatsStr ? JSON.parse(deletedMatsStr) : [];
+            if (!deletedMats.includes(opt.label)) deletedMats.push(opt.label);
+            const normMat = normalizeKey(opt.label);
+            if (normMat && !deletedMats.includes(normMat)) deletedMats.push(normMat);
             if (stdItemId) {
+                const key = `${stdItemId}-${opt.label}`;
+                if (!deletedMats.includes(key)) deletedMats.push(key);
                 const storedCustom = localStorage.getItem('pks_custom_materials');
                 if (storedCustom) {
                     try {
@@ -2935,6 +2947,17 @@
                     } catch (e) { }
                 }
             }
+            localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedMats));
+
+            // Sync to Firebase Cloud across all devices
+            try {
+                if (window.PKSSync) {
+                    if (window.PKSSync.pushDeletedStandardMaterials) window.PKSSync.pushDeletedStandardMaterials(JSON.parse(localStorage.getItem('pks_deleted_standard_materials') || '[]'));
+                    if (window.PKSSync.pushCustomMaterials) window.PKSSync.pushCustomMaterials(JSON.parse(localStorage.getItem('pks_custom_materials') || '{}'));
+                    if (window.PKSSync.pushMaterialsDb) window.PKSSync.pushMaterialsDb(JSON.parse(localStorage.getItem('pks_materials_db') || '[]'));
+                    if (window.PKSSync.debouncedPush) window.PKSSync.debouncedPush(50);
+                }
+            } catch (e) { }
 
             invalidateMaterialsCache();
             ITEMS = getFullItemsList();
