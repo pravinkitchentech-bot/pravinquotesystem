@@ -1127,7 +1127,11 @@
                 <button type="button" class="mode-tab-btn" id="modeBtnPremium"
                     onclick="switchPricingMode('premium')">Premium</button>
                 <button type="button" class="mode-tab-btn" id="modeBtnMedium"
+<<<<<<< HEAD
+                    onclick="switchPricingMode('medium')">Middle</button>
+=======
                     onclick="switchPricingMode('medium')">Middle / Standard</button>
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
                 <button type="button" class="mode-tab-btn" id="modeBtnEconomy"
                     onclick="switchPricingMode('economy')">Economy</button>
             </div>
@@ -1464,6 +1468,63 @@
 
         // Render division badge in header
         document.getElementById('divisionBadge').textContent = `${selectedDivisionName} (${modeLabel})`;
+<<<<<<< HEAD
+
+        const role = sessionStorage.getItem('pks_role');
+        if (!role) {
+            location.href = 'index.html';
+        }
+        const showRate = (role === 'admin');
+
+        function getRooms() {
+            const stored = localStorage.getItem('pks_custom_rooms');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch (e) { }
+            }
+            return [
+                { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+                { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+                { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+                { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
+                { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
+                { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
+                { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
+                { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+                { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
+                { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+                { id: 'passage_ceiling', name: 'Passage Ceiling', icon: '🏛️', active: true },
+                { id: 'false_ceiling', name: 'False Ceiling', icon: '✨', active: true },
+                { id: 'walk_in_wardrobe', name: 'Walk-in Wardrobe', icon: '👔', active: true },
+                { id: 'staircase', name: 'Staircase', icon: '🪜', active: true },
+                { id: 'profile_glass_door', name: 'Profile Glass Door', icon: '🪟', active: true },
+                { id: 'courtyard', name: 'Courtyard', icon: '🏞️', active: true },
+                { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
+                { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true },
+                { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
+            ];
+        }
+
+        const allRooms = getRooms();
+        const ROOMS = allRooms.filter(r => {
+            if (isEconomyMode && r.id === 'study_room') return false;
+            return true;
+        });
+
+        let selectedRoom = (sessionStorage.getItem('pks_selected_room') || 'kitchen').toLowerCase();
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+
+        let FIELD_LABELS = {
+            L: "Length (in)",
+            W: "Width",
+            H: "Height (in)",
+            SQFT: "Sq.Ft",
+            QTY: "Quantity"
+        };
+
+=======
 
         const role = sessionStorage.getItem('pks_role');
         if (!role) {
@@ -1505,6 +1566,7 @@
             QTY: "Quantity"
         };
 
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
         /* ---------- Base Materials & Formulas (Inches, divided by 144) ---------- */
         const STD_CABINET = [
             { label: "Marine Ply – Lamination", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1925,7 +1987,11 @@
             addStd('kitchen', 'Kitchen Bottom', boxPartitionDoor);
             addStd('kitchen', 'Kitchen Top Box', boxDoorOnly);
             addStd('kitchen', 'Kitchen Loft', loftOptions);
+<<<<<<< HEAD
+            addStd('kitchen', 'Kitchen I-Land Cabinet', boxDoorOnly);
+=======
             addStd('kitchen', 'Kitchen Island Cabinet', boxDoorOnly);
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
             addStd('kitchen', 'Kitchen Breakfast Table', boxDoorOnly);
             addStd('kitchen', 'Breakfast Table Wall Paneling', [
                 { label: "PVC", base: 300, formula: "L*H/144" },
@@ -1956,7 +2022,12 @@
                 { label: "Marine Plane", base: 350, formula: "(L+W)*H/144" },
                 { label: "Engineering Wood", base: 280, formula: "(L+W)*H/144" }
             ]);
+<<<<<<< HEAD
+            addStd('kitchen', 'Crockery Unit', sideCabinetOptions);
+            addStd('kitchen', 'Fridge Top Cabinet', sideCabinetOptions);
+=======
             addStd('kitchen', 'Staircase Bottom', sideCabinetOptions);
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
 
             addStd('living_room', 'Tv Unit – Wall Panelling', [
                 { label: "PVC", base: 300, formula: "L*W/144" },
@@ -1972,7 +2043,11 @@
                 { label: "Charcoal", base: 400, formula: "L*W/144" }
             ]);
             addStd('living_room', 'Staircase Bottom', sideCabinetOptions);
+<<<<<<< HEAD
+            addStd('living_room', 'Courtyard', sideCabinetOptions);
+=======
             addStd('living_room', 'QUATUYAD', sideCabinetOptions);
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
             addStd('living_room', 'LIVING AND KITCHEN PARTITION', [
                 { label: "WPC", base: 550, formula: "(L+W)*H/144" },
                 { label: "Marine Plane", base: 350, formula: "(L+W)*H/144" },
@@ -1983,6 +2058,10 @@
             addStd('prayer_unit', 'PRAYER UNIT WALL PANELING', wallPanelMats);
 
             addStd('bedroom', 'Wardrobe', sideCabinetOptions);
+<<<<<<< HEAD
+            addStd('bedroom', 'Walk-in Wardrobe', sideCabinetOptions);
+=======
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
             addStd('bedroom', 'Bed back wall paneling with headrest', wallPanelMats);
             addStd('bedroom', 'Bed', [
                 { label: "King Size Bed (Direct Price)", base: 35000, formula: "QTY" },
@@ -2008,6 +2087,12 @@
 
             addStd('musical_room', 'WALL PANEL', wallPanelMats);
             addStd('musical_room', 'WALL PANNELLING TABLE', sideCabinetOptions);
+<<<<<<< HEAD
+            addStd('musical_room', 'Table Box Type', sideCabinetOptions);
+            addStd('musical_room', 'Cupboard', sideCabinetOptions);
+            addStd('musical_room', 'Crockery Unit', sideCabinetOptions);
+=======
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
 
             addStd('study_room', 'BOOK SHELF', sideCabinetOptions);
             addStd('study_room', 'STUDY TABLE', sideCabinetOptions);
@@ -2041,6 +2126,34 @@
                 { label: "PU Paint", base: 600, formula: "L*W/144" }
             ]);
 
+<<<<<<< HEAD
+            addStd('walk_in_wardrobe', 'Walk-in Wardrobe Module', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Walk-in Wardrobe Shutter', sideCabinetOptions);
+
+            addStd('staircase', 'Staircase Bottom Cabinet', sideCabinetOptions);
+            addStd('staircase', 'Staircase Wall Paneling', wallPanelMats);
+            addStd('staircase', 'Staircase Storage Ledge', sideCabinetOptions);
+
+            const profileGlassOpts = [
+                { label: "Black Profile Glass", base: 950, formula: "L*H/144" },
+                { label: "Gold Profile Glass", base: 1100, formula: "L*H/144" },
+                { label: "Rose Gold Profile Glass", base: 1100, formula: "L*H/144" },
+                { label: "Bronze Profile Glass", base: 1050, formula: "L*H/144" },
+                { label: "Fluted Profile Glass", base: 1200, formula: "L*H/144" }
+            ];
+
+            addStd('profile_glass_door', 'Kitchen Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Prayer Unit Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Study Room Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts);
+
+            addStd('courtyard', 'Courtyard Wall Paneling', wallPanelMats);
+            addStd('courtyard', 'Courtyard Storage Cabinet', sideCabinetOptions);
+
+=======
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
             // 2. NEW WOOD ROOMS: Full Teak Wood and Half Teak Wood
             // full_teak_wood room (Premium only)
             const ftSpecsBottom = "KERALA TEAK WOOD, BACKDSEAT 8 MM TEAK WOOD, BOX WOOD SIZE 17MM, DOOR WOOD SIZE FRAME 25MM, FINISHING PU OR MATE FINISHING, SOFT CLOSING HINGES";
@@ -2339,6 +2452,45 @@
             }
             _materialsDbCache = db;
             return db;
+<<<<<<< HEAD
+        }
+        const activeMaterialType = sessionStorage.getItem('pks_material_type') || 'Half Teak Wood';
+        let activeQuality = 'Premium';
+        if (pricingMode === 'medium') activeQuality = 'Middle / Standard';
+        else if (pricingMode === 'economy') activeQuality = 'Economy';
+        function evaluateFormula(formulaStr, values) {
+            if (!formulaStr) return 0;
+            let normalized = formulaStr.toUpperCase();
+            normalized = normalized.replace(/\bLENGTH\b/g, 'L');
+            normalized = normalized.replace(/\bWIDTH\b/g, 'W');
+            normalized = normalized.replace(/\bHEIGHT\b/g, 'H');
+            normalized = normalized.replace(/\bDEPTH\b/g, 'D');
+            normalized = normalized.replace(/\bSQFT\b/g, 'S');
+            normalized = normalized.replace(/\bQTY\b/g, 'Q');
+            const valMap = {
+                L: parseFloat(values && (values.L || values.Length) || 0) || 0,
+                W: parseFloat(values && (values.W || values.Width) || 0) || 0,
+                H: parseFloat(values && (values.H || values.Height) || 0) || 0,
+                D: parseFloat(values && (values.Depth || values.D) || 0) || 0,
+                S: parseFloat(values && (values.SQFT || values.S) || 0) || 0,
+                Q: parseFloat(values && (values.QTY || values.Q) || 1) || 1
+            };
+            let evalStr = normalized;
+            evalStr = evalStr.replace(/\bL\b/g, valMap.L);
+            evalStr = evalStr.replace(/\bW\b/g, valMap.W);
+            evalStr = evalStr.replace(/\bH\b/g, valMap.H);
+            evalStr = evalStr.replace(/\bD\b/g, valMap.D);
+            evalStr = evalStr.replace(/\bS\b/g, valMap.S);
+            evalStr = evalStr.replace(/\bQ\b/g, valMap.Q);
+            evalStr = evalStr.replace(/[^0-9+\-*/().\s]/g, '');
+            try {
+                const res = Function(`"use strict"; return (${evalStr})`)();
+                return parseFloat(res) || 0;
+            } catch (e) {
+                return 0;
+            }
+=======
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
         }
         const activeMaterialType = sessionStorage.getItem('pks_material_type') || 'Half Teak Wood';
         let activeQuality = 'Premium';
@@ -2394,6 +2546,29 @@
             const htSpecsThin = "Kerala Teak Wood, Thickness - 12 mm, Finishing - PU / Matte / Glossy";
             const htSpecsOpenBox = "Kerala Teak Wood, Thickness - 16 mm, Finishing - PU / Matte / Glossy";
 
+<<<<<<< HEAD
+        function getFullItemsList() {
+            const cacheKey = `${(selectedRoom || '').toLowerCase()}__${(modeLabel || '').toLowerCase()}`;
+            if (_itemsListCache[cacheKey]) {
+                return _itemsListCache[cacheKey];
+            }
+
+            const db = getOrInitMaterialsDb();
+
+            // Hardcoded specifications and formulas mapping to protect them
+            const ftSpecsBottom = "KERALA TEAK WOOD, BACKDSEAT 8 MM TEAK WOOD, BOX WOOD SIZE 17MM, DOOR WOOD SIZE FRAME 25MM, FINISHING PU OR MATE FINISHING, SOFT CLOSING HINGES";
+            const ftSpecsTop = "KERALA TEAK WOOD, BACK - RAILING, BOX WOOD SIZE 17MM, DOOR WOOD SIZE FRAME 25MM, FINISHING PU OR MATE FINISHING, SOFT CLOSING HINGES";
+            const ftSpecsLoft = "KERALA TEAK WOOD, BOX WOOD SIZE 17MM, DOOR WOOD SIZE FRAME 25MM, FINISHING PU OR MATE FINISHING, SOFT CLOSING HINGES";
+            const ftSpecsThin = "KERALA TEAK WOOD, THICKNESS 12MM, FINISHING PU/MATE";
+            const ftSpecsPartition = "KERALA TEAK WOOD, THICKNESS 17MM, DOOR FRAME 25 MM, FINISHING PU/MATE, HINGES-HITECH/SLEEK";
+            const ftSpecsDoor = "KERALA TEAK WOOD FRAME THICKNESS 20 MM, DOOR THICKNESS 25MM/17MM, FINISHING PU/MATE/GLOSSY, HINGES - SOFT CLOSING, HITECH, SLEEK";
+
+            const htSpecsBottom = "Marineply-710 grade 16 mm, Backs TOP Seat WPC / Tech wood, Outdoor kerala teak wood, Teak wood size 17mm/25mm, Soft Closing Hinges, Sleek, hitech, finishing pu/mate, glossy";
+            const htSpecsPartition = "Frame and Partition - Marine Ply, 710 Grade, Thickness - 16 mm, Brand - Fineply / Saburi, Inner Finishing - Teak Wood Color Lamination / Half White Color Lamination, Outside Area - Full Kerala Teak Wood, Door Frame Thickness - 25 mm, Outside Finish - PU / Matte / Glossy, Hinges - Soft Closing / Hitech";
+            const htSpecsDoor = "Frame - Marine Ply, 710 Grade, Thickness - 16 mm, Brand - Fineply / Saburi, Inner Finishing - Teak Wood Color Lamination / Half White Color Lamination, Outside Door - Kerala Teak Wood, Door Thickness - 25 mm / 16 mm, Outside Finish - PU / Matte / Glossy, Hinges - Soft Closing / Hitech";
+            const htSpecsThin = "Kerala Teak Wood, Thickness - 12 mm, Finishing - PU / Matte / Glossy";
+            const htSpecsOpenBox = "Kerala Teak Wood, Thickness - 16 mm, Finishing - PU / Matte / Glossy";
+
             const formulaCab = "(Length + Width) * Height / 144";
             const formulaDoor = "L * H / 144";
 
@@ -2402,6 +2577,16 @@
                 const isFullTeak = (m.roomId === 'full_teak_wood' || m.constructionType.includes('Full Teak Wood'));
                 const isHalfTeak = (m.roomId === 'half_teak_wood' || m.constructionType.includes('Half Teak Wood'));
 
+=======
+            const formulaCab = "(Length + Width) * Height / 144";
+            const formulaDoor = "L * H / 144";
+
+            // Loop through database and override specs and formulas for teak wood items
+            db.forEach(m => {
+                const isFullTeak = (m.roomId === 'full_teak_wood' || m.constructionType.includes('Full Teak Wood'));
+                const isHalfTeak = (m.roomId === 'half_teak_wood' || m.constructionType.includes('Half Teak Wood'));
+
+>>>>>>> 4bd8fadcc59fe647355e58caad746f27fc22f321
                 if (isFullTeak) {
                     const cType = m.constructionType.includes('Door Only') ? 'Door Only' : (m.constructionType.includes('Partition Type') ? 'Partition Type' : 'Box Type');
                     m.formula = formulaCab;
