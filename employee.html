@@ -1775,7 +1775,7 @@
         // Setup base database
         function getOrInitMaterialsDb() {
             if (_materialsDbCache) return _materialsDbCache;
-            const currentDbVersion = 'v35';
+            const currentDbVersion = 'v37';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
 
@@ -1855,7 +1855,7 @@
                             });
                             return;
                         }
-                        const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal");
+                        const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal") || room === 'profile_glass_door';
                         if (isWallPanelOrCeiling) {
                             mats.forEach(m => {
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
@@ -2073,20 +2073,21 @@
             addStd('staircase', 'Staircase Wall Paneling', wallPanelMats);
             addStd('staircase', 'Staircase Storage Ledge', sideCabinetOptions);
 
+            const profileGlassSpecs = "ALUMINIUM PROFILE FRAME 45MM, TOUGHENED GLASS 4MM / FLUTED / TINTED, PREMIUM PROFILE HINGES, INTEGRATED PROFILE HANDLE, SOFT CLOSING MECHANISM";
             const profileGlassOpts = [
-                { label: "Black Profile Glass", base: 950, formula: "L*H/144" },
-                { label: "Gold Profile Glass", base: 1100, formula: "L*H/144" },
-                { label: "Rose Gold Profile Glass", base: 1100, formula: "L*H/144" },
-                { label: "Bronze Profile Glass", base: 1050, formula: "L*H/144" },
-                { label: "Fluted Profile Glass", base: 1200, formula: "L*H/144" }
+                { label: "Profile Glass Door", base: 850, formula: "L*H/144" }
             ];
 
-            addStd('profile_glass_door', 'Kitchen Profile Glass Door', profileGlassOpts);
-            addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts);
-            addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts);
-            addStd('profile_glass_door', 'Prayer Unit Profile Glass Door', profileGlassOpts);
-            addStd('profile_glass_door', 'Study Room Profile Glass Door', profileGlassOpts);
-            addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts);
+            addStd('profile_glass_door', 'Kitchen Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'TV Unit Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Crockery Unit Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Prayer Unit Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Study Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Partition Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Wardrobe Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('courtyard', 'Courtyard Wall Paneling', wallPanelMats);
             addStd('courtyard', 'Courtyard Storage Cabinet', sideCabinetOptions);
@@ -2957,6 +2958,18 @@
                 if (normalized.includes('CHAPPAL') || normalized.includes('STAND')) return 100;
                 if (normalized.includes('CEILING')) return 101;
                 if (normalized.includes('ACCESSORIES')) return 102;
+            }
+            if (room === 'profile_glass_door') {
+                if (normalized.includes('KITCHEN')) return 570;
+                if (normalized.includes('TV UNIT')) return 571;
+                if (normalized.includes('CROCKERY')) return 572;
+                if (normalized.includes('PRAYER')) return 573;
+                if (normalized.includes('STUDY')) return 574;
+                if (normalized.includes('PARTITION') || normalized.includes('PARTICIAN')) return 575;
+                if (normalized.includes('WARDROBE')) return 576;
+                if (normalized.includes('MUSICAL')) return 577;
+                if (normalized.includes('LIVING')) return 578;
+                if (normalized.includes('DINING')) return 579;
             }
             return null;
         }
