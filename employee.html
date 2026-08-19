@@ -1775,7 +1775,7 @@
         // Setup base database
         function getOrInitMaterialsDb() {
             if (_materialsDbCache) return _materialsDbCache;
-            const currentDbVersion = 'v50';
+            const currentDbVersion = 'v70';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
 
@@ -2069,8 +2069,26 @@
                 { label: "PU Paint", base: 600, formula: "L*W/144" }
             ]);
 
-            addStd('walk_in_wardrobe', 'Walk-in Wardrobe Module', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'Walk-in Wardrobe Shutter', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Bed back wall paneling with headrest', wallPanelMats);
+            addStd('walk_in_wardrobe', 'Bed', [
+                { label: "King Size Bed (Direct Price)", base: 35000, formula: "QTY" },
+                { label: "Queen Size Bed (Direct Price)", base: 28000, formula: "QTY" }
+            ]);
+            addStd('walk_in_wardrobe', 'Bay window', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Dressing unit wall paneling', wallPanelMats);
+            addStd('walk_in_wardrobe', 'Dressing unit bottom cabinet', [{ label: "Glass", base: 350, formula: "L*W/144" }]);
+            addStd('walk_in_wardrobe', 'Tv unit-wall paneling', wallPanelMats);
+            addStd('walk_in_wardrobe', 'Tv unit-bottom cabinet', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Tv unit-SIDE SHOW WALL CABINET', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'SIDE CABINET', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'CUPBOARD 1', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'CUPBOARD 2', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'LOFT 1', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'LOFT 2', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'WALL PANNELING', wallPanelMats);
+            addStd('walk_in_wardrobe', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
 
             addStd('staircase', 'Staircase Bottom Cabinet', sideCabinetOptions);
             addStd('staircase', 'Staircase Wall Paneling', wallPanelMats);
@@ -2929,6 +2947,26 @@
                 if (normalized === 'WALL PANNELING') return 70;
                 if (normalized.includes('HIDDEN DOOR')) return 71;
                 if (normalized.includes('ACCESSORIES')) return 72;
+            }
+            if (room === 'walk_in_wardrobe') {
+                if (normalized === 'WARDROBE' || (normalized.includes('WARDROBE') && !normalized.includes('WALK-IN'))) return 540;
+                if (normalized.includes('WALK-IN')) return 541;
+                if (normalized.includes('BED BACK') || normalized.includes('HEADREST')) return 542;
+                if (normalized === 'BED') return 543;
+                if (normalized.includes('BAY WINDOW')) return 544;
+                if (normalized.includes('DRESSING') && normalized.includes('PANEL')) return 545;
+                if (normalized.includes('DRESSING') && normalized.includes('BOTTOM')) return 546;
+                if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 547;
+                if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 548;
+                if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 549;
+                if (normalized === 'SIDE CABINET') return 550;
+                if (normalized.includes('CUPBOARD 1')) return 551;
+                if (normalized.includes('CUPBOARD 2')) return 552;
+                if (normalized.includes('LOFT 1')) return 553;
+                if (normalized.includes('LOFT 2')) return 554;
+                if (normalized === 'WALL PANNELING') return 555;
+                if (normalized.includes('HIDDEN DOOR')) return 556;
+                if (normalized.includes('ACCESSORIES')) return 557;
             }
             if (room === 'dining_room') {
                 if (normalized.includes('BOTTOM')) return 37;
