@@ -1775,7 +1775,7 @@
         // Setup base database
         function getOrInitMaterialsDb() {
             if (_materialsDbCache) return _materialsDbCache;
-            const currentDbVersion = 'v37';
+            const currentDbVersion = 'v50';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
 
@@ -1844,7 +1844,10 @@
 
             // Helper to populate standard items in standard rooms
             function addStd(room, item, mats, specs = null) {
-                if (loadedFromStore) return;
+                if (loadedFromStore) {
+                    const hasItemInDb = db.some(m => m.roomId === room && m.itemName === item);
+                    if (hasItemInDb) return;
+                }
                 qualities.forEach(qual => {
                     if (qual === 'Economy') {
                         let finalSpecs = "ENGINEERING WOOD THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -2275,7 +2278,7 @@
             if (customItemsStr) {
                 try {
                     const parsedItems = JSON.parse(customItemsStr);
-                    const standardRooms = ['kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'toilet_area', 'store_room', 'sitout'];
+                    const standardRooms = ['kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'toilet_area', 'store_room', 'sitout', 'profile_glass_door', 'walk_in_wardrobe', 'staircase', 'courtyard'];
                     parsedItems.forEach(item => {
                         standardRooms.forEach(room => {
                             qualities.forEach(qual => {
@@ -2381,12 +2384,10 @@
                     m.constructionType === 'Engineering Wood (Door Only)' ||
                     m.constructionType === 'Engineering Wood (Partition Type)';
             });
-            if (!loadedFromStore) {
-                try {
-                    localStorage.setItem('pks_materials_db', JSON.stringify(db));
-                    localStorage.setItem('pks_materials_db_version', currentDbVersion);
-                } catch (e) { }
-            }
+            try {
+                localStorage.setItem('pks_materials_db', JSON.stringify(db));
+                localStorage.setItem('pks_materials_db_version', currentDbVersion);
+            } catch (e) { }
             _materialsDbCache = db;
             return db;
         }
@@ -2646,6 +2647,7 @@
             selectedRoomName = roomName;
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
+            invalidateMaterialsCache();
 
             try {
                 ITEMS = getFullItemsList();
