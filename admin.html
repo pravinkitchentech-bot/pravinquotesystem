@@ -49,7 +49,6 @@
             overflow-x: hidden;
         }
 
-        /* Ambient blurred background accents */
         body::before {
             content: '';
             position: absolute;
@@ -234,7 +233,15 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        button, input, select, textarea, .tab-btn, .item-manage-card, .btn-primary, .btn-danger, .nav-btn {
+        button,
+        input,
+        select,
+        textarea,
+        .tab-btn,
+        .item-manage-card,
+        .btn-primary,
+        .btn-danger,
+        .nav-btn {
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
             will-change: transform;
             backface-visibility: hidden;
@@ -242,15 +249,20 @@
             transform: translateZ(0);
         }
 
-        button:hover, .tab-btn:hover, .btn-primary:hover {
+        button:hover,
+        .tab-btn:hover,
+        .btn-primary:hover {
             transform: translateY(-1px) translateZ(0);
         }
 
-        button:active, .tab-btn:active {
+        button:active,
+        .tab-btn:active {
             transform: translateY(0) scale(0.98) translateZ(0);
         }
 
-        div[style*="overflow-y: auto"], div[style*="overflow-x: auto"], .item-list-container {
+        div[style*="overflow-y: auto"],
+        div[style*="overflow-x: auto"],
+        .item-list-container {
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
         }
@@ -269,6 +281,7 @@
                 opacity: 0;
                 transform: translateY(8px) translateZ(0);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) translateZ(0);
@@ -857,10 +870,14 @@
                     </div>
 
                     <div style="margin-bottom: 15px;">
-                        <div id="specsEditorTargetBadge" style="font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px;"></div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                        <div id="specsEditorTargetBadge"
+                            style="font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px;">
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
                             <div class="form-group">
-                                <label for="specsEditorTextPremium" style="font-weight: 700; color: #2ecc71; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <label for="specsEditorTextPremium"
+                                    style="font-weight: 700; color: #2ecc71; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
                                     <span>✨ Premium Specifications</span>
                                 </label>
                                 <textarea id="specsEditorTextPremium" rows="7"
@@ -868,7 +885,8 @@
                                     style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(46, 204, 113, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="specsEditorTextMedium" style="font-weight: 700; color: #3498db; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <label for="specsEditorTextMedium"
+                                    style="font-weight: 700; color: #3498db; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
                                     <span>⚖️ Middle / Standard Specifications</span>
                                 </label>
                                 <textarea id="specsEditorTextMedium" rows="7"
@@ -876,7 +894,8 @@
                                     style="background: rgba(5, 11, 7, 0.75); border: 1px solid rgba(52, 152, 219, 0.4); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.88rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="specsEditorTextEconomy" style="font-weight: 700; color: #f39c12; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <label for="specsEditorTextEconomy"
+                                    style="font-weight: 700; color: #f39c12; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
                                     <span>💡 Economy Specifications</span>
                                 </label>
                                 <textarea id="specsEditorTextEconomy" rows="7"
@@ -1063,9 +1082,7 @@
             localStorage.setItem('pks_divisions', JSON.stringify(DEFAULT_DIVISIONS));
             return DEFAULT_DIVISIONS;
         }
-
         let divisionsList = getDivisions();
-
         function getDeletedStandardItems() {
             const stored = localStorage.getItem('pks_deleted_standard_items');
             if (stored) {
@@ -1077,19 +1094,41 @@
             return [];
         }
         let deletedStandardItems = getDeletedStandardItems();
-
         function getDeletedStandardMaterials() {
             const stored = localStorage.getItem('pks_deleted_standard_materials');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) return parsed;
+                    if (Array.isArray(parsed)) {
+                        deletedStandardMaterials = parsed;
+                        return parsed;
+                    }
                 } catch (e) { }
             }
+            deletedStandardMaterials = [];
             return [];
         }
         let deletedStandardMaterials = getDeletedStandardMaterials();
-
+        function isMaterialDeleted(mat, itemId = null) {
+            if (!mat) return false;
+            const deletedMats = getDeletedStandardMaterials();
+            if (!deletedMats || !deletedMats.length) return false;
+            const cleanMat = String(mat).trim();
+            const normMat = normalizeKey(cleanMat);
+            const baseMat = cleanRateMaterialName ? cleanRateMaterialName(cleanMat, selectedRoom) : cleanMat.replace(/\s*\([^)]*\)/gi, '').trim();
+            const normBase = normalizeKey(baseMat);
+            for (let i = 0; i < deletedMats.length; i++) {
+                const d = String(deletedMats[i]).trim();
+                if (!d) continue;
+                const normD = normalizeKey(d);
+                if (d === cleanMat || (baseMat && d === baseMat)) return true;
+                if (normD === normMat || (normBase && normD === normBase)) return true;
+                if (itemId !== null && itemId !== undefined) {
+                    if (d === `${itemId}-${cleanMat}` || normD === normalizeKey(`${itemId}-${cleanMat}`)) return true;
+                }
+            }
+            return false;
+        }
         const ROOMS = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
@@ -1107,16 +1146,12 @@
             { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
             { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true }
         ];
-
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
-
         function logout() {
             sessionStorage.removeItem('pks_admin_auth');
             location.href = 'index.html';
         }
-
-        /* ---------- Base Materials & Defaults ---------- */
         const DEFAULT_RATES = {
             "Marine Ply – Lamination": 450,
             "Marine Ply – Acrylic": 650,
@@ -1155,7 +1190,6 @@
             "Soft Closing Hinges": 0,
             "Profile Handle": 0
         };
-
         const ACCESSORY_LIST = [
             "Basket",
             "Tandom Box",
@@ -1175,7 +1209,6 @@
             "Soft Closing Hinges",
             "Profile Handle"
         ];
-
         const ROOM_ITEMS = {
             kitchen: [
                 { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
@@ -1502,6 +1535,7 @@
             function addMaterial(label) {
                 if (!label || typeof label !== 'string') return;
                 const clean = label.trim();
+                if (isMaterialDeleted(clean)) return;
                 const norm = normalizeKey(clean);
                 if (!norm) return;
 
@@ -1622,11 +1656,7 @@
             }
 
             const uniqueMaterials = Array.from(materialMap.values()).sort((a, b) => a.localeCompare(b));
-            const deletedMats = getDeletedStandardMaterials();
-            const activeMaterials = uniqueMaterials.filter(mat => {
-                const normMat = normalizeKey(mat);
-                return !deletedMats.includes(mat) && !deletedMats.includes(normMat);
-            });
+            const activeMaterials = uniqueMaterials.filter(mat => !isMaterialDeleted(mat));
 
             activeMaterials.forEach(mat => {
                 const tr = document.createElement('tr');
@@ -1761,10 +1791,7 @@
                 div.className = 'item-manage-card';
 
                 // Get standard list (filter deleted)
-                let filteredOptions = item.options.filter(opt => {
-                    const norm = normalizeKey(opt);
-                    return !deletedStandardMaterials.includes(opt) && !deletedStandardMaterials.includes(norm) && !deletedStandardMaterials.includes(`${item.id}-${opt}`);
-                });
+                let filteredOptions = item.options.filter(opt => !isMaterialDeleted(opt, item.id));
                 let matTags = filteredOptions.map(opt => `
                     <span class="tag-pill">
                         ${opt}
@@ -1839,11 +1866,7 @@
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
 
-                const deletedMats = getDeletedStandardMaterials();
-                let filteredOptions = (item.options || []).filter(o => {
-                    const norm = normalizeKey(o);
-                    return !deletedMats.includes(o) && !deletedMats.includes(norm) && !deletedMats.includes(`${item.id}-${o}`);
-                });
+                let filteredOptions = (item.options || []).filter(o => !isMaterialDeleted(o, item.id));
 
                 let matTags = filteredOptions.map(opt => `
                     <span class="tag-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin: 3px;">
@@ -2029,19 +2052,27 @@
             if (!mat) return;
             if (!confirm(`Are you sure you want to delete material "${mat}" across all devices?\n\nThis will permanently remove "${mat}" from rates, items, specs, and quotation calculations everywhere.`)) return;
 
-            const normMat = normalizeKey(mat);
+            const cleanMat = String(mat).trim();
+            const normMat = normalizeKey(cleanMat);
+            const baseMat = cleanRateMaterialName ? cleanRateMaterialName(cleanMat, selectedRoom) : cleanMat.replace(/\s*\([^)]*\)/gi, '').trim();
+            const normBase = normalizeKey(baseMat);
 
             // 1. Add material name and normalized form to pks_deleted_standard_materials
             let deletedMats = getDeletedStandardMaterials();
-            if (!deletedMats.includes(mat)) deletedMats.push(mat);
-            if (normMat && !deletedMats.includes(normMat)) deletedMats.push(normMat);
+            [cleanMat, normMat, baseMat, normBase].forEach(v => {
+                if (v && !deletedMats.includes(v)) deletedMats.push(v);
+            });
 
             // Also mark as deleted for every base item
             BASE_ITEMS.forEach(item => {
-                const key = `${item.id}-${mat}`;
-                if (!deletedMats.includes(key)) deletedMats.push(key);
+                const key1 = `${item.id}-${cleanMat}`;
+                const key2 = `${item.id}-${normMat}`;
+                if (!deletedMats.includes(key1)) deletedMats.push(key1);
+                if (!deletedMats.includes(key2)) deletedMats.push(key2);
             });
+
             localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedMats));
+            deletedStandardMaterials = deletedMats;
 
             // 2. Remove from customMaterials (pks_custom_materials)
             let customMats = getCustomMaterials();
@@ -2049,7 +2080,7 @@
             for (const itemId in customMats) {
                 if (Array.isArray(customMats[itemId])) {
                     const origLen = customMats[itemId].length;
-                    customMats[itemId] = customMats[itemId].filter(m => m.label !== mat && normalizeKey(m.label || '') !== normMat);
+                    customMats[itemId] = customMats[itemId].filter(m => !isMaterialDeleted(m.label, itemId));
                     if (customMats[itemId].length !== origLen) customChanged = true;
                     if (customMats[itemId].length === 0) delete customMats[itemId];
                 }
@@ -2066,7 +2097,7 @@
                     const origLen = item.options.length;
                     item.options = item.options.filter(opt => {
                         const lbl = typeof opt === 'string' ? opt : opt.label;
-                        return lbl !== mat && normalizeKey(lbl || '') !== normMat;
+                        return !isMaterialDeleted(lbl, item.id);
                     });
                     if (item.options.length !== origLen) customItemsChanged = true;
                 }
@@ -2080,7 +2111,7 @@
             if (storedDb) {
                 try {
                     let db = JSON.parse(storedDb);
-                    db = db.filter(m => m.constructionType !== mat && normalizeKey(m.constructionType || '') !== normMat);
+                    db = db.filter(m => !isMaterialDeleted(m.constructionType));
                     localStorage.setItem('pks_materials_db', JSON.stringify(db));
                 } catch (e) { }
             }
@@ -2088,16 +2119,17 @@
             // 5. Remove stored rates from pks_rates (currentRates)
             let rates = getRates();
             let ratesChanged = false;
-            const matLower = mat.toLowerCase();
+            const targetNorms = [normMat, normBase].filter(Boolean);
             for (const k in rates) {
-                const kLower = k.toLowerCase();
-                if (kLower === matLower || kLower.endsWith(`_${matLower}`) || kLower.includes(`_${matLower}_`) || kLower.startsWith(`${matLower}_`)) {
+                const kNorm = normalizeKey(k);
+                if (targetNorms.some(tn => kNorm.includes(tn))) {
                     delete rates[k];
                     ratesChanged = true;
                 }
             }
             if (ratesChanged) {
                 localStorage.setItem('pks_rates', JSON.stringify(rates));
+                currentRates = rates;
             }
 
             // 6. Broadcast Realtime Cloud Sync across all devices
@@ -2872,11 +2904,7 @@
                 const card = document.createElement('div');
                 card.className = 'item-manage-card';
 
-                const deletedMats = getDeletedStandardMaterials();
-                let optionsList = (item.options || []).filter(o => {
-                    const norm = normalizeKey(o);
-                    return !deletedMats.includes(o) && !deletedMats.includes(norm) && !deletedMats.includes(`${item.id}-${o}`);
-                });
+                let optionsList = (item.options || []).filter(o => !isMaterialDeleted(o, item.id));
 
                 const cMats = getCustomMaterials();
                 if (cMats[item.id]) {
