@@ -398,6 +398,19 @@ window.PKSSync = {
             const data = await res.json();
             if (data && typeof data === 'object') {
                 let changed = false;
+                if (data.materials_db && Array.isArray(data.materials_db)) {
+                    data.materials_db = data.materials_db.filter(m => {
+                        const name = (m.itemName || '').toUpperCase();
+                        return !(name.includes('WALK-IN WARDROBE MODULE') || name.includes('WALK-IN WARDROBE SHUTTER') || (m.roomId === 'walk_in_wardrobe' && (name.includes('MODULE') || name.includes('SHUTTER'))));
+                    });
+                }
+                if (data.custom_items && Array.isArray(data.custom_items)) {
+                    data.custom_items = data.custom_items.filter(i => {
+                        const name = (i.name || '').toUpperCase();
+                        return !(name.includes('WALK-IN WARDROBE MODULE') || name.includes('WALK-IN WARDROBE SHUTTER') || name.includes('WARDROBE MODULE') || name.includes('WARDROBE SHUTTER'));
+                    });
+                }
+
                 if (data.rates && this.setLocalItemSilently('pks_rates', JSON.stringify(data.rates))) changed = true;
                 if (data.materials_db && this.setLocalItemSilently('pks_materials_db', JSON.stringify(data.materials_db))) changed = true;
                 if (data.item_specs && this.setLocalItemSilently('pks_item_specs', JSON.stringify(data.item_specs))) changed = true;
