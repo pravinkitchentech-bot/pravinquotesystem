@@ -1284,11 +1284,15 @@
             ],
             profile_glass_door: [
                 { id: 570, name: "Kitchen Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
-                { id: 571, name: "Living Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
-                { id: 572, name: "Dining Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 571, name: "TV Unit Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 572, name: "Crockery Unit Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
                 { id: 573, name: "Prayer Unit Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
                 { id: 574, name: "Study Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
-                { id: 575, name: "Musical Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] }
+                { id: 575, name: "Partition Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 576, name: "Wardrobe Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 577, name: "Musical Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 578, name: "Living Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] },
+                { id: 579, name: "Dining Room Profile Glass Door", options: ["Black Profile Glass", "Gold Profile Glass", "Rose Gold Profile Glass", "Bronze Profile Glass", "Fluted Profile Glass"] }
             ],
             courtyard: [
                 { id: 580, name: "Courtyard Wall Paneling", options: ["PVC", "Lamination", "Charcoal", "Wood finishing", "Veneer finishing"] },
@@ -1497,7 +1501,7 @@
         function cleanRateMaterialName(name, roomId) {
             if (!name) return '';
             const trimmed = name.trim();
-            if (roomId === 'full_teak_wood' || roomId === 'half_teak_wood' || roomId === 'profile_glass') {
+            if (roomId === 'full_teak_wood' || roomId === 'half_teak_wood' || roomId === 'profile_glass' || roomId === 'profile_glass_door') {
                 return trimmed;
             }
             if (trimmed.includes('Direct Price')) {
