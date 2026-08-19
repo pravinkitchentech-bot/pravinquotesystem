@@ -1772,10 +1772,42 @@
             _itemsListCache = {};
         }
 
+        // Immediately scrub local storage of obsolete Walk-in Wardrobe Module and Shutter
+        (function forceCleanObsoleteItems() {
+            try {
+                let dbStr = localStorage.getItem('pks_materials_db');
+                if (dbStr) {
+                    let db = JSON.parse(dbStr);
+                    if (Array.isArray(db)) {
+                        let cleaned = db.filter(m => {
+                            const name = (m.itemName || '').toUpperCase();
+                            return !(name.includes('MODULE') || name.includes('SHUTTER'));
+                        });
+                        if (cleaned.length !== db.length) {
+                            localStorage.setItem('pks_materials_db', JSON.stringify(cleaned));
+                        }
+                    }
+                }
+                let customStr = localStorage.getItem('pks_custom_items');
+                if (customStr) {
+                    let items = JSON.parse(customStr);
+                    if (Array.isArray(items)) {
+                        let cleaned = items.filter(i => {
+                            const name = (i.name || '').toUpperCase();
+                            return !(name.includes('MODULE') || name.includes('SHUTTER'));
+                        });
+                        if (cleaned.length !== items.length) {
+                            localStorage.setItem('pks_custom_items', JSON.stringify(cleaned));
+                        }
+                    }
+                }
+            } catch(e) {}
+        })();
+
         // Setup base database
         function getOrInitMaterialsDb() {
             if (_materialsDbCache) return _materialsDbCache;
-            const currentDbVersion = 'v70';
+            const currentDbVersion = 'v4000';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
 
@@ -1814,6 +1846,12 @@
 
             // Ensure no standard rooms have Accessories material type
             db = db.filter(m => !(m.materialType === 'Accessories' && m.roomId !== 'accessories'));
+
+            // Strictly purge obsolete Walk-in Wardrobe Module and Walk-in Wardrobe Shutter items from db
+            db = db.filter(m => {
+                const name = (m.itemName || '').toUpperCase();
+                return !(name.includes('MODULE') || name.includes('SHUTTER'));
+            });
 
             const adminSavedSpecs = localStorage.getItem('pks_material_specs');
             const defaultSpecs = adminSavedSpecs || "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -2047,27 +2085,31 @@
             addStd('sitout', 'Chappal stand', sideCabinetOptions);
             addStd('sitout', 'Sit out area ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
 
-            addStd('passage_ceiling', 'Passage Ceiling', [
+            const ceilingMats = [
                 { label: "Gypsum Board", base: 110, formula: "L*W/144" },
                 { label: "POP", base: 120, formula: "L*W/144" },
                 { label: "PVC", base: 300, formula: "L*W/144" },
                 { label: "Lamination", base: 250, formula: "L*W/144" },
-                { label: "Charcoal", base: 400, formula: "L*W/144" },
                 { label: "Wood finishing", base: 500, formula: "L*W/144" },
                 { label: "Veneer finishing", base: 700, formula: "L*W/144" },
                 { label: "PU Paint", base: 600, formula: "L*W/144" }
-            ]);
+            ];
 
-            addStd('false_ceiling', 'False Ceiling', [
-                { label: "Gypsum Board", base: 110, formula: "L*W/144" },
-                { label: "POP", base: 120, formula: "L*W/144" },
-                { label: "PVC", base: 300, formula: "L*W/144" },
-                { label: "Lamination", base: 250, formula: "L*W/144" },
-                { label: "Charcoal", base: 400, formula: "L*W/144" },
-                { label: "Wood finishing", base: 500, formula: "L*W/144" },
-                { label: "Veneer finishing", base: 700, formula: "L*W/144" },
-                { label: "PU Paint", base: 600, formula: "L*W/144" }
-            ]);
+            addStd('passage_ceiling', 'Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Kitchen Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Living Room Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Bedroom Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Dining Room Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Prayer Unit Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Study Room Passage Ceiling', ceilingMats);
+
+            addStd('false_ceiling', 'False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Kitchen False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Living Room False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Bedroom False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Dining Room False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Prayer Unit False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Study Room False Ceiling', ceilingMats);
 
             addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
@@ -2109,6 +2151,7 @@
             addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Bedroom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('courtyard', 'Courtyard Wall Paneling', wallPanelMats);
             addStd('courtyard', 'Courtyard Storage Cabinet', sideCabinetOptions);
@@ -2531,7 +2574,25 @@
                 }
             });
 
-            // Apply custom edited specifications overrides from pks_item_specs & pks_custom_specs_by_id
+            // 1. Filter db first down to ONLY active room and quality items (~15 items instead of 3000)
+            const filtered = db.filter(m => {
+                const rId = (m.roomId || '').toLowerCase();
+                const selR = (selectedRoom || '').toLowerCase();
+                const q = (m.quality || '').toLowerCase();
+                const reqQ = (modeLabel || '').toLowerCase();
+                const name = (m.itemName || '').toUpperCase();
+
+                if (rId !== selR) return false;
+                if (q !== reqQ) return false;
+                if (m.status && m.status !== 'ON') return false;
+
+                // Absolute ban on obsolete Walk-in Wardrobe Module and Walk-in Wardrobe Shutter
+                if (name.includes('MODULE') || name.includes('SHUTTER')) return false;
+
+                return true;
+            });
+
+            // 2. Fetch admin overrides ONCE
             let itemSpecsMap = {};
             const storedItemSpecs = localStorage.getItem('pks_item_specs');
             if (storedItemSpecs) {
@@ -2544,7 +2605,10 @@
                 try { customSpecs = JSON.parse(storedCustom) || {}; } catch (e) { }
             }
 
-            db.forEach(m => {
+            const adminRates = getRates();
+
+            // 3. Process specifications & rates ONLY on filtered room items
+            filtered.forEach(m => {
                 const stdItemId = getStandardItemId(m.roomId, m.itemName);
                 const rawQ = m.quality || (typeof activeQuality !== 'undefined' ? activeQuality : '') || sessionStorage.getItem('pks_pricing_mode') || 'premium';
                 const normQ = rawQ.toLowerCase();
@@ -2575,11 +2639,7 @@
                 } else if (customSpecs[m.id] !== undefined) {
                     m.specifications = customSpecs[m.id];
                 }
-            });
 
-            // Apply admin-set rates to all DB entries
-            const adminRates = getRates();
-            db.forEach(m => {
                 const targetRate = resolveRate(adminRates, m.constructionType, m.materialType, m.roomId, selectedDivision);
                 if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
                     let factor = 1.0;
@@ -2589,12 +2649,6 @@
                     m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
                 }
             });
-
-            const filtered = db.filter(m =>
-                (m.roomId || '').toLowerCase() === (selectedRoom || '').toLowerCase() &&
-                (m.quality || '').toLowerCase() === (modeLabel || '').toLowerCase() &&
-                (m.status === 'ON' || !m.status)
-            );
 
             // Group by itemName
             const grouped = {};
@@ -3010,6 +3064,7 @@
                 if (normalized.includes('MUSICAL')) return 577;
                 if (normalized.includes('LIVING')) return 578;
                 if (normalized.includes('DINING')) return 579;
+                if (normalized.includes('BEDROOM')) return 580;
             }
             return null;
         }
@@ -4950,27 +5005,31 @@
         initCustomerAutofill();
         updateQualityBadges();
 
-        // Consolidated live-sync listener for updates from Admin panel or Cloud Sync
+        // Consolidated live-sync listener for updates from Admin panel or Cloud Sync (Debounced for 60FPS speed)
+        let _externalSyncDebounceTimer = null;
         function handleExternalDataSync(key) {
             if (!key || key === 'pks_materials_db' || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
-                invalidateMaterialsCache();
-                ITEMS = getFullItemsList();
-                const activeBuilders = document.querySelectorAll('.builder');
-                if (activeBuilders.length === 0) {
-                    renderItemsGrid();
-                } else {
-                    document.querySelectorAll('[id$="-specs-text"]').forEach(block => {
-                        const buildId = block.id.replace('-specs-text', '');
-                        const itemId = parseInt(buildId.split('-')[0]) || null;
-                        if (itemId) {
-                            const item = ITEMS.find(i => i.id === itemId);
-                            if (item && item.options && item.options[0]) {
-                                const effSpecs = getEffectiveSpecs(selectedRoom, itemId, item.options[0].label, item.options[0].specifications);
-                                block.textContent = formatSpecificationsText(effSpecs, selectedRoom, item.options[0].label) || "No specifications added. Click edit icon to add.";
+                if (_externalSyncDebounceTimer) clearTimeout(_externalSyncDebounceTimer);
+                _externalSyncDebounceTimer = setTimeout(() => {
+                    invalidateMaterialsCache();
+                    ITEMS = getFullItemsList();
+                    const activeBuilders = document.querySelectorAll('.builder');
+                    if (activeBuilders.length === 0) {
+                        renderItemsGrid();
+                    } else {
+                        document.querySelectorAll('[id$="-specs-text"]').forEach(block => {
+                            const buildId = block.id.replace('-specs-text', '');
+                            const itemId = parseInt(buildId.split('-')[0]) || null;
+                            if (itemId) {
+                                const item = ITEMS.find(i => i.id === itemId);
+                                if (item && item.options && item.options[0]) {
+                                    const effSpecs = getEffectiveSpecs(selectedRoom, itemId, item.options[0].label, item.options[0].specifications);
+                                    block.textContent = formatSpecificationsText(effSpecs, selectedRoom, item.options[0].label) || "No specifications added. Click edit icon to add.";
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                }, 150);
             }
         }
 
