@@ -2088,7 +2088,7 @@
 
             addStd('prayer_unit', 'PRAYER UNIT BOTTOM CABINET', sideCabinetOptions);
             addStd('prayer_unit', 'PRAYER UNIT WALL PANELING', wallPanelMats);
-            addStd('prayer_unit', 'PRAYER UNIT CROCKERY UNIT', sideCabinetOptions);
+            addStd('prayer_unit', 'PRAYER UNIT SHOW WALL CABINET', sideCabinetOptions);
             addStd('prayer_unit', 'PRAYER UNIT CUPBOARD', sideCabinetOptions);
 
             addStd('bedroom', 'Wardrobe', sideCabinetOptions);
@@ -2109,8 +2109,8 @@
             addStd('bedroom', 'CUPBOARD 2', sideCabinetOptions);
             addStd('bedroom', 'LOFT 1', sideCabinetOptions);
             addStd('bedroom', 'LOFT 2', sideCabinetOptions);
-            addStd('bedroom', 'WALL PANNELING', wallPanelMats);
-            addStd('bedroom', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
+            addStd('bedroom', 'Bed Back Wall Paneling', wallPanelMats);
+            addStd('bedroom', 'Bed Back Wall Paneling with Hidden Door', wallPanelMats);
             addStd('bedroom', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('dining_room', 'Washbasin Bottom Cabinet', sideCabinetOptions);
@@ -2124,19 +2124,21 @@
             ]);
 
             addStd('musical_room', 'WALL PANEL', wallPanelMats);
-            addStd('musical_room', 'WALL PANNELLING TABLE', sideCabinetOptions);
             addStd('musical_room', 'Table Box Type', sideCabinetOptions);
             addStd('musical_room', 'Cupboard', sideCabinetOptions);
             addStd('musical_room', 'Crockery Unit', sideCabinetOptions);
 
             addStd('study_room', 'BOOK SHELF', sideCabinetOptions);
             addStd('study_room', 'STUDY TABLE', sideCabinetOptions);
-            addStd('study_room', 'STUDY TABLE TOP BOX', sideCabinetOptions);
+            addStd('study_room', 'Study Table Upper Cabinet', sideCabinetOptions);
             addStd('study_room', 'COMPUTER TABLE', sideCabinetOptions);
             addStd('study_room', 'STUDY ROOM CUPBOARD', sideCabinetOptions);
+            addStd('study_room', 'Study Room Wall Paneling', wallPanelMats);
 
             addStd('toilet_area', 'Toilet area washbasin cabinet', sideCabinetOptions);
             addStd('store_room', 'Store room cupboard', sideCabinetOptions);
+            addStd('store_room', 'Loft', loftOptions);
+            addStd('store_room', 'Overhead Cabinet', boxDoorOnly);
             addStd('sitout', 'Shoe Rack Unit', sideCabinetOptions);
             addStd('sitout', 'Foyer Ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
             addStd('sitout', 'Foyer Wall Paneling', wallPanelMats);
@@ -2171,25 +2173,13 @@
             addStd('false_ceiling', 'Walk-in Wardrobe False Ceiling', ceilingMats);
 
             addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'Bed back wall paneling with headrest', wallPanelMats);
-            addStd('walk_in_wardrobe', 'Bed', [
-                { label: "King Size Bed (Direct Price)", base: 35000, formula: "QTY" },
-                { label: "Queen Size Bed (Direct Price)", base: 28000, formula: "QTY" }
-            ]);
             addStd('walk_in_wardrobe', 'Bay window', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Dressing unit wall paneling', wallPanelMats);
             addStd('walk_in_wardrobe', 'Dressing unit bottom cabinet', [{ label: "Glass", base: 350, formula: "L*W/144" }]);
-            addStd('walk_in_wardrobe', 'Tv unit-wall paneling', wallPanelMats);
-            addStd('walk_in_wardrobe', 'Tv unit-bottom cabinet', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'Tv unit-SIDE SHOW WALL CABINET', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'Bed Side Cabinet', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'CUPBOARD 1', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'CUPBOARD 2', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'LOFT 1', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'LOFT 2', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'WALL PANNELING', wallPanelMats);
-            addStd('walk_in_wardrobe', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
 
             addStd('staircase', 'Staircase Bottom Cabinet', sideCabinetOptions);
             addStd('staircase', 'Staircase Wall Paneling', wallPanelMats);
@@ -2210,7 +2200,9 @@
             addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
-            addStd('profile_glass_door', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Bedroom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Staircase Bottom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Walk-in Bottom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             const courtyardMats = [
                 { label: "PVC", base: 300, formula: "L*H/144" },
@@ -2279,7 +2271,6 @@
 
             addFullTeakCabinet('Wash Basin', 1300, 850, 1600, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Wardrobe', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
-            addFullTeakCabinet('Tv Unit', 1350, 850, 1600, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Loft', 900, 750, 900, ftSpecsLoft, ftSpecsPartition);
 
             // half_teak_wood room (Premium, Middle, Economy)
@@ -2326,7 +2317,6 @@
             addHalfTeakCabinet('Dining Partition', 1200, 650, 1100, htSpecsThin, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Wash Basin Cabinet', 900, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Wardrobe', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
-            addHalfTeakCabinet('Tv Unit', 950, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Loft', 750, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
 
             // Accessories room items with full material options
@@ -3094,7 +3084,7 @@
             if (room === 'prayer_unit') {
                 if (normalized.includes('BOTTOM')) return 75;
                 if (normalized.includes('WALL PANEL')) return 76;
-                if (normalized.includes('CROCKERY')) return 77;
+                if (normalized.includes('SHOW WALL') || normalized.includes('SHOWALL') || normalized.includes('SHOW') || normalized.includes('CROCKERY')) return 77;
                 if (normalized.includes('CUPBOARD')) return 78;
                 if (normalized.includes('ACCESSORIES')) return 79;
             }
@@ -3135,8 +3125,8 @@
                 if (normalized.includes('CUPBOARD 2')) return 67;
                 if (normalized.includes('LOFT 1')) return 68;
                 if (normalized.includes('LOFT 2')) return 69;
-                if (normalized === 'WALL PANNELING') return 70;
                 if (normalized.includes('HIDDEN DOOR')) return 71;
+                if (normalized.includes('BED BACK WALL PANEL') || normalized.includes('WALL PANEL') || normalized === 'WALL PANNELING') return 70;
                 if (normalized.includes('PROFILE GLASS')) return 73;
                 if (normalized.includes('ACCESSORIES')) return 72;
             }
@@ -3156,8 +3146,8 @@
                 if (normalized.includes('CUPBOARD 2')) return 552;
                 if (normalized.includes('LOFT 1')) return 553;
                 if (normalized.includes('LOFT 2')) return 554;
-                if (normalized === 'WALL PANNELING') return 555;
                 if (normalized.includes('HIDDEN DOOR')) return 556;
+                if (normalized.includes('BED BACK WALL PANEL') || normalized.includes('WALL PANEL') || normalized === 'WALL PANNELING') return 555;
                 if (normalized.includes('ACCESSORIES')) return 557;
             }
             if (room === 'dining_room') {
@@ -3177,10 +3167,11 @@
             }
             if (room === 'study_room') {
                 if (normalized.includes('BOOK')) return 85;
-                if (normalized.includes('STUDY TABLE') && !normalized.includes('TOP')) return 86;
-                if (normalized.includes('TOP BOX')) return 87;
+                if (normalized.includes('STUDY TABLE') && !normalized.includes('TOP') && !normalized.includes('UPPER')) return 86;
+                if (normalized.includes('TOP BOX') || normalized.includes('UPPER')) return 87;
                 if (normalized.includes('COMPUTER')) return 88;
                 if (normalized.includes('CUPBOARD')) return 90;
+                if (normalized.includes('WALL PANEL') || normalized.includes('PANEL')) return 91;
                 if (normalized.includes('ACCESSORIES')) return 89;
             }
             if (room === 'toilet_area') {
@@ -3188,6 +3179,8 @@
                 if (normalized.includes('ACCESSORIES')) return 94;
             }
             if (room === 'store_room') {
+                if (normalized.includes('LOFT')) return 441;
+                if (normalized.includes('OVERHEAD') || normalized.includes('TOP')) return 442;
                 if (normalized.includes('CUPBOARD') || normalized.includes('STORE')) return 96;
                 if (normalized.includes('ACCESSORIES')) return 97;
             }
@@ -3238,6 +3231,8 @@
                 if (normalized.includes('PASSAGE')) return 594;
             }
             if (room === 'profile_glass_door') {
+                if (normalized.includes('STAIRCASE')) return 581;
+                if (normalized.includes('WALK')) return 582;
                 if (normalized.includes('KITCHEN')) return 570;
                 if (normalized.includes('TV UNIT')) return 571;
                 if (normalized.includes('CROCKERY')) return 572;
