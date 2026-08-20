@@ -1629,6 +1629,12 @@
             "Staircase Shoe Rack Unit": 450,
             "Chappal stand": 450,
             "Staircase Chappal Stand": 450,
+            "Rolling Shutter": 8500,
+            "ROLLING SHUTTER": 8500,
+            "Glass Rolling Shutter": 12500,
+            "PVC / Aluminium Rolling Shutter": 8500,
+            "PVC Rolling Shutter": 8500,
+            "Aluminium Rolling Shutter": 9500,
             "Wallpaper": 2500,
             "Standard Wallpaper": 2200,
             "Vinyl Wallpaper": 2500,
@@ -2332,7 +2338,7 @@
                 { name: "Dustbin Unit", options: [{ label: "Single Dustbin Unit", base: 1200 }, { label: "Double Dustbin Unit", base: 2200 }, { label: "Door Mounted Dustbin", base: 1500 }] },
                 { name: "Detergent Holder", options: [{ label: "SS Detergent Holder", base: 900 }, { label: "Door Mounted Detergent Holder", base: 1100 }] },
                 { name: "GTBT", options: [{ label: "GTBT SS 304", base: 2500 }, { label: "GTBT Standard", base: 2000 }] },
-                { name: "Rolling Shutter", options: [{ label: "Glass Rolling Shutter", base: 12500 }, { label: "PVC / Aluminium Rolling Shutter", base: 8500 }] },
+                { name: "Rolling Shutter", options: [{ label: "Glass Rolling Shutter", base: 12500 }, { label: "PVC / Aluminium Rolling Shutter", base: 8500 }, { label: "PVC Rolling Shutter", base: 8500 }, { label: "Aluminium Rolling Shutter", base: 9500 }] },
                 { name: "Tall Unit", options: [{ label: "Tall Unit (6 Layer)", base: 18000 }, { label: "Tall Unit (12 Layer)", base: 28000 }] },
                 { name: "Swing Corner", options: [{ label: "Swing Corner Left", base: 7500 }, { label: "Swing Corner Right", base: 7500 }, { label: "Universal Swing Corner", base: 7500 }] },
                 { name: "Magic Corner", options: [{ label: "Magic Corner Left", base: 12000 }, { label: "Magic Corner Right", base: 12000 }, { label: "Universal Magic Corner", base: 12000 }] },
@@ -2688,7 +2694,7 @@
                 if (m.status && m.status !== 'ON') return false;
 
                 // Absolute ban on obsolete Walk-in Wardrobe Module and Walk-in Wardrobe Shutter
-                if (name.includes('MODULE') || name.includes('SHUTTER')) return false;
+                if (name.includes('MODULE') || (name.includes('SHUTTER') && !name.includes('ROLLING'))) return false;
 
                 return true;
             });
@@ -3093,6 +3099,25 @@
             }
             if (room === 'wallpaper') {
                 if (normalized.includes('WALLPAPER')) return 701;
+            }
+            if (room === 'accessories') {
+                if (normalized.includes('BASKET')) return 601;
+                if (normalized.includes('TANDOM')) return 602;
+                if (normalized.includes('PULL OUT')) return 603;
+                if (normalized.includes('PVC CUTLERY')) return 604;
+                if (normalized.includes('SS CUTLERY')) return 605;
+                if (normalized.includes('DUSTBIN')) return 606;
+                if (normalized.includes('DETERGENT')) return 607;
+                if (normalized.includes('GTBT')) return 608;
+                if (normalized.includes('SHUTTER') || normalized.includes('ROLLING')) return 609;
+                if (normalized.includes('TALL UNIT')) return 610;
+                if (normalized.includes('SWING')) return 611;
+                if (normalized.includes('MAGIC')) return 612;
+                if (normalized.includes('CARACEL') || normalized.includes('PARACEL')) return 613;
+                if (normalized.includes('TRAY') || normalized.includes('D-TRAY')) return 614;
+                if (normalized.includes('RUNNER')) return 615;
+                if (normalized.includes('HINGE')) return 616;
+                if (normalized.includes('HANDLE')) return 617;
             }
             if (room === 'bedroom') {
                 if (normalized.includes('WARDROBE')) return 25;
