@@ -1228,9 +1228,12 @@
             "GTBT": 2500,
             "GTBT SS 304": 2500,
             "GTBT Standard": 2000,
+            "Rolling Shutter": 8500,
             "ROLLING SHUTTER": 8500,
             "Glass Rolling Shutter": 12500,
             "PVC / Aluminium Rolling Shutter": 8500,
+            "PVC Rolling Shutter": 8500,
+            "Aluminium Rolling Shutter": 9500,
             "Tall Unit": 18000,
             "Tall Unit (6 Layer)": 18000,
             "Tall Unit (12 Layer)": 28000,
@@ -1272,7 +1275,7 @@
             "Dustbin Unit",
             "Detergent Holder",
             "GTBT",
-            "ROLLING SHUTTER",
+            "Rolling Shutter",
             "Tall Unit",
             "Swing Corner",
             "Magic Corner",
@@ -1285,7 +1288,7 @@
         const ROOM_ITEMS = {
             kitchen: [
                 { id: 1, name: "Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
-                { id: 2, name: "Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 2, name: "Overhead Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
                 { id: 4, name: "I-Land Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
@@ -1386,7 +1389,8 @@
                 { id: 213, name: "Dining Room False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
                 { id: 214, name: "Prayer Unit False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
                 { id: 215, name: "Study Room False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
-                { id: 216, name: "Foyer False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] }
+                { id: 216, name: "Foyer False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 217, name: "Walk-in Wardrobe False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] }
             ],
             walk_in_wardrobe: [
                 { id: 540, name: "Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
@@ -1447,7 +1451,7 @@
                 { id: 606, name: "Dustbin Unit", options: ["Single Dustbin Unit", "Double Dustbin Unit", "Door Mounted Dustbin"] },
                 { id: 607, name: "Detergent Holder", options: ["SS Detergent Holder", "Door Mounted Detergent Holder"] },
                 { id: 608, name: "GTBT", options: ["GTBT SS 304", "GTBT Standard"] },
-                { id: 609, name: "Rolling Shutter", options: ["Glass Rolling Shutter", "PVC / Aluminium Rolling Shutter"] },
+                { id: 609, name: "Rolling Shutter", options: ["Glass Rolling Shutter", "PVC / Aluminium Rolling Shutter", "PVC Rolling Shutter", "Aluminium Rolling Shutter"] },
                 { id: 610, name: "Tall Unit", options: ["Tall Unit (6 Layer)", "Tall Unit (12 Layer)"] },
                 { id: 611, name: "Swing Corner", options: ["Swing Corner Left", "Swing Corner Right", "Universal Swing Corner"] },
                 { id: 612, name: "Magic Corner", options: ["Magic Corner Left", "Magic Corner Right", "Universal Magic Corner"] },
@@ -1459,7 +1463,7 @@
             ],
             full_teak_wood: [
                 { id: 301, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 302, name: "Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 302, name: "Overhead Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 303, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 304, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 305, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -1480,7 +1484,7 @@
             ],
             half_teak_wood: [
                 { id: 401, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 402, name: "Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 402, name: "Overhead Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 403, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 404, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 405, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -2357,7 +2361,7 @@
                 return { formulaType: "QTY", fields: ["QTY"], note: "qty" };
             }
             // L*W formulas (Ledge, Ceilings)
-            if (itemId === 10 || itemId === 47 || itemId === 201 || itemId === 202 || itemId === 209 || itemId === 216 ||
+            if (itemId === 10 || itemId === 47 || itemId === 201 || itemId === 202 || itemId === 209 || itemId === 216 || itemId === 217 ||
                 nameUpper.includes("CEILING") ||
                 name === "Wood finishing" || name === "Veneer finishing" || name === "PU Paint" ||
                 name === "Gypsum Board" || name === "POP") {
@@ -3391,9 +3395,11 @@
                 }
             }
         }
+
         window.addEventListener('storage', (e) => {
             handleAdminExternalSync(e.key);
         });
+
         window.addEventListener('pks_cloud_synced', (e) => {
             handleAdminExternalSync(e.detail && e.detail.key);
         });
