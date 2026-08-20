@@ -1130,6 +1130,7 @@
             { id: 'courtyard', name: 'Courtyard', icon: '🏞️', active: true },
             { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
             { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true },
+            { id: 'wallpaper', name: 'Wallpaper', icon: '🖼️', active: true },
             { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
         ];
 
@@ -1149,6 +1150,13 @@
             "Staircase Shoe Rack Unit": 450,
             "Chappal stand": 450,
             "Staircase Chappal Stand": 450,
+            "Wallpaper": 2500,
+            "Standard Wallpaper": 2200,
+            "Vinyl Wallpaper": 2500,
+            "3D Wallpaper": 3500,
+            "Non-Woven Wallpaper": 2800,
+            "Textured Wallpaper": 3000,
+            "Custom Wallpaper": 2500,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Type)": 450,
@@ -1234,6 +1242,8 @@
             "Magic Corner Left": 12000,
             "Magic Corner Right": 12000,
             "Universal Magic Corner": 12000,
+            "CARACEL CORNER": 9000,
+            "Caracel Corner (Soft Close)": 9000,
             "PARACEL CORNER": 9000,
             "Paracel Corner (Soft Close)": 9000,
             "D-Tray": 3200,
@@ -1266,7 +1276,7 @@
             "Tall Unit",
             "Swing Corner",
             "Magic Corner",
-            "PARACEL CORNER",
+            "Caracel Corner",
             "D-Tray",
             "Soft Closing Runner",
             "Soft Closing Hinges",
@@ -1274,13 +1284,14 @@
         ];
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
+                { id: 1, name: "Kitchen Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
                 { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
                 { id: 4, name: "Kitchen I-Land Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 5, name: "Kitchen Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 6, name: "Breakfast Table Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 7, name: "Breakfast Table Beam Covering", options: ["Lamination"] },
+                { id: 15, name: "Breakfast Table Box Type", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] },
                 { id: 8, name: "Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
@@ -1290,11 +1301,11 @@
                 { id: 14, name: "Fridge Top Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 16, name: "Tv Unit – Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 17, name: "Tv Unit – Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 19, name: "Living & Dining Room Partition", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 20, name: "Living Room Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 20, name: "Living Room Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 60, name: "Courtyard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Marine Plane", "Engineering Wood"] }
@@ -1326,10 +1337,11 @@
                 { id: 73, name: "BEDROOM ROOM PROFILE GLASS DOOR", options: ["Profile Glass Door"] }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 38, name: "Wash basin unit wall paneling", options: ["PVC", "Lamination", "Charcoal"] },
-                { id: 39, name: "Dining room crockery unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 40, name: "Breakfast Table Box Type", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] }
+                { id: 37, name: "Washbasin Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 38, name: "Washbasin Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 39, name: "Crockery Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 40, name: "Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 41, name: "Dining & Kitchen Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] }
             ],
             musical_room: [
                 { id: 80, name: "WALL PANEL", options: ["PVC", "Lamination", "Charcoal"] },
@@ -1439,14 +1451,14 @@
                 { id: 610, name: "Tall Unit", options: ["Tall Unit (6 Layer)", "Tall Unit (12 Layer)"] },
                 { id: 611, name: "Swing Corner", options: ["Swing Corner Left", "Swing Corner Right", "Universal Swing Corner"] },
                 { id: 612, name: "Magic Corner", options: ["Magic Corner Left", "Magic Corner Right", "Universal Magic Corner"] },
-                { id: 613, name: "Paracel Corner", options: ["Paracel Corner (Soft Close)"] },
+                { id: 613, name: "Caracel Corner", options: ["Caracel Corner (Soft Close)"] },
                 { id: 614, name: "D-Tray", options: ["D-Tray 180°", "D-Tray 270°", "D-Tray 360°"] },
                 { id: 615, name: "Soft Closing Runner", options: ["Soft Closing Runner (Under Mount)", "Soft Closing Runner (Telescopic)"] },
                 { id: 616, name: "Soft Closing Hinges", options: ["0 Crank Soft Close Hinges", "8 Crank Soft Close Hinges", "16 Crank Soft Close Hinges"] },
                 { id: 617, name: "Profile Handle", options: ["G-Profile Handle", "J-Profile Handle", "Edge Profile Handle"] }
             ],
             full_teak_wood: [
-                { id: 301, name: "Kitchen Bottom", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 301, name: "Kitchen Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 302, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 303, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 304, name: "Kitchen I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -1467,7 +1479,7 @@
                 { id: 319, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
             ],
             half_teak_wood: [
-                { id: 401, name: "Kitchen Bottom", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 401, name: "Kitchen Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 402, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 403, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 404, name: "Kitchen I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -1485,6 +1497,9 @@
                 { id: 416, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 417, name: "Tv Unit", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 418, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
+            ],
+            wallpaper: [
+                { id: 701, name: "Wallpaper", options: ["Standard Wallpaper", "Vinyl Wallpaper", "3D Wallpaper", "Non-Woven Wallpaper", "Textured Wallpaper", "Custom Wallpaper"] }
             ]
         };
         for (const room in ROOM_ITEMS) {
@@ -1587,7 +1602,7 @@
                             const ACCESSORY_LIST = [
                                 "Basket", "Tandom Box", "Oil Pull Out", "PVC Cutlery Tray", "SS Cutlery Tray",
                                 "Dustbin Unit", "Detergent Holder", "GTBT", "ROLLING SHUTTER", "Tall Unit",
-                                "Swing Corner", "Magic Corner", "PARACEL CORNER", "D-Tray",
+                                "Swing Corner", "Magic Corner", "Caracel Corner", "D-Tray",
                                 "Soft Closing Runner", "Soft Closing Hinges", "Profile Handle"
                             ];
                             ACCESSORY_LIST.forEach(opt => roomOptions.add(opt));
@@ -2337,7 +2352,7 @@
                 nameUpper.includes("MAGIC CORNER") || nameUpper.includes("SHUTTER") ||
                 nameUpper.includes("DETERGENT") || nameUpper.includes("D-TRAY") ||
                 nameUpper.includes("GTBT") || nameUpper.includes("CORNER") ||
-                nameUpper.includes("PARACEL") || nameUpper.includes("SWING") ||
+                nameUpper.includes("CARACEL") || nameUpper.includes("PARACEL") || nameUpper.includes("SWING") ||
                 nameUpper.includes("TRAY") || nameUpper.includes("DUSTBIN")) {
                 return { formulaType: "QTY", fields: ["QTY"], note: "qty" };
             }
