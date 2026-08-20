@@ -1213,7 +1213,7 @@
                     <tr>
                         <th>#</th>
                         <th>Room</th>
-                        <th>Material</th>
+                        <th>Material / Brand</th>
                         <th id="sizeHeader">Size</th>
                         <th class="num" id="sqftHeader">Sq.Ft</th>
                         <th class="num" id="rateHeader">Rate</th>
@@ -1487,7 +1487,7 @@
                 } catch (e) { }
             }
             return [
-                { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+                { id: 'sitout', name: 'Foyer', icon: '🌿', active: true },
                 { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
                 { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
                 { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
@@ -1624,9 +1624,28 @@
 
         // Default Rates lookup (fallback if not in localStorage)
         const DEFAULT_RATES = {
+            "Shoe Rack Unit": 450,
+            "Staircase Shoe Rack Unit": 450,
+            "Chappal stand": 450,
+            "Staircase Chappal Stand": 450,
             "Marine Ply – Lamination": 450,
+            "Marine Ply – Lamination (Box Type)": 450,
+            "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Lamination (Partition Type)": 450,
+            "Marine Ply – Lamination (Door Only)": 450,
             "Marine Ply – Acrylic": 650,
+            "Marine Ply – Acrylic (Box Type)": 650,
+            "Marine Ply – Acrylic (Door Type)": 650,
+            "Marine Ply – Acrylic (Partition Type)": 650,
+            "Marine Ply – Acrylic (Door Only)": 650,
             "WPC": 550,
+            "WPC (Box Type)": 550,
+            "WPC (Door Type)": 550,
+            "WPC (Partition Type)": 550,
+            "WPC (Door Only)": 550,
+            "Engineering Wood (Box Type)": 280,
+            "Engineering Wood (Door Only)": 280,
+            "Engineering Wood (Partition Type)": 280,
             "PVC": 300,
             "Lamination": 250,
             "Charcoal": 400,
@@ -2098,9 +2117,9 @@
 
             addStd('toilet_area', 'Toilet area washbasin cabinet', sideCabinetOptions);
             addStd('store_room', 'Store room cupboard', sideCabinetOptions);
-            addStd('sitout', 'Chappal stand', sideCabinetOptions);
-            addStd('sitout', 'Sit out area ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
-            addStd('sitout', 'Sitout Wall Paneling', wallPanelMats);
+            addStd('sitout', 'Shoe Rack Unit', sideCabinetOptions);
+            addStd('sitout', 'Foyer Ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
+            addStd('sitout', 'Foyer Wall Paneling', wallPanelMats);
 
             const ceilingMats = [
                 { label: "Gypsum Board", base: 110, formula: "L*W/144" },
@@ -2119,7 +2138,7 @@
             addStd('passage_ceiling', 'Dining Room Passage Ceiling', ceilingMats);
             addStd('passage_ceiling', 'Prayer Unit Passage Ceiling', ceilingMats);
             addStd('passage_ceiling', 'Study Room Passage Ceiling', ceilingMats);
-            addStd('passage_ceiling', 'Sitout Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Foyer Passage Ceiling', ceilingMats);
 
             addStd('false_ceiling', 'False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Kitchen False Ceiling', ceilingMats);
@@ -2128,7 +2147,7 @@
             addStd('false_ceiling', 'Dining Room False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Prayer Unit False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Study Room False Ceiling', ceilingMats);
-            addStd('false_ceiling', 'Sitout False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Foyer False Ceiling', ceilingMats);
 
             addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
@@ -2158,7 +2177,7 @@
                 { label: "Marine Ply – Acrylic (Door Only)", base: 650, formula: "L*H/144" },
                 { label: "WPC (Door Only)", base: 550, formula: "L*H/144" }
             ]);
-            addStd('staircase', 'Staircase Chappal Stand', sideCabinetOptions);
+            addStd('staircase', 'Staircase Shoe Rack Unit', sideCabinetOptions);
 
             addStd('profile_glass_door', 'Kitchen Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'TV Unit Profile Glass Door', profileGlassOpts, profileGlassSpecs);
@@ -2183,7 +2202,7 @@
             addStd('courtyard', 'Dining Room Courtyard Wall Paneling', courtyardMats);
             addStd('courtyard', 'Prayer Unit Courtyard Wall Paneling', courtyardMats);
             addStd('courtyard', 'Study Room Courtyard Wall Paneling', courtyardMats);
-            addStd('courtyard', 'Sitout Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Foyer Courtyard Wall Paneling', courtyardMats);
             addStd('courtyard', 'Musical Room Courtyard Wall Paneling', courtyardMats);
             addStd('courtyard', 'Passage Courtyard Wall Paneling', courtyardMats);
 
@@ -2481,7 +2500,7 @@
             });
             try {
                 localStorage.setItem('pks_materials_db', JSON.stringify(db));
-                localStorage.setItem('pks_materials_db_version', currentDbVersion);
+                localStorage.setItem('pks_materials_db_version', 'v5002');
             } catch (e) { }
             _materialsDbCache = db;
             return db;
@@ -3111,8 +3130,8 @@
                 if (normalized.includes('CUPBOARD') || normalized.includes('STORE')) return 96;
                 if (normalized.includes('ACCESSORIES')) return 97;
             }
-            if (room === 'sitout') {
-                if (normalized.includes('CHAPPAL') || normalized.includes('STAND')) return 100;
+            if (room === 'sitout' || room === 'foyer') {
+                if (normalized.includes('SHOE') || normalized.includes('RACK') || normalized.includes('CHAPPAL') || normalized.includes('STAND')) return 100;
                 if (normalized.includes('CEILING')) return 101;
                 if (normalized.includes('PANEL') || normalized.includes('PANNELING')) return 561;
                 if (normalized.includes('ACCESSORIES')) return 102;
@@ -3121,7 +3140,7 @@
                 if (normalized.includes('BOTTOM')) return 46;
                 if (normalized.includes('PANEL')) return 48;
                 if (normalized.includes('DOOR ONLY')) return 49;
-                if (normalized.includes('CHAPPAL')) return 50;
+                if (normalized.includes('SHOE') || normalized.includes('RACK') || normalized.includes('CHAPPAL')) return 50;
                 if (normalized.includes('ACCESSORIES')) return 51;
             }
             if (room === 'passage_ceiling') {
@@ -3132,7 +3151,7 @@
                 if (normalized.includes('DINING')) return 206;
                 if (normalized.includes('PRAYER')) return 207;
                 if (normalized.includes('STUDY')) return 208;
-                if (normalized.includes('SITOUT')) return 209;
+                if (normalized.includes('FOYER') || normalized.includes('SITOUT')) return 209;
             }
             if (room === 'false_ceiling') {
                 if (normalized === 'FALSE CEILING') return 202;
@@ -3142,7 +3161,7 @@
                 if (normalized.includes('DINING')) return 213;
                 if (normalized.includes('PRAYER')) return 214;
                 if (normalized.includes('STUDY')) return 215;
-                if (normalized.includes('SITOUT')) return 216;
+                if (normalized.includes('FOYER') || normalized.includes('SITOUT')) return 216;
             }
             if (room === 'courtyard') {
                 if (normalized === 'COURTYARD WALL PANELING') return 585;
@@ -3152,7 +3171,7 @@
                 if (normalized.includes('DINING')) return 589;
                 if (normalized.includes('PRAYER')) return 590;
                 if (normalized.includes('STUDY')) return 591;
-                if (normalized.includes('SITOUT')) return 592;
+                if (normalized.includes('FOYER') || normalized.includes('SITOUT')) return 592;
                 if (normalized.includes('MUSICAL')) return 593;
                 if (normalized.includes('PASSAGE')) return 594;
             }
@@ -3514,7 +3533,7 @@
                             if (!matMatch) return false;
 
                             const itemRoom = (item.room || "").toLowerCase().trim();
-                            const roomMatch = itemRoom === 'all' || itemRoom === currentRoomId.toLowerCase().trim();
+                            const roomMatch = itemRoom === 'all' || itemRoom === (currentRoomId || '').toLowerCase().trim();
                             return roomMatch;
                         });
 
@@ -3524,7 +3543,11 @@
                     }
                 } catch (e) { }
             }
-            return cleanSpecsForType(resultText, currentMaterialLabel);
+            const cleaned = cleanSpecsForType(resultText, currentMaterialLabel);
+            if (!cleaned) return "";
+            const points = cleaned.split(/[\r\n,;]+/).map(p => p.replace(/^[•\-\*]\s*/, '').trim()).filter(Boolean);
+            if (points.length === 0) return "";
+            return points.map(p => `• ${p}`).join('\n');
         }
 
         function getFinalRateForOption(opt) {
@@ -4443,7 +4466,7 @@
                             <tr>
                                 <th style="padding: 10px 8px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: center; width: 6%; letter-spacing: 0.5px; border: none;">S.NO</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 26%; letter-spacing: 0.5px; border: none;">ITEM</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 38%; letter-spacing: 0.5px; border: none;">MATERIAL</th>
+                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 38%; letter-spacing: 0.5px; border: none;">MATERIAL / BRAND</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 16%; letter-spacing: 0.5px; border: none;">SIZE</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: right; width: 14%; letter-spacing: 0.5px; border: none;">AMOUNT</th>
                             </tr>
