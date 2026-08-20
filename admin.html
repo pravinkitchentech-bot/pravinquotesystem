@@ -3391,11 +3391,9 @@
                 }
             }
         }
-
         window.addEventListener('storage', (e) => {
             handleAdminExternalSync(e.key);
         });
-
         window.addEventListener('pks_cloud_synced', (e) => {
             handleAdminExternalSync(e.detail && e.detail.key);
         });
