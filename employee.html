@@ -2104,7 +2104,7 @@
             addStd('bedroom', 'Tv unit-wall paneling', wallPanelMats);
             addStd('bedroom', 'Tv unit-bottom cabinet', sideCabinetOptions);
             addStd('bedroom', 'Tv unit-SIDE SHOW WALL CABINET', sideCabinetOptions);
-            addStd('bedroom', 'SIDE CABINET', sideCabinetOptions);
+            addStd('bedroom', 'Bed Side Cabinet', sideCabinetOptions);
             addStd('bedroom', 'CUPBOARD 1', sideCabinetOptions);
             addStd('bedroom', 'CUPBOARD 2', sideCabinetOptions);
             addStd('bedroom', 'LOFT 1', sideCabinetOptions);
@@ -2183,7 +2183,7 @@
             addStd('walk_in_wardrobe', 'Tv unit-wall paneling', wallPanelMats);
             addStd('walk_in_wardrobe', 'Tv unit-bottom cabinet', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Tv unit-SIDE SHOW WALL CABINET', sideCabinetOptions);
-            addStd('walk_in_wardrobe', 'SIDE CABINET', sideCabinetOptions);
+            addStd('walk_in_wardrobe', 'Bed Side Cabinet', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'CUPBOARD 1', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'CUPBOARD 2', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'LOFT 1', sideCabinetOptions);
@@ -3130,7 +3130,7 @@
                 if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 32;
                 if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 33;
                 if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 34;
-                if (normalized === 'SIDE CABINET') return 65;
+                if (normalized.includes('BED SIDE') || normalized === 'SIDE CABINET') return 65;
                 if (normalized.includes('CUPBOARD 1')) return 66;
                 if (normalized.includes('CUPBOARD 2')) return 67;
                 if (normalized.includes('LOFT 1')) return 68;
@@ -3151,7 +3151,7 @@
                 if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 547;
                 if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 548;
                 if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 549;
-                if (normalized === 'SIDE CABINET') return 550;
+                if (normalized.includes('BED SIDE') || normalized === 'SIDE CABINET') return 550;
                 if (normalized.includes('CUPBOARD 1')) return 551;
                 if (normalized.includes('CUPBOARD 2')) return 552;
                 if (normalized.includes('LOFT 1')) return 553;
