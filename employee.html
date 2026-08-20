@@ -2024,7 +2024,7 @@
 
             // Populate all room items for Premium, Middle, Economy
             addStd('kitchen', 'Bottom Cabinet', boxPartitionDoor);
-            addStd('kitchen', 'Top Box', boxDoorOnly);
+            addStd('kitchen', 'Overhead Cabinet', boxDoorOnly);
             addStd('kitchen', 'Loft', loftOptions);
             addStd('kitchen', 'I-Land Cabinet', boxDoorOnly);
             addStd('kitchen', 'Breakfast Table', boxDoorOnly);
@@ -2168,6 +2168,7 @@
             addStd('false_ceiling', 'Prayer Unit False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Study Room False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Foyer False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Walk-in Wardrobe False Ceiling', ceilingMats);
 
             addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
@@ -2248,7 +2249,7 @@
             }
 
             addFullTeakCabinet('Bottom Cabinet', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
-            addFullTeakCabinet('Top Box', 1200, 800, 1200, ftSpecsTop, ftSpecsPartition);
+            addFullTeakCabinet('Overhead Cabinet', 1200, 800, 1200, ftSpecsTop, ftSpecsPartition);
             addFullTeakCabinet('Loft', 900, 750, 900, ftSpecsLoft, ftSpecsPartition);
             addFullTeakCabinet('I-Land Cabinet', 1500, 800, 1500, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Breakfast Table', 1400, 800, 1400, ftSpecsBottom, ftSpecsPartition);
@@ -2309,7 +2310,7 @@
             }
 
             addHalfTeakCabinet('Bottom Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
-            addHalfTeakCabinet('Top Box', 900, 600, 900, htSpecsBottom, htSpecsDoor, htSpecsPartition);
+            addHalfTeakCabinet('Overhead Cabinet', 900, 600, 900, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Loft', 750, 550, 750, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('I-Land Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Breakfast Table', 1000, 650, 1000, htSpecsBottom, htSpecsDoor, htSpecsPartition);
@@ -2618,7 +2619,7 @@
                         m.specifications = ftSpecsPartition;
                     } else {
                         // Box Type
-                        if (m.itemName === 'Top Box' || m.itemName === 'Kitchen Top Box' || m.itemName === 'Side Storage Cabinet' || m.itemName === 'Kitchen Side Storage Cabinet') {
+                        if (m.itemName === 'Overhead Cabinet' || m.itemName === 'Top Box' || m.itemName === 'Kitchen Top Box' || m.itemName === 'Side Storage Cabinet' || m.itemName === 'Kitchen Side Storage Cabinet') {
                             m.specifications = ftSpecsTop;
                         } else if (m.itemName === 'Kitchen Loft' || m.itemName === 'Loft') {
                             m.specifications = ftSpecsLoft;
@@ -3063,7 +3064,7 @@
             const normalized = (name || '').toUpperCase().trim();
             if (room === 'kitchen') {
                 if (normalized.includes('BOTTOM') && !normalized.includes('STAIRCASE')) return 1;
-                if (normalized.includes('TOP')) return 2;
+                if (normalized.includes('OVERHEAD') || (normalized.includes('TOP') && !normalized.includes('FRIDGE'))) return 2;
                 if (normalized.includes('LOFT')) return 3;
                 if (normalized.includes('ISLAND') || normalized.includes('I-LAND')) return 4;
                 if (normalized.includes('BREAKFAST TABLE') && !normalized.includes('PANEL') && !normalized.includes('BEAM') && !normalized.includes('BOX')) return 5;
@@ -3222,6 +3223,7 @@
                 if (normalized.includes('PRAYER')) return 214;
                 if (normalized.includes('STUDY')) return 215;
                 if (normalized.includes('FOYER') || normalized.includes('SITOUT')) return 216;
+                if (normalized.includes('WARDROBE') || normalized.includes('WALK')) return 217;
             }
             if (room === 'courtyard') {
                 if (normalized === 'COURTYARD WALL PANELING') return 585;
