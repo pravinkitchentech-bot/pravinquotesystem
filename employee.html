@@ -1127,7 +1127,7 @@
                 <button type="button" class="mode-tab-btn" id="modeBtnPremium"
                     onclick="switchPricingMode('premium')">Premium</button>
                 <button type="button" class="mode-tab-btn" id="modeBtnMedium"
-                    onclick="switchPricingMode('medium')">Middle / Standard</button>
+                    onclick="switchPricingMode('medium')">Middle</button>
                 <button type="button" class="mode-tab-btn" id="modeBtnEconomy"
                     onclick="switchPricingMode('economy')">Economy</button>
             </div>
@@ -1459,7 +1459,7 @@
         const pricingMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
 
         let modeLabel = 'Premium';
-        if (pricingMode === 'medium') modeLabel = 'Middle / Standard';
+        if (pricingMode === 'medium') modeLabel = 'Middle';
         else if (pricingMode === 'economy') modeLabel = 'Economy';
 
         // Render division badge in header
@@ -1658,7 +1658,8 @@
 
         function normalizeKey(str) {
             if (!str) return '';
-            return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return str.toLowerCase().replace
+                (/[^a-z0-9]/g, '');
         }
 
         function resolveRate(ratesObj, constType, matType, roomId, divId, qual) {
@@ -1670,7 +1671,7 @@
             if (normQ.includes('middle') || normQ.includes('medium') || normQ.includes('standard')) qualKey = 'medium';
             else if (normQ.includes('economy')) qualKey = 'economy';
 
-            function singleLookup(obj) {
+            function singleLookup(obj, allowBaseFallback = false) {
                 if (!obj) return undefined;
 
                 const normMap = {};
@@ -1691,16 +1692,7 @@
                 if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}_${qualKey}`);
                 if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}_${qualKey}`);
 
-                // 2. Room Base candidates (only for premium)
-                if (qualKey === 'premium') {
-                    if (curDiv && curRoom && constType) candidateStrings.push(`${curDiv}_${curRoom}_${constType}`);
-                    if (curRoom && constType) candidateStrings.push(`${curRoom}_${constType}`);
-                    if (curDiv && curRoom && baseName) candidateStrings.push(`${curDiv}_${curRoom}_${baseName}`);
-                    if (curRoom && baseName) candidateStrings.push(`${curRoom}_${baseName}`);
-                    if (curDiv && curRoom && matType) candidateStrings.push(`${curDiv}_${curRoom}_${matType}`);
-                    if (curRoom && matType) candidateStrings.push(`${curRoom}_${matType}`);
-                }
-                // 3. Global Mode candidates
+                // 2. Global Mode candidates
                 if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}_${qualKey}`);
                 if (constType) candidateStrings.push(`${constType}_${qualKey}`);
                 if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}_${qualKey}`);
@@ -1708,26 +1700,43 @@
                 if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}_${qualKey}`);
                 if (matType) candidateStrings.push(`${matType}_${qualKey}`);
 
-                // 4. Global Base candidates (only for premium)
-                if (qualKey === 'premium') {
-                    if (curDiv && constType) candidateStrings.push(`${curDiv}_${constType}`);
-                    if (constType) candidateStrings.push(constType);
-                    if (curDiv && baseName) candidateStrings.push(`${curDiv}_${baseName}`);
-                    if (baseName) candidateStrings.push(baseName);
-                    if (curDiv && matType) candidateStrings.push(`${curDiv}_${matType}`);
-                    if (matType) candidateStrings.push(matType);
-                }
-
                 for (const cand of candidateStrings) {
                     const k = normalizeKey(cand);
                     if (normMap[k] !== undefined) return normMap[k];
+                }
+
+                // 3. Fallback to base rate if allowBaseFallback is true or if qualKey === 'premium'
+                if (qualKey === 'premium' || allowBaseFallback) {
+                    const baseCandidates = [];
+                    if (curDiv && curRoom && constType) baseCandidates.push(`${curDiv}_${curRoom}_${constType}`);
+                    if (curRoom && constType) baseCandidates.push(`${curRoom}_${constType}`);
+                    if (curDiv && curRoom && baseName) baseCandidates.push(`${curDiv}_${curRoom}_${baseName}`);
+                    if (curRoom && baseName) baseCandidates.push(`${curRoom}_${baseName}`);
+                    if (curDiv && curRoom && matType) baseCandidates.push(`${curDiv}_${curRoom}_${matType}`);
+                    if (curRoom && matType) baseCandidates.push(`${curRoom}_${matType}`);
+                    if (curDiv && constType) baseCandidates.push(`${curDiv}_${constType}`);
+                    if (constType) baseCandidates.push(constType);
+                    if (curDiv && baseName) baseCandidates.push(`${curDiv}_${baseName}`);
+                    if (baseName) baseCandidates.push(baseName);
+                    if (curDiv && matType) baseCandidates.push(`${curDiv}_${matType}`);
+                    if (matType) baseCandidates.push(matType);
+
+                    for (const cand of baseCandidates) {
+                        const k = normalizeKey(cand);
+                        if (normMap[k] !== undefined) {
+                            const val = normMap[k];
+                            if (qualKey === 'premium') return val;
+                            const factor = qualKey === 'medium' ? 0.85 : 0.70;
+                            return Math.round(val * factor);
+                        }
+                    }
                 }
 
                 return undefined;
             }
 
             // 1. Try provided custom/room rates object
-            let rateVal = singleLookup(ratesObj);
+            let rateVal = singleLookup(ratesObj, true);
             if (rateVal !== undefined) return rateVal;
 
             // 2. Fallback to global pks_rates
@@ -1735,16 +1744,14 @@
             if (globalStored) {
                 try {
                     const globalRates = JSON.parse(globalStored);
-                    rateVal = singleLookup(globalRates);
+                    rateVal = singleLookup(globalRates, true);
                     if (rateVal !== undefined) return rateVal;
                 } catch (e) { }
             }
 
-            // 3. Fallback to DEFAULT_RATES (only for premium)
-            if (qualKey === 'premium') {
-                rateVal = singleLookup(DEFAULT_RATES);
-                if (rateVal !== undefined) return rateVal;
-            }
+            // 3. Fallback to DEFAULT_RATES
+            rateVal = singleLookup(DEFAULT_RATES, true);
+            if (rateVal !== undefined) return rateVal;
 
             return undefined;
         }
@@ -1801,19 +1808,16 @@
                         }
                     }
                 }
-            } catch(e) {}
+            } catch (e) { }
         })();
-
-        // Setup base database
         function getOrInitMaterialsDb() {
             if (_materialsDbCache) return _materialsDbCache;
-            const currentDbVersion = 'v4000';
+            const rates = getRates();
+            const currentDbVersion = 'v5001';
             let stored = localStorage.getItem('pks_materials_db');
             let storedVersion = localStorage.getItem('pks_materials_db_version');
-
             let db = [];
-            const qualities = ['Premium', 'Middle / Standard', 'Economy'];
-
+            const qualities = ['Premium', 'Middle', 'Economy'];
             function addMat(room, type, qual, item, constType, specs, formula, baseAmount, showSqft = true) {
                 db.push({
                     id: 'mat_' + room + '_' + type.replace(/\s+/g, '_').toLowerCase() + '_' + qual.replace(/\s+/g, '_').toLowerCase() + '_' + item.replace(/\s+/g, '_').toLowerCase() + '_' + constType.replace(/\s+/g, '_').toLowerCase(),
@@ -1832,7 +1836,6 @@
                     status: 'ON'
                 });
             }
-
             let loadedFromStore = false;
             if (stored && storedVersion === currentDbVersion) {
                 try {
@@ -1843,7 +1846,6 @@
                     }
                 } catch (e) { }
             }
-
             // Ensure no standard rooms have Accessories material type
             db = db.filter(m => !(m.materialType === 'Accessories' && m.roomId !== 'accessories'));
 
@@ -1865,9 +1867,9 @@
             ];
 
             const wallPanelMats = [
-                { label: "PVC", base: 300, formula: "L*W/144" },
-                { label: "Charcoal", base: 400, formula: "L*W/144" },
-                { label: "Lamination", base: 250, formula: "L*W/144" }
+                { label: "PVC", base: 300, formula: "L*H/144" },
+                { label: "Charcoal", base: 400, formula: "L*H/144" },
+                { label: "Lamination", base: 250, formula: "L*H/144" }
             ];
 
             // Economy items (Engineering Wood only)
@@ -1880,7 +1882,7 @@
                 { label: "Engineering Wood", base: 280, formula: "(L+W)*H/144" }
             ];
 
-            // Helper to populate standard items in standard rooms
+            // Helper to populate items in rooms
             function addStd(room, item, mats, specs = null) {
                 if (loadedFromStore) {
                     const hasItemInDb = db.some(m => m.roomId === room && m.itemName === item);
@@ -1896,7 +1898,7 @@
                             });
                             return;
                         }
-                        const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal") || room === 'profile_glass_door';
+                        const isWallPanelOrCeiling = mats.some(m => m.label === "PVC" || m.label === "Lamination" || m.label === "Charcoal") || room === 'profile_glass_door' || room === 'courtyard';
                         if (isWallPanelOrCeiling) {
                             mats.forEach(m => {
                                 addMat(room, 'Standard', qual, item, m.label, finalSpecs, m.formula, m.base);
@@ -1982,11 +1984,16 @@
                 { label: "WPC (Door Type)", base: 550, formula: "L*H/144" }
             ];
 
-            // Populate all standard room items for Premium and Middle
+            const profileGlassSpecs = "ALUMINIUM PROFILE FRAME 45MM, TOUGHENED GLASS 4MM / FLUTED / TINTED, PREMIUM PROFILE HINGES, INTEGRATED PROFILE HANDLE, SOFT CLOSING MECHANISM";
+            const profileGlassOpts = [
+                { label: "Profile Glass Door", base: 850, formula: "L*H/144" }
+            ];
+
+            // Populate all room items for Premium, Middle, Economy
             addStd('kitchen', 'Kitchen Bottom', boxPartitionDoor);
             addStd('kitchen', 'Kitchen Top Box', boxDoorOnly);
             addStd('kitchen', 'Kitchen Loft', loftOptions);
-            addStd('kitchen', 'Kitchen Island Cabinet', boxDoorOnly);
+            addStd('kitchen', 'Kitchen I-Land Cabinet', boxDoorOnly);
             addStd('kitchen', 'Kitchen Breakfast Table', boxDoorOnly);
             addStd('kitchen', 'Breakfast Table Wall Paneling', [
                 { label: "PVC", base: 300, formula: "L*H/144" },
@@ -2043,6 +2050,8 @@
 
             addStd('prayer_unit', 'PRAYER UNIT BOTTOM CABINET', sideCabinetOptions);
             addStd('prayer_unit', 'PRAYER UNIT WALL PANELING', wallPanelMats);
+            addStd('prayer_unit', 'PRAYER UNIT CROCKERY UNIT', sideCabinetOptions);
+            addStd('prayer_unit', 'PRAYER UNIT CUPBOARD', sideCabinetOptions);
 
             addStd('bedroom', 'Wardrobe', sideCabinetOptions);
             addStd('bedroom', 'Walk-in Wardrobe', sideCabinetOptions);
@@ -2064,10 +2073,16 @@
             addStd('bedroom', 'LOFT 2', sideCabinetOptions);
             addStd('bedroom', 'WALL PANNELING', wallPanelMats);
             addStd('bedroom', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
+            addStd('bedroom', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('dining_room', 'Wash basin unit bottom cabinet', sideCabinetOptions);
             addStd('dining_room', 'Wash basin unit wall paneling', wallPanelMats);
             addStd('dining_room', 'Dining room crockery unit', sideCabinetOptions);
+            addStd('dining_room', 'Breakfast Table Box Type', [
+                { label: "Marine Ply – Lamination (Box Type)", base: 450, formula: "(L+W)*H/144" },
+                { label: "Marine Ply – Acrylic (Box Type)", base: 650, formula: "(L+W)*H/144" },
+                { label: "WPC (Box Type)", base: 550, formula: "(L+W)*H/144" }
+            ]);
 
             addStd('musical_room', 'WALL PANEL', wallPanelMats);
             addStd('musical_room', 'WALL PANNELLING TABLE', sideCabinetOptions);
@@ -2079,11 +2094,13 @@
             addStd('study_room', 'STUDY TABLE', sideCabinetOptions);
             addStd('study_room', 'STUDY TABLE TOP BOX', sideCabinetOptions);
             addStd('study_room', 'COMPUTER TABLE', sideCabinetOptions);
+            addStd('study_room', 'STUDY ROOM CUPBOARD', sideCabinetOptions);
 
             addStd('toilet_area', 'Toilet area washbasin cabinet', sideCabinetOptions);
             addStd('store_room', 'Store room cupboard', sideCabinetOptions);
             addStd('sitout', 'Chappal stand', sideCabinetOptions);
             addStd('sitout', 'Sit out area ceiling', [{ label: "Lamination", base: 250, formula: "L*W/144" }]);
+            addStd('sitout', 'Sitout Wall Paneling', wallPanelMats);
 
             const ceilingMats = [
                 { label: "Gypsum Board", base: 110, formula: "L*W/144" },
@@ -2102,6 +2119,7 @@
             addStd('passage_ceiling', 'Dining Room Passage Ceiling', ceilingMats);
             addStd('passage_ceiling', 'Prayer Unit Passage Ceiling', ceilingMats);
             addStd('passage_ceiling', 'Study Room Passage Ceiling', ceilingMats);
+            addStd('passage_ceiling', 'Sitout Passage Ceiling', ceilingMats);
 
             addStd('false_ceiling', 'False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Kitchen False Ceiling', ceilingMats);
@@ -2110,6 +2128,7 @@
             addStd('false_ceiling', 'Dining Room False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Prayer Unit False Ceiling', ceilingMats);
             addStd('false_ceiling', 'Study Room False Ceiling', ceilingMats);
+            addStd('false_ceiling', 'Sitout False Ceiling', ceilingMats);
 
             addStd('walk_in_wardrobe', 'Wardrobe', sideCabinetOptions);
             addStd('walk_in_wardrobe', 'Walk-in Wardrobe', sideCabinetOptions);
@@ -2134,12 +2153,12 @@
 
             addStd('staircase', 'Staircase Bottom Cabinet', sideCabinetOptions);
             addStd('staircase', 'Staircase Wall Paneling', wallPanelMats);
-            addStd('staircase', 'Staircase Storage Ledge', sideCabinetOptions);
-
-            const profileGlassSpecs = "ALUMINIUM PROFILE FRAME 45MM, TOUGHENED GLASS 4MM / FLUTED / TINTED, PREMIUM PROFILE HINGES, INTEGRATED PROFILE HANDLE, SOFT CLOSING MECHANISM";
-            const profileGlassOpts = [
-                { label: "Profile Glass Door", base: 850, formula: "L*H/144" }
-            ];
+            addStd('staircase', 'Staircase Door Only', [
+                { label: "Marine Ply – Lamination (Door Only)", base: 450, formula: "L*H/144" },
+                { label: "Marine Ply – Acrylic (Door Only)", base: 650, formula: "L*H/144" },
+                { label: "WPC (Door Only)", base: 550, formula: "L*H/144" }
+            ]);
+            addStd('staircase', 'Staircase Chappal Stand', sideCabinetOptions);
 
             addStd('profile_glass_door', 'Kitchen Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'TV Unit Profile Glass Door', profileGlassOpts, profileGlassSpecs);
@@ -2151,10 +2170,23 @@
             addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
-            addStd('profile_glass_door', 'Bedroom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
-            addStd('courtyard', 'Courtyard Wall Paneling', wallPanelMats);
-            addStd('courtyard', 'Courtyard Storage Cabinet', sideCabinetOptions);
+            const courtyardMats = [
+                { label: "PVC", base: 300, formula: "L*H/144" },
+                { label: "Lamination", base: 250, formula: "L*H/144" }
+            ];
+            addStd('courtyard', 'Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Kitchen Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Living Room Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Bedroom Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Dining Room Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Prayer Unit Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Study Room Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Sitout Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Musical Room Courtyard Wall Paneling', courtyardMats);
+            addStd('courtyard', 'Passage Courtyard Wall Paneling', courtyardMats);
+
             // 2. NEW WOOD ROOMS: Full Teak Wood and Half Teak Wood
             // full_teak_wood room (Premium only)
             const ftSpecsBottom = "KERALA TEAK WOOD, BACKDSEAT 8 MM TEAK WOOD, BOX WOOD SIZE 17MM, DOOR WOOD SIZE FRAME 25MM, FINISHING PU OR MATE FINISHING, SOFT CLOSING HINGES";
@@ -2169,7 +2201,7 @@
                 if (loadedFromStore) return;
                 const boxFormula = customBoxFormula || "(Length + Width) * Height / 144";
                 qualities.forEach(qual => {
-                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
                     addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Box Type', boxSpecs, boxFormula, Math.round(boxBase * factor));
                     addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Door Only', ftSpecsDoor, 'L * H / 144', Math.round(doorBase * factor));
                     addMat('full_teak_wood', 'Full Teak Wood', qual, itemName, 'Partition Type', partSpecs, '(Length + Width) * Height / 144', Math.round(partBase * factor));
@@ -2179,13 +2211,13 @@
             addFullTeakCabinet('Kitchen Bottom', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Top Box', 1200, 800, 1200, ftSpecsTop, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Loft', 900, 750, 900, ftSpecsLoft, ftSpecsPartition);
-            addFullTeakCabinet('Kitchen Island Cabinet', 1500, 800, 1500, ftSpecsBottom, ftSpecsPartition);
+            addFullTeakCabinet('Kitchen I-Land Cabinet', 1500, 800, 1500, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Breakfast Table', 1400, 800, 1400, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Side Storage Cabinet', 1100, 900, 1100, ftSpecsTop, ftSpecsPartition);
 
             if (!loadedFromStore) {
                 qualities.forEach(qual => {
-                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
                     addMat('full_teak_wood', 'Full Teak Wood', qual, 'Breakfast Table Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(650 * factor));
                     addMat('full_teak_wood', 'Full Teak Wood', qual, 'Breakfast Table Beam Covering', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(600 * factor));
                 });
@@ -2200,7 +2232,7 @@
 
             if (!loadedFromStore) {
                 qualities.forEach(qual => {
-                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
                     addMat('full_teak_wood', 'Full Teak Wood', qual, 'Wall Paneling', 'Box Type', ftSpecsThin, 'W * H / 144', Math.round(700 * factor));
                 });
             }
@@ -2210,7 +2242,7 @@
             addFullTeakCabinet('Tv Unit', 1350, 850, 1600, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Loft', 900, 750, 900, ftSpecsLoft, ftSpecsPartition);
 
-            // half_teak_wood room (Premium, Middle/Standard, Economy)
+            // half_teak_wood room (Premium, Middle, Economy)
             const htSpecsBottom = "Marineply-710 grade 16 mm, Backs TOP Seat WPC / Tech wood, Outdoor kerala teak wood, Teak wood size 17mm/25mm, Soft Closing Hinges, Sleek, hitech, finishing pu/mate, glossy";
             const htSpecsPartition = "Frame and Partition - Marine Ply, 710 Grade, Thickness - 16 mm, Brand - Fineply / Saburi, Inner Finishing - Teak Wood Color Lamination / Half White Color Lamination, Outside Area - Full Kerala Teak Wood, Door Frame Thickness - 25 mm, Outside Finish - PU / Matte / Glossy, Hinges - Soft Closing / Hitech";
             const htSpecsDoor = "Frame - Marine Ply, 710 Grade, Thickness - 16 mm, Brand - Fineply / Saburi, Inner Finishing - Teak Wood Color Lamination / Half White Color Lamination, Outside Door - Kerala Teak Wood, Door Thickness - 25 mm / 16 mm, Outside Finish - PU / Matte / Glossy, Hinges - Soft Closing / Hitech";
@@ -2222,7 +2254,7 @@
                 if (loadedFromStore) return;
                 const boxFormula = customBoxFormula || "(Length + Width) * Height / 144";
                 qualities.forEach(qual => {
-                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
                     addMat('half_teak_wood', 'Half Teak Wood', qual, itemName, 'Box Type', boxSpecs, boxFormula, Math.round(boxBase * factor));
                     addMat('half_teak_wood', 'Half Teak Wood', qual, itemName, 'Door Only', doorSpecs, 'L * H / 144', Math.round(doorBase * factor));
                     addMat('half_teak_wood', 'Half Teak Wood', qual, itemName, 'Partition Type', partSpecs, '(Length + Width) * Height / 144', Math.round(partBase * factor));
@@ -2232,7 +2264,7 @@
             function addHalfTeakPanel(itemName, base, specs, formula) {
                 if (loadedFromStore) return;
                 qualities.forEach(qual => {
-                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle / Standard' ? 0.85 : 0.7);
+                    let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
                     addMat('half_teak_wood', 'Half Teak Wood', qual, itemName, 'Box Type', specs, formula, Math.round(base * factor));
                 });
             }
@@ -2240,7 +2272,7 @@
             addHalfTeakCabinet('Kitchen Bottom', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Top Box', 900, 600, 900, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Loft', 750, 550, 750, htSpecsBottom, htSpecsDoor, htSpecsPartition);
-            addHalfTeakCabinet('Kitchen Island Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
+            addHalfTeakCabinet('Kitchen I-Land Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Breakfast Table', 1000, 650, 1000, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Side Storage Cabinet', 850, 650, 850, htSpecsBottom, htSpecsDoor, htSpecsPartition);
 
@@ -2257,33 +2289,33 @@
             addHalfTeakCabinet('Tv Unit', 950, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Loft', 750, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
 
-            // Accessories (applicable to all standard rooms as well as Accessories room)
-            const accOpts = [
-                { name: "Basket", base: 1200 },
-                { name: "Tandom Box", base: 3500 },
-                { name: "Oil Pull Out", base: 2200 },
-                { name: "PVC Cutlery Tray", base: 800 },
-                { name: "SS Cutlery Tray", base: 1500 },
-                { name: "Dustbin Unit", base: 1200 },
-                { name: "Detergent Holder", base: 900 },
-                { name: "GTBT", base: 2500 },
-                { name: "ROLLING SHUTTER", base: 8500 },
-                { name: "Tall Unit", base: 18000 },
-                { name: "Swing Corner", base: 7500 },
-                { name: "Magic Corner", base: 12000 },
-                { name: "PARACEL CORNER", base: 9000 },
-                { name: "D-Tray", base: 3200 },
-                { name: "Soft Closing Runner", base: 1500 },
-                { name: "Soft Closing Hinges", base: 350 },
-                { name: "Profile Handle", base: 450 }
+            // Accessories room items with full material options
+            const accDetailedOpts = [
+                { name: "Basket", options: [{ label: "Plain Basket", base: 1200 }, { label: "Thali Basket", base: 1400 }, { label: "Cup & Saucer Basket", base: 1300 }, { label: "Cutlery Basket", base: 1500 }, { label: "SS 304 Wire Basket", base: 1800 }, { label: "Soft Close Wire Basket", base: 2200 }] },
+                { name: "Tandom Box", options: [{ label: "Tandom Box (Soft Close)", base: 3500 }, { label: "Tandom Box (Slim)", base: 4500 }] },
+                { name: "Oil Pull Out", options: [{ label: "2-Tier Oil Pull Out", base: 2200 }, { label: "3-Tier Oil Pull Out", base: 2800 }, { label: "SS 304 Oil Pull Out", base: 2500 }] },
+                { name: "PVC Cutlery Tray", options: [{ label: "PVC Cutlery Tray", base: 800 }] },
+                { name: "SS Cutlery Tray", options: [{ label: "SS 304 Cutlery Tray", base: 1500 }, { label: "SS 202 Cutlery Tray", base: 1100 }] },
+                { name: "Dustbin Unit", options: [{ label: "Single Dustbin Unit", base: 1200 }, { label: "Double Dustbin Unit", base: 2200 }, { label: "Door Mounted Dustbin", base: 1500 }] },
+                { name: "Detergent Holder", options: [{ label: "SS Detergent Holder", base: 900 }, { label: "Door Mounted Detergent Holder", base: 1100 }] },
+                { name: "GTBT", options: [{ label: "GTBT SS 304", base: 2500 }, { label: "GTBT Standard", base: 2000 }] },
+                { name: "Rolling Shutter", options: [{ label: "Glass Rolling Shutter", base: 12500 }, { label: "PVC / Aluminium Rolling Shutter", base: 8500 }] },
+                { name: "Tall Unit", options: [{ label: "Tall Unit (6 Layer)", base: 18000 }, { label: "Tall Unit (12 Layer)", base: 28000 }] },
+                { name: "Swing Corner", options: [{ label: "Swing Corner Left", base: 7500 }, { label: "Swing Corner Right", base: 7500 }, { label: "Universal Swing Corner", base: 7500 }] },
+                { name: "Magic Corner", options: [{ label: "Magic Corner Left", base: 12000 }, { label: "Magic Corner Right", base: 12000 }, { label: "Universal Magic Corner", base: 12000 }] },
+                { name: "Paracel Corner", options: [{ label: "Paracel Corner (Soft Close)", base: 9000 }] },
+                { name: "D-Tray", options: [{ label: "D-Tray 180°", base: 2800 }, { label: "D-Tray 270°", base: 3200 }, { label: "D-Tray 360°", base: 3800 }] },
+                { name: "Soft Closing Runner", options: [{ label: "Soft Closing Runner (Under Mount)", base: 1500 }, { label: "Soft Closing Runner (Telescopic)", base: 1200 }] },
+                { name: "Soft Closing Hinges", options: [{ label: "0 Crank Soft Close Hinges", base: 350 }, { label: "8 Crank Soft Close Hinges", base: 350 }, { label: "16 Crank Soft Close Hinges", base: 380 }] },
+                { name: "Profile Handle", options: [{ label: "G-Profile Handle", base: 450 }, { label: "J-Profile Handle", base: 450 }, { label: "Edge Profile Handle", base: 400 }] }
             ];
 
             if (!loadedFromStore) {
-                const allAccRooms = ['accessories'];
-                allAccRooms.forEach(room => {
-                    accOpts.forEach(acc => {
+                accDetailedOpts.forEach(acc => {
+                    acc.options.forEach(opt => {
                         qualities.forEach(qual => {
-                            addMat(room, 'Accessories', qual, acc.name, 'Box Type', 'Stainless Steel Kitchen Accessories', 'QTY', acc.base, false);
+                            const qualRate = resolveRate(rates, opt.label, 'Accessories', 'accessories', selectedDivision, qual) || opt.base || 0;
+                            addMat('accessories', 'Accessories', qual, acc.name, opt.label, 'Stainless Steel Kitchen Accessories', 'QTY', qualRate, false);
                         });
                     });
                 });
@@ -2341,7 +2373,8 @@
                     const parsedItems = JSON.parse(customItemsStr);
                     const standardRooms = ['kitchen', 'living_room', 'prayer_unit', 'bedroom', 'dining_room', 'musical_room', 'study_room', 'toilet_area', 'store_room', 'sitout', 'profile_glass_door', 'walk_in_wardrobe', 'staircase', 'courtyard'];
                     parsedItems.forEach(item => {
-                        standardRooms.forEach(room => {
+                        const targetRooms = item.roomId ? [item.roomId] : standardRooms;
+                        targetRooms.forEach(room => {
                             qualities.forEach(qual => {
                                 const itemUpper = item.name.toUpperCase();
                                 const isEcoTable = qual === 'Economy' &&
@@ -2366,12 +2399,13 @@
                                     return;
                                 }
 
-                                item.options.forEach(opt => {
+                                (item.options || []).forEach(opt => {
+                                    const optLabel = typeof opt === 'string' ? opt : opt.label;
                                     const exists = db.some(m =>
                                         m.roomId === room &&
                                         m.itemName === item.name &&
                                         m.quality === qual &&
-                                        m.constructionType === opt.label
+                                        m.constructionType === optLabel
                                     );
                                     if (!exists) {
                                         let formula = "L*H/144";
@@ -2382,9 +2416,9 @@
                                         else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
                                         else { fields = ["L", "W", "H"]; formula = "(L+W)*H/144"; }
 
-                                        const qualRate = resolveRate(rates, opt.label, 'Standard', room, selectedDivision, qual) || opt.rate || 0;
+                                        const qualRate = resolveRate(rates, optLabel, 'Standard', room, selectedDivision, qual) || (opt.rate || 0);
 
-                                        addMat(room, 'Standard', qual, item.name, opt.label, opt.specifications || "", formula, qualRate);
+                                        addMat(room, 'Standard', qual, item.name, optLabel, opt.specifications || "", formula, qualRate);
                                     }
                                 });
                             });
@@ -2454,11 +2488,14 @@
         }
         const activeMaterialType = sessionStorage.getItem('pks_material_type') || 'Half Teak Wood';
         let activeQuality = 'Premium';
-        if (pricingMode === 'medium') activeQuality = 'Middle / Standard';
+        if (pricingMode === 'medium') activeQuality = 'Middle';
         else if (pricingMode === 'economy') activeQuality = 'Economy';
         function evaluateFormula(formulaStr, values) {
             if (!formulaStr) return 0;
-            let normalized = formulaStr.toUpperCase();
+            if (typeof formulaStr === 'function') {
+                try { return parseFloat(formulaStr(values)) || 0; } catch (e) { return 0; }
+            }
+            let normalized = String(formulaStr).toUpperCase();
             normalized = normalized.replace(/\bLENGTH\b/g, 'L');
             normalized = normalized.replace(/\bWIDTH\b/g, 'W');
             normalized = normalized.replace(/\bHEIGHT\b/g, 'H');
@@ -2583,7 +2620,20 @@
                 const name = (m.itemName || '').toUpperCase();
 
                 if (rId !== selR) return false;
-                if (q !== reqQ) return false;
+
+                let matchesQuality = (q === reqQ);
+                if (!matchesQuality) {
+                    if ((reqQ.includes('middle') || reqQ.includes('medium') || reqQ.includes('standard')) &&
+                        (q.includes('middle') || q.includes('medium') || q.includes('standard'))) {
+                        matchesQuality = true;
+                    } else if (reqQ.includes('premium') && q.includes('premium')) {
+                        matchesQuality = true;
+                    } else if (reqQ.includes('economy') && q.includes('economy')) {
+                        matchesQuality = true;
+                    }
+                }
+                if (!matchesQuality) return false;
+
                 if (m.status && m.status !== 'ON') return false;
 
                 // Absolute ban on obsolete Walk-in Wardrobe Module and Walk-in Wardrobe Shutter
@@ -2643,7 +2693,7 @@
                 const targetRate = resolveRate(adminRates, m.constructionType, m.materialType, m.roomId, selectedDivision);
                 if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
                     let factor = 1.0;
-                    if (m.quality === 'Middle / Standard') factor = 0.85;
+                    if (m.quality === 'Middle / Standard' || m.quality === 'Middle') factor = 0.85;
                     else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
                     m.baseAmount = Math.round(parseFloat(targetRate) * factor);
                     m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
@@ -2756,7 +2806,7 @@
                       <span class="item-num">${item.id}</span>
                       <span class="item-name">${item.name}</span>
                     </div>
-                    <button class="add-btn" onclick="openBuilder(${item.id})">Click ${item.custom ? 'Custom Line' : 'Me'}</button>
+                    <button class="add-btn" onclick="openBuilder(${item.id})">Click Me</button>
                     <div class="builders" id="builders-${item.id}"></div>
                 `;
                 grid.appendChild(card);
@@ -2824,7 +2874,7 @@
 
             if (item.custom) {
                 wrap.innerHTML = `
-                    <div class="step-label">Custom line details</div>
+                    <div class="step-label">Line details</div>
                     <div class="custom-fields field-row">
                         <div class="field" style="flex:2">
                             <label>Description</label>
@@ -2958,7 +3008,7 @@
                 if (normalized.includes('BOTTOM') && !normalized.includes('STAIRCASE')) return 1;
                 if (normalized.includes('TOP')) return 2;
                 if (normalized.includes('LOFT')) return 3;
-                if (normalized.includes('ISLAND')) return 4;
+                if (normalized.includes('ISLAND') || normalized.includes('I-LAND')) return 4;
                 if (normalized.includes('BREAKFAST TABLE') && !normalized.includes('PANEL') && !normalized.includes('BEAM') && !normalized.includes('BOX')) return 5;
                 if (normalized.includes('WALL PANEL')) return 6;
                 if (normalized.includes('BEAM')) return 7;
@@ -2967,6 +3017,8 @@
                 if (normalized.includes('LEDGE')) return 10;
                 if (normalized.includes('SIDE')) return 11;
                 if (normalized.includes('PARTITION')) return 12;
+                if (normalized.includes('CROCKERY')) return 14;
+                if (normalized.includes('FRIDGE')) return 15;
                 if (normalized.includes('STAIRCASE')) return 14;
                 if (normalized.includes('ACCESSORIES')) return 13;
             }
@@ -2977,11 +3029,16 @@
                 if (normalized.includes('PARTITION') && normalized.includes('DINING')) return 19;
                 if (normalized.includes('WALL PANEL')) return 20;
                 if (normalized.includes('STAIRCASE')) return 21;
+                if (normalized.includes('COURTYARD')) return 23;
+                if (normalized.includes('KITCHEN PARTITION')) return 24;
                 if (normalized.includes('ACCESSORIES')) return 22;
             }
             if (room === 'prayer_unit') {
-                if (normalized.includes('BOTTOM') || normalized.includes('PRAYER')) return 75;
-                if (normalized.includes('ACCESSORIES')) return 76;
+                if (normalized.includes('BOTTOM')) return 75;
+                if (normalized.includes('WALL PANEL')) return 76;
+                if (normalized.includes('CROCKERY')) return 77;
+                if (normalized.includes('CUPBOARD')) return 78;
+                if (normalized.includes('ACCESSORIES')) return 79;
             }
             if (room === 'bedroom') {
                 if (normalized.includes('WARDROBE')) return 25;
@@ -3000,6 +3057,7 @@
                 if (normalized.includes('LOFT 2')) return 69;
                 if (normalized === 'WALL PANNELING') return 70;
                 if (normalized.includes('HIDDEN DOOR')) return 71;
+                if (normalized.includes('PROFILE GLASS')) return 73;
                 if (normalized.includes('ACCESSORIES')) return 72;
             }
             if (room === 'walk_in_wardrobe') {
@@ -3026,11 +3084,15 @@
                 if (normalized.includes('BOTTOM')) return 37;
                 if (normalized.includes('WALL PANEL')) return 38;
                 if (normalized.includes('CROCKERY')) return 39;
+                if (normalized.includes('BREAKFAST TABLE') || normalized.includes('BOX TYPE')) return 41;
                 if (normalized.includes('ACCESSORIES')) return 40;
             }
             if (room === 'musical_room') {
-                if (normalized.includes('WALL PANEL')) return 80;
-                if (normalized.includes('TABLE')) return 81;
+                if (normalized.includes('WALL PANEL') && !normalized.includes('TABLE')) return 80;
+                if (normalized.includes('WALL PANNELLING TABLE')) return 81;
+                if (normalized.includes('TABLE BOX TYPE')) return 83;
+                if (normalized.includes('CUPBOARD')) return 84;
+                if (normalized.includes('CROCKERY')) return 85;
                 if (normalized.includes('ACCESSORIES')) return 82;
             }
             if (room === 'study_room') {
@@ -3038,6 +3100,7 @@
                 if (normalized.includes('STUDY TABLE') && !normalized.includes('TOP')) return 86;
                 if (normalized.includes('TOP BOX')) return 87;
                 if (normalized.includes('COMPUTER')) return 88;
+                if (normalized.includes('CUPBOARD')) return 90;
                 if (normalized.includes('ACCESSORIES')) return 89;
             }
             if (room === 'toilet_area') {
@@ -3051,7 +3114,47 @@
             if (room === 'sitout') {
                 if (normalized.includes('CHAPPAL') || normalized.includes('STAND')) return 100;
                 if (normalized.includes('CEILING')) return 101;
+                if (normalized.includes('PANEL') || normalized.includes('PANNELING')) return 561;
                 if (normalized.includes('ACCESSORIES')) return 102;
+            }
+            if (room === 'staircase') {
+                if (normalized.includes('BOTTOM')) return 46;
+                if (normalized.includes('PANEL')) return 48;
+                if (normalized.includes('DOOR ONLY')) return 49;
+                if (normalized.includes('CHAPPAL')) return 50;
+                if (normalized.includes('ACCESSORIES')) return 51;
+            }
+            if (room === 'passage_ceiling') {
+                if (normalized === 'PASSAGE CEILING') return 201;
+                if (normalized.includes('KITCHEN')) return 203;
+                if (normalized.includes('LIVING')) return 204;
+                if (normalized.includes('BEDROOM')) return 205;
+                if (normalized.includes('DINING')) return 206;
+                if (normalized.includes('PRAYER')) return 207;
+                if (normalized.includes('STUDY')) return 208;
+                if (normalized.includes('SITOUT')) return 209;
+            }
+            if (room === 'false_ceiling') {
+                if (normalized === 'FALSE CEILING') return 202;
+                if (normalized.includes('KITCHEN')) return 210;
+                if (normalized.includes('LIVING')) return 211;
+                if (normalized.includes('BEDROOM')) return 212;
+                if (normalized.includes('DINING')) return 213;
+                if (normalized.includes('PRAYER')) return 214;
+                if (normalized.includes('STUDY')) return 215;
+                if (normalized.includes('SITOUT')) return 216;
+            }
+            if (room === 'courtyard') {
+                if (normalized === 'COURTYARD WALL PANELING') return 585;
+                if (normalized.includes('KITCHEN')) return 586;
+                if (normalized.includes('LIVING')) return 587;
+                if (normalized.includes('BEDROOM')) return 588;
+                if (normalized.includes('DINING')) return 589;
+                if (normalized.includes('PRAYER')) return 590;
+                if (normalized.includes('STUDY')) return 591;
+                if (normalized.includes('SITOUT')) return 592;
+                if (normalized.includes('MUSICAL')) return 593;
+                if (normalized.includes('PASSAGE')) return 594;
             }
             if (room === 'profile_glass_door') {
                 if (normalized.includes('KITCHEN')) return 570;
@@ -3179,7 +3282,7 @@
                 let db = JSON.parse(storedDb) || [];
                 const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
                 let qual = 'Premium';
-                if (pMode === 'medium') qual = 'Middle / Standard';
+                if (pMode === 'medium') qual = 'Middle';
                 else if (pMode === 'economy') qual = 'Economy';
 
                 const cleanMatName = matName.trim();
@@ -3198,7 +3301,7 @@
                     const stdItemId = getStandardItemId(selectedRoom, itemName) || rItem.id;
                     const firstOpt = rItem.options ? (rItem.options[0] || {}) : {};
 
-                    ['Premium', 'Middle / Standard', 'Economy'].forEach(qVal => {
+                    ['Premium', 'Middle', 'Economy'].forEach(qVal => {
                         const exists = db.some(m =>
                             (m.roomId || '').toLowerCase() === selectedRoom.toLowerCase() &&
                             (m.itemName || '').toUpperCase() === itemName.toUpperCase() &&
@@ -4170,7 +4273,7 @@
             // Quotation Type top list
             const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
             let typeLabel = 'Premium';
-            if (pMode === 'medium') typeLabel = 'Middle / Standard';
+            if (pMode === 'medium') typeLabel = 'Middle';
             else if (pMode === 'economy') typeLabel = 'Economy';
             document.getElementById('printQuotationType').textContent = typeLabel;
             document.getElementById('printCustName').textContent = document.getElementById('custName')?.value || '—';
@@ -4256,7 +4359,7 @@
                             <tr><td style="padding: 2px 0; font-weight: 700; color: #7a6e61; border: none;">Division:</td><td style="padding: 2px 0; font-weight: 600; color: #1a1714; text-align: right; border: none;">${selectedDivisionName}</td></tr>
                             <tr><td style="padding: 2px 0; font-weight: 700; color: #7a6e61; border: none;">Quotation Type:</td><td style="padding: 2px 0; font-weight: 600; color: #1a1714; text-align: right; border: none;">${(() => {
                     const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
-                    if (pMode === 'medium') return 'Middle / Standard';
+                    if (pMode === 'medium') return 'Middle';
                     if (pMode === 'economy') return 'Economy';
                     return 'Premium';
                 })()}</td></tr>
@@ -4886,7 +4989,7 @@
 
         function recalculateQuoteLinesForMode(newMode) {
             let targetQual = 'Premium';
-            if (newMode === 'medium') targetQual = 'Middle / Standard';
+            if (newMode === 'medium') targetQual = 'Middle';
             else if (newMode === 'economy') targetQual = 'Economy';
 
             const adminRates = getRates();
@@ -4929,7 +5032,6 @@
 
             renderQuote();
         }
-
         function convertQuoteSummaryMode(mode) {
             document.querySelectorAll('.quote-mode-btn').forEach(btn => btn.classList.remove('active'));
             let activeId = 'quoteModeBtnPremium';
@@ -4940,15 +5042,14 @@
             if (btn) btn.classList.add('active');
 
             recalculateQuoteLinesForMode(mode);
-            showToast(`Quote Summary converted to ${mode === 'premium' ? 'Premium' : (mode === 'medium' ? 'Middle / Standard' : 'Economy')} mode!`);
+            showToast(`Quote Summary converted to ${mode === 'premium' ? 'Premium' : (mode === 'medium' ? 'Middle' : 'Economy')} mode!`);
         }
-
         function switchPricingMode(mode) {
             sessionStorage.setItem('pks_pricing_mode', mode);
             sessionStorage.setItem('pks_economy_mode', mode === 'economy' ? 'true' : 'false');
 
             if (mode === 'premium') activeQuality = 'Premium';
-            else if (mode === 'medium') activeQuality = 'Middle / Standard';
+            else if (mode === 'medium') activeQuality = 'Middle';
             else if (mode === 'economy') activeQuality = 'Economy';
 
             invalidateMaterialsCache();
@@ -4961,9 +5062,9 @@
             const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
             let typeLabel = 'Premium';
             if (pMode === 'medium') {
-                typeLabel = 'Middle / Standard';
-                activeQuality = 'Middle / Standard';
-                modeLabel = 'Middle / Standard';
+                typeLabel = 'Middle';
+                activeQuality = 'Middle';
+                modeLabel = 'Middle';
             } else if (pMode === 'economy') {
                 typeLabel = 'Economy';
                 activeQuality = 'Economy';
@@ -5000,12 +5101,8 @@
                 if (btn) btn.classList.add('active');
             }
         }
-
-        // Initialize customer auto-fill logic
         initCustomerAutofill();
         updateQualityBadges();
-
-        // Consolidated live-sync listener for updates from Admin panel or Cloud Sync (Debounced for 60FPS speed)
         let _externalSyncDebounceTimer = null;
         function handleExternalDataSync(key) {
             if (!key || key === 'pks_materials_db' || key === 'pks_rates' || key === 'pks_custom_materials' || key === 'pks_custom_items' || key === 'pks_item_specs' || key === 'pks_custom_specs_by_id' || key === 'pks_deleted_standard_materials' || key === 'pks_deleted_standard_items') {
@@ -5032,11 +5129,9 @@
                 }, 150);
             }
         }
-
         window.addEventListener('storage', (e) => {
             handleExternalDataSync(e.key);
         });
-
         window.addEventListener('pks_cloud_synced', (e) => {
             handleExternalDataSync(e.detail && e.detail.key);
         });
