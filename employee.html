@@ -1211,8 +1211,8 @@
             <table class="quote-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Room</th>
+                        <th>S.NO</th>
+                        <th>Room / Item</th>
                         <th>Material / Brand</th>
                         <th id="sizeHeader">Size</th>
                         <th class="num" id="sqftHeader">Sq.Ft</th>
@@ -1505,6 +1505,7 @@
                 { id: 'courtyard', name: 'Courtyard', icon: '🏞️', active: true },
                 { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
                 { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true },
+                { id: 'wallpaper', name: 'Wallpaper', icon: '🖼️', active: true },
                 { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
             ];
         }
@@ -1628,6 +1629,13 @@
             "Staircase Shoe Rack Unit": 450,
             "Chappal stand": 450,
             "Staircase Chappal Stand": 450,
+            "Wallpaper": 2500,
+            "Standard Wallpaper": 2200,
+            "Vinyl Wallpaper": 2500,
+            "3D Wallpaper": 3500,
+            "Non-Woven Wallpaper": 2800,
+            "Textured Wallpaper": 3000,
+            "Custom Wallpaper": 2500,
             "Marine Ply – Lamination": 450,
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Type)": 450,
@@ -2009,7 +2017,7 @@
             ];
 
             // Populate all room items for Premium, Middle, Economy
-            addStd('kitchen', 'Kitchen Bottom', boxPartitionDoor);
+            addStd('kitchen', 'Kitchen Bottom Cabinet', boxPartitionDoor);
             addStd('kitchen', 'Kitchen Top Box', boxDoorOnly);
             addStd('kitchen', 'Kitchen Loft', loftOptions);
             addStd('kitchen', 'Kitchen I-Land Cabinet', boxDoorOnly);
@@ -2021,6 +2029,11 @@
             ]);
             addStd('kitchen', 'Breakfast Table Beam Covering', [
                 { label: "Lamination", base: 250, formula: "L*H/144" }
+            ]);
+            addStd('kitchen', 'Breakfast Table Box Type', [
+                { label: "Marine Ply – Lamination (Box Type)", base: 450, formula: "(L+W)*H/144" },
+                { label: "Marine Ply – Acrylic (Box Type)", base: 650, formula: "(L+W)*H/144" },
+                { label: "WPC (Box Type)", base: 550, formula: "(L+W)*H/144" }
             ]);
             addStd('kitchen', 'Open Box', [
                 { label: "Marine Ply – Lamination", base: 450, formula: "(L+W)*H/144" },
@@ -2046,7 +2059,7 @@
             addStd('kitchen', 'Crockery Unit', sideCabinetOptions);
             addStd('kitchen', 'Fridge Top Cabinet', sideCabinetOptions);
 
-            addStd('living_room', 'Tv Unit – Wall Panelling', [
+            addStd('living_room', 'Tv Unit – Wall Paneling', [
                 { label: "PVC", base: 300, formula: "L*W/144" },
                 { label: "Lamination", base: 250, formula: "L*W/144" },
                 { label: "Charcoal", base: 400, formula: "L*W/144" }
@@ -2054,7 +2067,7 @@
             addStd('living_room', 'Tv Unit – Bottom Cabinet', sideCabinetOptions);
             addStd('living_room', 'Tv Unit – Side Show Wall Cabinet', sideCabinetOptions);
             addStd('living_room', 'Living & Dining Room Partition', sideCabinetOptions);
-            addStd('living_room', 'Living Room Wall Panelling', [
+            addStd('living_room', 'Living Room Wall Paneling', [
                 { label: "PVC", base: 300, formula: "L*W/144" },
                 { label: "Lamination", base: 250, formula: "L*W/144" },
                 { label: "Charcoal", base: 400, formula: "L*W/144" }
@@ -2094,13 +2107,14 @@
             addStd('bedroom', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
             addStd('bedroom', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
-            addStd('dining_room', 'Wash basin unit bottom cabinet', sideCabinetOptions);
-            addStd('dining_room', 'Wash basin unit wall paneling', wallPanelMats);
-            addStd('dining_room', 'Dining room crockery unit', sideCabinetOptions);
-            addStd('dining_room', 'Breakfast Table Box Type', [
-                { label: "Marine Ply – Lamination (Box Type)", base: 450, formula: "(L+W)*H/144" },
-                { label: "Marine Ply – Acrylic (Box Type)", base: 650, formula: "(L+W)*H/144" },
-                { label: "WPC (Box Type)", base: 550, formula: "(L+W)*H/144" }
+            addStd('dining_room', 'Washbasin Bottom Cabinet', sideCabinetOptions);
+            addStd('dining_room', 'Washbasin Wall Paneling', wallPanelMats);
+            addStd('dining_room', 'Crockery Unit', sideCabinetOptions);
+            addStd('dining_room', 'Wall Paneling', wallPanelMats);
+            addStd('dining_room', 'Dining & Kitchen Partition', [
+                { label: "WPC", base: 550, formula: "(L+W)*H/144" },
+                { label: "Marine Plane", base: 350, formula: "(L+W)*H/144" },
+                { label: "Engineering Wood", base: 280, formula: "(L+W)*H/144" }
             ]);
 
             addStd('musical_room', 'WALL PANEL', wallPanelMats);
@@ -2227,7 +2241,7 @@
                 });
             }
 
-            addFullTeakCabinet('Kitchen Bottom', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
+            addFullTeakCabinet('Kitchen Bottom Cabinet', 1500, 850, 1600, ftSpecsBottom, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Top Box', 1200, 800, 1200, ftSpecsTop, ftSpecsPartition);
             addFullTeakCabinet('Kitchen Loft', 900, 750, 900, ftSpecsLoft, ftSpecsPartition);
             addFullTeakCabinet('Kitchen I-Land Cabinet', 1500, 800, 1500, ftSpecsBottom, ftSpecsPartition);
@@ -2288,7 +2302,7 @@
                 });
             }
 
-            addHalfTeakCabinet('Kitchen Bottom', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
+            addHalfTeakCabinet('Kitchen Bottom Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Top Box', 900, 600, 900, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen Loft', 750, 550, 750, htSpecsBottom, htSpecsDoor, htSpecsPartition);
             addHalfTeakCabinet('Kitchen I-Land Cabinet', 1100, 650, 1100, htSpecsBottom, htSpecsDoor, htSpecsPartition);
@@ -2322,7 +2336,7 @@
                 { name: "Tall Unit", options: [{ label: "Tall Unit (6 Layer)", base: 18000 }, { label: "Tall Unit (12 Layer)", base: 28000 }] },
                 { name: "Swing Corner", options: [{ label: "Swing Corner Left", base: 7500 }, { label: "Swing Corner Right", base: 7500 }, { label: "Universal Swing Corner", base: 7500 }] },
                 { name: "Magic Corner", options: [{ label: "Magic Corner Left", base: 12000 }, { label: "Magic Corner Right", base: 12000 }, { label: "Universal Magic Corner", base: 12000 }] },
-                { name: "Paracel Corner", options: [{ label: "Paracel Corner (Soft Close)", base: 9000 }] },
+                { name: "Caracel Corner", options: [{ label: "Caracel Corner (Soft Close)", base: 9000 }] },
                 { name: "D-Tray", options: [{ label: "D-Tray 180°", base: 2800 }, { label: "D-Tray 270°", base: 3200 }, { label: "D-Tray 360°", base: 3800 }] },
                 { name: "Soft Closing Runner", options: [{ label: "Soft Closing Runner (Under Mount)", base: 1500 }, { label: "Soft Closing Runner (Telescopic)", base: 1200 }] },
                 { name: "Soft Closing Hinges", options: [{ label: "0 Crank Soft Close Hinges", base: 350 }, { label: "8 Crank Soft Close Hinges", base: 350 }, { label: "16 Crank Soft Close Hinges", base: 380 }] },
@@ -2336,6 +2350,24 @@
                             const qualRate = resolveRate(rates, opt.label, 'Accessories', 'accessories', selectedDivision, qual) || opt.base || 0;
                             addMat('accessories', 'Accessories', qual, acc.name, opt.label, 'Stainless Steel Kitchen Accessories', 'QTY', qualRate, false);
                         });
+                    });
+                });
+
+                // Wallpaper room (Premium, Middle, Economy) with QTY formula
+                const wallpaperOpts = [
+                    { label: "Standard Wallpaper", base: 2200 },
+                    { label: "Vinyl Wallpaper", base: 2500 },
+                    { label: "3D Wallpaper", base: 3500 },
+                    { label: "Non-Woven Wallpaper", base: 2800 },
+                    { label: "Textured Wallpaper", base: 3000 },
+                    { label: "Custom Wallpaper", base: 2500 }
+                ];
+                const wallpaperSpecs = "PREMIUM DESIGNER WALLPAPER, WASHABLE, SEAMLESS PASTING FINISH, MOISTURE RESISTANT, HIGH DURABILITY";
+                wallpaperOpts.forEach(opt => {
+                    qualities.forEach(qual => {
+                        let factor = qual === 'Premium' ? 1.0 : (qual === 'Middle' ? 0.85 : 0.7);
+                        const qualRate = resolveRate(rates, opt.label, 'Wallpaper', 'wallpaper', selectedDivision, qual) || Math.round(opt.base * factor);
+                        addMat('wallpaper', 'Wallpaper', qual, 'Wallpaper', opt.label, wallpaperSpecs, 'QTY', qualRate, false);
                     });
                 });
             }
@@ -3059,6 +3091,9 @@
                 if (normalized.includes('CUPBOARD')) return 78;
                 if (normalized.includes('ACCESSORIES')) return 79;
             }
+            if (room === 'wallpaper') {
+                if (normalized.includes('WALLPAPER')) return 701;
+            }
             if (room === 'bedroom') {
                 if (normalized.includes('WARDROBE')) return 25;
                 if (normalized.includes('BED BACK') || normalized.includes('HEADREST')) return 27;
@@ -3100,11 +3135,11 @@
                 if (normalized.includes('ACCESSORIES')) return 557;
             }
             if (room === 'dining_room') {
-                if (normalized.includes('BOTTOM')) return 37;
-                if (normalized.includes('WALL PANEL')) return 38;
+                if (normalized.includes('WASHBASIN') && (normalized.includes('BOTTOM') || normalized.includes('CABINET'))) return 37;
+                if (normalized.includes('WASHBASIN') && normalized.includes('PANEL')) return 38;
                 if (normalized.includes('CROCKERY')) return 39;
-                if (normalized.includes('BREAKFAST TABLE') || normalized.includes('BOX TYPE')) return 41;
-                if (normalized.includes('ACCESSORIES')) return 40;
+                if (normalized.includes('WALL PANEL')) return 40;
+                if (normalized.includes('PARTITION')) return 41;
             }
             if (room === 'musical_room') {
                 if (normalized.includes('WALL PANEL') && !normalized.includes('TABLE')) return 80;
@@ -3736,10 +3771,22 @@
                 }
             }
 
+            const floorEl = document.getElementById('floorSelector');
+            const roomNoEl = document.getElementById('roomNoSelector');
+            const curFloor = floorEl ? floorEl.value : 'Ground Floor';
+            const curRoomNo = roomNoEl ? roomNoEl.value : '1';
+            const fullFloorLabel = `${curFloor} ${curRoomNo}`;
+            const cleanRoom = `${selectedRoomName} ${curRoomNo}`;
+            const fullRoomLabel = `${curFloor} - ${cleanRoom}`;
+
             quoteLines.push({
                 id: lineIdCounter++,
                 roomId: selectedRoom,
-                roomName: getFullRoomLabel(),
+                floor: fullFloorLabel,
+                floorName: curFloor,
+                roomNo: curRoomNo,
+                cleanRoomName: cleanRoom,
+                roomName: fullRoomLabel,
                 itemName: item.name,
                 material: opt.label,
                 size: sizeDesc,
@@ -3770,10 +3817,22 @@
                 rate = sqft > 0 ? amount / sqft : 0;
             }
 
+            const floorEl = document.getElementById('floorSelector');
+            const roomNoEl = document.getElementById('roomNoSelector');
+            const curFloor = floorEl ? floorEl.value : 'Ground Floor';
+            const curRoomNo = roomNoEl ? roomNoEl.value : '1';
+            const fullFloorLabel = `${curFloor} ${curRoomNo}`;
+            const cleanRoom = `${selectedRoomName} ${curRoomNo}`;
+            const fullRoomLabel = `${curFloor} - ${cleanRoom}`;
+
             quoteLines.push({
                 id: lineIdCounter++,
                 roomId: selectedRoom,
-                roomName: getFullRoomLabel(),
+                floor: fullFloorLabel,
+                floorName: curFloor,
+                roomNo: curRoomNo,
+                cleanRoomName: cleanRoom,
+                roomName: fullRoomLabel,
                 itemName: item.name,
                 material: desc,
                 size: '—',
@@ -3911,6 +3970,58 @@
             renderQuote();
         }
 
+        function getFloorSortKey(floorStr) {
+            if (!floorStr) return 999;
+            const s = String(floorStr).toLowerCase().trim();
+            if (s.includes('basement')) return 0;
+            if (s.includes('ground') || s.includes('gf') || s.includes('g.f')) {
+                const match = s.match(/\d+/);
+                return 10 + (match ? parseInt(match[0], 10) : 1);
+            }
+            if (s.includes('first') || s.includes('1st') || s.includes('ff') || s.includes('floor 1')) {
+                const match = s.match(/\d+/);
+                return 20 + (match ? parseInt(match[0], 10) : 1);
+            }
+            if (s.includes('second') || s.includes('2nd') || s.includes('sf') || s.includes('floor 2')) {
+                const match = s.match(/\d+/);
+                return 30 + (match ? parseInt(match[0], 10) : 1);
+            }
+            if (s.includes('third') || s.includes('3rd') || s.includes('tf') || s.includes('floor 3')) {
+                const match = s.match(/\d+/);
+                return 40 + (match ? parseInt(match[0], 10) : 1);
+            }
+            if (s.includes('fourth') || s.includes('4th') || s.includes('floor 4')) {
+                const match = s.match(/\d+/);
+                return 50 + (match ? parseInt(match[0], 10) : 1);
+            }
+            if (s.includes('terrace') || s.includes('roof')) return 800;
+            return 100;
+        }
+
+        function sortQuoteLines(lines) {
+            return [...lines].sort((a, b) => {
+                const aIsAcc = (a.roomId === 'accessories' || (a.roomName || '').toLowerCase().includes('accessories'));
+                const bIsAcc = (b.roomId === 'accessories' || (b.roomName || '').toLowerCase().includes('accessories'));
+                if (aIsAcc && !bIsAcc) return 1;
+                if (!aIsAcc && bIsAcc) return -1;
+                if (aIsAcc && bIsAcc) return 0;
+
+                const rankA = getFloorSortKey(a.floor || a.floorName || a.roomName);
+                const rankB = getFloorSortKey(b.floor || b.floorName || b.roomName);
+                if (rankA !== rankB) return rankA - rankB;
+
+                const floorA = (a.floor || a.floorName || '').toLowerCase();
+                const floorB = (b.floor || b.floorName || '').toLowerCase();
+                if (floorA !== floorB) return floorA.localeCompare(floorB);
+
+                const roomA = (a.cleanRoomName || a.roomName || '').toLowerCase();
+                const roomB = (b.cleanRoomName || b.roomName || '').toLowerCase();
+                if (roomA !== roomB) return roomA.localeCompare(roomB);
+
+                return (a.id || 0) - (b.id || 0);
+            });
+        }
+
         function renderQuote() {
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
@@ -3936,9 +4047,12 @@
                 document.querySelector('.specs-and-terms-container').style.display = 'flex';
             }
 
+            // Sort lines floor by floor
+            const sortedLines = sortQuoteLines(quoteLines);
+
             // Split into Rooms and Accessories
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
-            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const roomLines = sortedLines.filter(l => !(l.roomId === 'accessories' || (l.roomName || '').toLowerCase().includes('accessories')));
+            const accessoryLines = sortedLines.filter(l => l.roomId === 'accessories' || (l.roomName || '').toLowerCase().includes('accessories'));
 
             const roomTotal = roomLines.reduce((s, l) => s + (l.enabled ? l.amount : 0), 0) * (1 + globalIncreasePercentage / 100);
             const roomOfferTotal = roomLines.reduce((s, l) => s + (l.enabled ? (l.amount * (1 + globalIncreasePercentage / 100) * (1 - (l.discountPercentage || 0) / 100)) : 0), 0);
@@ -3951,20 +4065,44 @@
 
             let html = '';
             let lineIndex = 1;
+            let lastFloor = '';
             let lastRoomName = '';
 
             if (roomLines.length > 0) {
                 roomLines.forEach(l => {
-                    if (l.roomName !== lastRoomName) {
+                    let dispFloor = l.floor || (l.floorName ? `${l.floorName} ${l.roomNo || 1}` : 'Ground Floor 1');
+                    let dispRoom = l.cleanRoomName || l.roomName || 'Room';
+                    if (l.roomName && l.roomName.includes(' - ')) {
+                        const parts = l.roomName.split(' - ');
+                        dispFloor = parts[0].trim();
+                        dispRoom = parts[1].trim();
+                    }
+
+                    // Centered Floor Heading above rooms
+                    if (dispFloor !== lastFloor) {
                         html += `
-                            <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
-                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; font-weight: 700; font-size: 0.82rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase; text-align: left;">
-                                    🏢 ${l.roomName}
+                            <tr class="floor-header-row" style="background: rgba(176, 125, 46, 0.12); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 9px 14px; font-weight: 800; font-size: 0.88rem; color: var(--accent); letter-spacing: 1.2px; text-transform: uppercase; text-align: center;">
+                                    🏠 ${dispFloor}
                                 </td>
                             </tr>
                         `;
-                        lastRoomName = l.roomName;
+                        lastFloor = dispFloor;
+                        lastRoomName = '';
                     }
+
+                    const mainRoomHeading = dispRoom.replace(/\s*\d+$/, '').trim().toUpperCase();
+                    if (mainRoomHeading !== lastRoomName) {
+                        html += `
+                            <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 8px 14px; font-weight: 700; font-size: 0.82rem; color: var(--accent-dark); letter-spacing: 0.8px; text-transform: uppercase; text-align: left;">
+                                    🏢 ${mainRoomHeading}
+                                </td>
+                            </tr>
+                        `;
+                        lastRoomName = mainRoomHeading;
+                    }
+
                     const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
                     const discountPct = l.discountPercentage || 0;
                     const offerPrice = displayedAmount * (1 - discountPct / 100);
@@ -3974,21 +4112,20 @@
 
                     html += `
                         <tr class="${l.enabled ? '' : 'line-disabled'}">
-                          <td>${lineIndex++}</td>
+                          <td style="text-align: center; font-weight: 600;">${lineIndex++}</td>
                           <td>
-                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${l.roomName}</div>
-                              <div style="font-weight:600; font-size:0.85rem; color:var(--text); text-transform: uppercase;">${l.itemName}</div>
+                              <div style="font-weight: 600; font-size: 0.85rem; color: var(--text); text-transform: uppercase; line-height: 1.3;">${l.itemName}</div>
                           </td>
                           <td>
-                              <div style="font-weight:600; color:var(--text);">${l.material}</div>
-                              ${l.specifications ? `<div style="font-size:0.72rem; color:var(--muted); margin-top:4px; line-height:1.3; font-weight:400; max-width:320px;">${l.specifications}</div>` : ''}
+                              <div style="font-weight: 600; color: var(--text);">${l.material}</div>
+                              ${l.specifications ? `<div style="font-size: 0.72rem; color: var(--muted); margin-top: 4px; line-height: 1.4; font-weight: 400; max-width: 320px; white-space: pre-line;">${l.specifications}</div>` : ''}
                           </td>
                           <td style="${showSizeSqft ? '' : 'display:none;'}">${sizeText}</td>
                           <td class="num" style="${showSizeSqft ? '' : 'display:none;'}">${sqftText}</td>
                           ${showRate ? `<td class="num">${rateText}</td>` : ''}
                           <td class="num">₹${displayedAmount.toFixed(2)}</td>
                           <td class="num" style="min-width: 130px; text-align: right;">
-                              <div style="font-weight:600; color:var(--accent);">₹${offerPrice.toFixed(2)}</div>
+                              <div style="font-weight: 600; color:var(--accent);">₹${offerPrice.toFixed(2)}</div>
                               <div class="item-discounts" style="display:flex; gap:3px; justify-content:flex-end; margin-top:4px;">
                                   <button type="button" class="dis-btn ${discountPct === 5 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 5)">-5%</button>
                                   <button type="button" class="dis-btn ${discountPct === 10 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 10)">-10%</button>
@@ -4020,18 +4157,14 @@
             }
 
             if (accessoryLines.length > 0) {
-                lastRoomName = '';
+                html += `
+                    <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
+                        <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); letter-spacing: 0.8px; text-transform: uppercase; text-align: left;">
+                            🧺 ACCESSORIES
+                        </td>
+                    </tr>
+                `;
                 accessoryLines.forEach(l => {
-                    if (l.roomName !== lastRoomName) {
-                        html += `
-                            <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
-                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; font-weight: 700; font-size: 0.82rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase; text-align: left;">
-                                    🏢 ${l.roomName}
-                                </td>
-                            </tr>
-                        `;
-                        lastRoomName = l.roomName;
-                    }
                     const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
                     const discountPct = l.discountPercentage || 0;
                     const offerPrice = displayedAmount * (1 - discountPct / 100);
@@ -4041,25 +4174,25 @@
 
                     html += `
                         <tr class="${l.enabled ? '' : 'line-disabled'}">
-                          <td>${lineIndex++}</td>
+                          <td style="text-align: center; font-weight: 600;">${lineIndex++}</td>
                           <td>
-                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${l.roomName}</div>
-                              <div style="font-weight:600; font-size:0.85rem; color:var(--text); text-transform: uppercase;">${l.itemName}</div>
+                              <div style="color: var(--accent-dark); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.4px;">Accessories</div>
+                              <div style="font-weight: 600; font-size: 0.85rem; color: var(--text); text-transform: uppercase;">${l.itemName}</div>
                           </td>
                           <td>
-                              <div style="font-weight:600; color:var(--text);">${l.material}</div>
-                              ${l.specifications ? `<div style="font-size:0.72rem; color:var(--muted); margin-top:4px; line-height:1.3; font-weight:400; max-width:320px;">${l.specifications}</div>` : ''}
+                              <div style="font-weight: 600; color: var(--text);">${l.material}</div>
+                              ${l.specifications ? `<div style="font-size: 0.72rem; color: var(--muted); margin-top: 4px; line-height: 1.4; font-weight: 400; max-width: 320px; white-space: pre-line;">${l.specifications}</div>` : ''}
                           </td>
                           <td style="${showSizeSqft ? '' : 'display:none;'}">${sizeText}</td>
                           <td class="num" style="${showSizeSqft ? '' : 'display:none;'}">${sqftText}</td>
                           ${showRate ? `<td class="num">${rateText}</td>` : ''}
                           <td class="num">₹${displayedAmount.toFixed(2)}</td>
                           <td class="num" style="min-width: 130px; text-align: right;">
-                              <div style="font-weight:600; color:var(--accent);">₹${offerPrice.toFixed(2)}</div>
-                              <div class="item-discounts" style="display:flex; gap:3px; justify-content:flex-end; margin-top:4px;">
+                              <div style="font-weight: 600; color: var(--accent);">₹${offerPrice.toFixed(2)}</div>
+                              <div class="item-discounts" style="display: flex; gap: 3px; justify-content: flex-end; margin-top: 4px;">
                                   <button type="button" class="dis-btn ${discountPct === 5 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 5)">-5%</button>
                                   <button type="button" class="dis-btn ${discountPct === 10 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 10)">-10%</button>
-                                  <button type="button" class="dis-btn ${discountPct === 0 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 0)" style="font-size:0.58rem; padding: 2px 4px;">None</button>
+                                  <button type="button" class="dis-btn ${discountPct === 0 ? 'selected' : ''}" onclick="setItemLineDiscount(${l.id}, 0)" style="font-size: 0.58rem; padding: 2px 4px;">None</button>
                               </div>
                           </td>
                           <td>
@@ -4395,8 +4528,9 @@
             `;
 
             // Build items table HTML matching screenshot design
-            const roomLines = quoteLines.filter(l => l.enabled && !(l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
-            const accessoryLines = quoteLines.filter(l => l.enabled && (l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
+            const sortedLines = sortQuoteLines(quoteLines);
+            const roomLines = sortedLines.filter(l => l.enabled && !(l.roomId === 'accessories' || (l.roomName || '').toLowerCase().includes('accessories')));
+            const accessoryLines = sortedLines.filter(l => l.enabled && (l.roomId === 'accessories' || (l.roomName || '').toLowerCase().includes('accessories')));
 
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0) * (1 + globalIncreasePercentage / 100);
             const roomOfferTotal = roomLines.reduce((s, l) => s + (l.amount * (1 + globalIncreasePercentage / 100) * (1 - (l.discountPercentage || 0) / 100)), 0);
@@ -4409,13 +4543,61 @@
 
             let rowsHTML = '';
             let pdfLineIndex = 1;
+            let pdfLastFloor = '';
+            let pdfLastRoom = '';
 
-            const allActiveLines = quoteLines.filter(l => l.enabled);
+            const allActiveLines = sortQuoteLines(quoteLines.filter(l => l.enabled));
             allActiveLines.forEach(l => {
                 const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
                 const discountPct = l.discountPercentage || 0;
                 const offerPrice = displayedAmount * (1 - discountPct / 100);
                 const sizeText = (l.showSqft !== false && l.size) ? l.size : (l.sqft ? `${l.sqft} sqft` : '—');
+
+                let dispFloor = l.floor || (l.floorName ? `${l.floorName} ${l.roomNo || 1}` : 'Ground Floor 1');
+                let dispRoom = l.cleanRoomName || l.roomName || 'Room';
+                if (l.roomName && l.roomName.includes(' - ')) {
+                    const parts = l.roomName.split(' - ');
+                    dispFloor = parts[0].trim();
+                    dispRoom = parts[1].trim();
+                }
+
+                const isAcc = (l.roomId === 'accessories' || (l.roomName || '').toLowerCase().includes('accessories'));
+                if (!isAcc) {
+                    if (dispFloor !== pdfLastFloor) {
+                        rowsHTML += `
+                            <tr style="background: #f1ebd8; border-top: 1px solid #d4c4a8; border-bottom: 1px solid #d4c4a8;">
+                                <td colspan="5" style="padding: 7px 12px; font-size: 0.82rem; font-weight: 800; color: #8c601e; text-transform: uppercase; letter-spacing: 1px; text-align: center; border: none;">
+                                    🏠 ${dispFloor}
+                                </td>
+                            </tr>
+                        `;
+                        pdfLastFloor = dispFloor;
+                        pdfLastRoom = '';
+                    }
+
+                    const mainRoomHeading = dispRoom.replace(/\s*\d+$/, '').trim().toUpperCase();
+                    if (mainRoomHeading !== pdfLastRoom) {
+                        rowsHTML += `
+                            <tr style="background: #fdfbf7; border-bottom: 1px solid #eae2d5;">
+                                <td colspan="5" style="padding: 6px 12px; font-size: 0.76rem; font-weight: 700; color: #b07d2e; text-transform: uppercase; letter-spacing: 0.6px; text-align: left; border: none;">
+                                    🏢 ${mainRoomHeading}
+                                </td>
+                            </tr>
+                        `;
+                        pdfLastRoom = mainRoomHeading;
+                    }
+                } else {
+                    if (pdfLastFloor !== 'accessories') {
+                        rowsHTML += `
+                            <tr style="background: #f1ebd8; border-top: 1px solid #d4c4a8; border-bottom: 1px solid #d4c4a8;">
+                                <td colspan="5" style="padding: 7px 12px; font-size: 0.82rem; font-weight: 800; color: #8c601e; text-transform: uppercase; letter-spacing: 1px; text-align: center; border: none;">
+                                    🧺 ACCESSORIES
+                                </td>
+                            </tr>
+                        `;
+                        pdfLastFloor = 'accessories';
+                    }
+                }
 
                 // Extract bullet items from material and specifications
                 let matBullets = [];
@@ -4439,7 +4621,6 @@
                             ${pdfLineIndex++}
                         </td>
                         <td style="padding: 12px 10px; vertical-align: top; border: none;">
-                            <div style="color: #b07d2e; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.4px;">${l.roomName}</div>
                             <div style="color: #111; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; line-height: 1.3;">${l.itemName}</div>
                         </td>
                         <td style="padding: 12px 10px; font-size: 0.75rem; color: #1a1714; vertical-align: top; line-height: 1.45; border: none;">
@@ -4465,7 +4646,7 @@
                         <thead style="background: #1c2820; border-bottom: 2px solid #b07d2e;">
                             <tr>
                                 <th style="padding: 10px 8px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: center; width: 6%; letter-spacing: 0.5px; border: none;">S.NO</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 26%; letter-spacing: 0.5px; border: none;">ITEM</th>
+                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 26%; letter-spacing: 0.5px; border: none;">ROOM / ITEM</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 38%; letter-spacing: 0.5px; border: none;">MATERIAL / BRAND</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 16%; letter-spacing: 0.5px; border: none;">SIZE</th>
                                 <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: right; width: 14%; letter-spacing: 0.5px; border: none;">AMOUNT</th>
