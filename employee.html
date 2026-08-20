@@ -1459,7 +1459,7 @@
         const pricingMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
 
         let modeLabel = 'Premium';
-        if (pricingMode === 'medium') modeLabel = 'Middle';
+        if (pricingMode === 'medium') modeLabel = 'Middle / Standard';
         else if (pricingMode === 'economy') modeLabel = 'Economy';
 
         // Render division badge in header
@@ -2064,7 +2064,6 @@
             addStd('bedroom', 'LOFT 2', sideCabinetOptions);
             addStd('bedroom', 'WALL PANNELING', wallPanelMats);
             addStd('bedroom', 'WALL PANNELING WITH HIDDEN DOOR', wallPanelMats);
-            addStd('bedroom', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('dining_room', 'Wash basin unit bottom cabinet', sideCabinetOptions);
             addStd('dining_room', 'Wash basin unit wall paneling', wallPanelMats);
@@ -2152,7 +2151,7 @@
             addStd('profile_glass_door', 'Musical Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Living Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
             addStd('profile_glass_door', 'Dining Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
-            addStd('profile_glass_door', 'Bedroom Room Profile Glass Door', profileGlassOpts, profileGlassSpecs);
+            addStd('profile_glass_door', 'Bedroom Profile Glass Door', profileGlassOpts, profileGlassSpecs);
 
             addStd('courtyard', 'Courtyard Wall Paneling', wallPanelMats);
             addStd('courtyard', 'Courtyard Storage Cabinet', sideCabinetOptions);
@@ -2644,7 +2643,7 @@
                 const targetRate = resolveRate(adminRates, m.constructionType, m.materialType, m.roomId, selectedDivision);
                 if (targetRate !== undefined && targetRate !== null && targetRate !== '') {
                     let factor = 1.0;
-                    if (m.quality === 'Middle / Standard' || m.quality === 'Middle') factor = 0.85;
+                    if (m.quality === 'Middle / Standard') factor = 0.85;
                     else if (m.quality === 'Economy' && m.itemName !== 'BED') factor = 0.70;
                     m.baseAmount = Math.round(parseFloat(targetRate) * factor);
                     m.offerPrice = m.baseAmount * (1 - (m.discountPercentage || 0) / 100);
@@ -3001,7 +3000,6 @@
                 if (normalized.includes('LOFT 2')) return 69;
                 if (normalized === 'WALL PANNELING') return 70;
                 if (normalized.includes('HIDDEN DOOR')) return 71;
-                if (normalized.includes('PROFILE GLASS')) return 73;
                 if (normalized.includes('ACCESSORIES')) return 72;
             }
             if (room === 'walk_in_wardrobe') {
@@ -4942,7 +4940,7 @@
             if (btn) btn.classList.add('active');
 
             recalculateQuoteLinesForMode(mode);
-            showToast(`Quote Summary converted to ${mode === 'premium' ? 'Premium' : (mode === 'medium' ? 'Middle' : 'Economy')} mode!`);
+            showToast(`Quote Summary converted to ${mode === 'premium' ? 'Premium' : (mode === 'medium' ? 'Middle / Standard' : 'Economy')} mode!`);
         }
 
         function switchPricingMode(mode) {
@@ -4950,7 +4948,7 @@
             sessionStorage.setItem('pks_economy_mode', mode === 'economy' ? 'true' : 'false');
 
             if (mode === 'premium') activeQuality = 'Premium';
-            else if (mode === 'medium') activeQuality = 'Middle';
+            else if (mode === 'medium') activeQuality = 'Middle / Standard';
             else if (mode === 'economy') activeQuality = 'Economy';
 
             invalidateMaterialsCache();
@@ -4963,9 +4961,9 @@
             const pMode = sessionStorage.getItem('pks_pricing_mode') || 'premium';
             let typeLabel = 'Premium';
             if (pMode === 'medium') {
-                typeLabel = 'Middle';
-                activeQuality = 'Middle';
-                modeLabel = 'Middle';
+                typeLabel = 'Middle / Standard';
+                activeQuality = 'Middle / Standard';
+                modeLabel = 'Middle / Standard';
             } else if (pMode === 'economy') {
                 typeLabel = 'Economy';
                 activeQuality = 'Economy';
