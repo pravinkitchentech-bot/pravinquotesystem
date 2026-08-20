@@ -1114,7 +1114,7 @@
         const ROOMS = [
             { id: 'sitout', name: 'Foyer', icon: '🌿', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
-            { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+            { id: 'kitchen', name: 'Modular Kitchen', icon: '🍳', active: true },
             { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
             { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
             { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
@@ -1137,7 +1137,7 @@
         let rawSelectedRoom = sessionStorage.getItem('pks_selected_room');
         let selectedRoom = (rawSelectedRoom && rawSelectedRoom !== 'null' && rawSelectedRoom !== 'undefined' && ROOMS.some(r => r.id === rawSelectedRoom)) ? rawSelectedRoom : 'kitchen';
         let rawSelectedRoomName = sessionStorage.getItem('pks_selected_room_name');
-        let selectedRoomName = (rawSelectedRoomName && rawSelectedRoomName !== 'null' && rawSelectedRoomName !== 'undefined') ? rawSelectedRoomName : 'Kitchen';
+        let selectedRoomName = (rawSelectedRoomName && rawSelectedRoomName !== 'null' && rawSelectedRoomName !== 'undefined') ? rawSelectedRoomName : 'Modular Kitchen';
 
         function logout() {
             sessionStorage.removeItem('pks_admin_auth');
@@ -1284,18 +1284,18 @@
         ];
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
-                { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
-                { id: 4, name: "Kitchen I-Land Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
-                { id: 5, name: "Kitchen Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 1, name: "Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
+                { id: 2, name: "Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
+                { id: 4, name: "I-Land Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 6, name: "Breakfast Table Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 7, name: "Breakfast Table Beam Covering", options: ["Lamination"] },
                 { id: 15, name: "Breakfast Table Box Type", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] },
                 { id: 8, name: "Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
                 { id: 13, name: "Crockery Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 14, name: "Fridge Top Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
@@ -1458,12 +1458,12 @@
                 { id: 617, name: "Profile Handle", options: ["G-Profile Handle", "J-Profile Handle", "Edge Profile Handle"] }
             ],
             full_teak_wood: [
-                { id: 301, name: "Kitchen Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 302, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 303, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 304, name: "Kitchen I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 305, name: "Kitchen Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 306, name: "Kitchen Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 301, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 302, name: "Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 303, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 304, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 305, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 306, name: "Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 307, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
                 { id: 308, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
                 { id: 309, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -1471,7 +1471,7 @@
                 { id: 311, name: "Ledge", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 312, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 313, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 314, name: "Kitchen & Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 314, name: "Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 315, name: "Wall Paneling", options: ["Box Type"] },
                 { id: 316, name: "Wash Basin", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 317, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -1479,12 +1479,12 @@
                 { id: 319, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
             ],
             half_teak_wood: [
-                { id: 401, name: "Kitchen Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 402, name: "Kitchen Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 403, name: "Kitchen Loft", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 404, name: "Kitchen I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 405, name: "Kitchen Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 406, name: "Kitchen Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 401, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 402, name: "Top Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 403, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 404, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 405, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 406, name: "Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 407, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 408, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
                 { id: 409, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
@@ -1492,7 +1492,7 @@
                 { id: 411, name: "Spice Rack", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 412, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 413, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
-                { id: 414, name: "Kitchen & Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 414, name: "Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 415, name: "Wash Basin Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 416, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
                 { id: 417, name: "Tv Unit", options: ["Box Type", "Door Only", "Partition Type"] },
@@ -2890,7 +2890,7 @@
         function onSpecsRoomChange() {
             const roomSelect = document.getElementById('specsSelectRoom');
             const targetRoomId = roomSelect ? roomSelect.value : selectedRoom;
-            const targetRoomObj = ROOMS.find(r => r.id === targetRoomId) || { name: 'Kitchen' };
+            const targetRoomObj = ROOMS.find(r => r.id === targetRoomId) || { name: 'Modular Kitchen' };
 
             const titleEl = document.getElementById('specsRoomNameTitle');
             if (titleEl) titleEl.textContent = targetRoomObj.name;
