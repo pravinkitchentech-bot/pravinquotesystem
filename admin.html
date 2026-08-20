@@ -1112,32 +1112,32 @@
         let deletedStandardMaterials = getDeletedStandardMaterials();
 
         const ROOMS = [
-            { id: 'sitout', name: 'Foyer', icon: '🌿', active: true },
-            { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
-            { id: 'kitchen', name: 'Modular Kitchen', icon: '🍳', active: true },
-            { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
-            { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
-            { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
-            { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
-            { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
-            { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
-            { id: 'passage_ceiling', name: 'Passage Ceiling', icon: '🏛️', active: true },
-            { id: 'false_ceiling', name: 'False Ceiling', icon: '✨', active: true },
-            { id: 'walk_in_wardrobe', name: 'Walk-in Wardrobe', icon: '👔', active: true },
-            { id: 'staircase', name: 'Staircase', icon: '🪜', active: true },
-            { id: 'profile_glass_door', name: 'Profile Glass Door', icon: '🪟', active: true },
-            { id: 'courtyard', name: 'Courtyard', icon: '🏞️', active: true },
-            { id: 'full_teak_wood', name: 'Full Teak Wood', icon: '👑', active: true },
-            { id: 'half_teak_wood', name: 'Half Teak Wood', icon: '🪵', active: true },
-            { id: 'wallpaper', name: 'Wallpaper', icon: '🖼️', active: true },
-            { id: 'accessories', name: 'Accessories', icon: '🧺', active: true }
+            { id: 'sitout', name: 'FOYER', icon: '🌿', active: true },
+            { id: 'living_room', name: 'LIVING ROOM', icon: '🛋️', active: true },
+            { id: 'kitchen', name: 'MODULAR KITCHEN', icon: '🍳', active: true },
+            { id: 'bedroom', name: 'BEDROOM', icon: '🛏️', active: true },
+            { id: 'study_room', name: 'STUDY ROOM', icon: '📚', active: true },
+            { id: 'prayer_unit', name: 'PRAYER UNIT', icon: '🪔', active: true },
+            { id: 'musical_room', name: 'MUSICAL ROOM', icon: '🎵', active: true },
+            { id: 'dining_room', name: 'DINING ROOM', icon: '🍽️', active: true },
+            { id: 'store_room', name: 'STORE ROOM', icon: '📦', active: true },
+            { id: 'toilet_area', name: 'TOILET AREA', icon: '🚿', active: true },
+            { id: 'passage_ceiling', name: 'PASSAGE CEILING', icon: '🏛️', active: true },
+            { id: 'false_ceiling', name: 'FALSE CEILING', icon: '✨', active: true },
+            { id: 'walk_in_wardrobe', name: 'WALK-IN WARDROBE', icon: '👔', active: true },
+            { id: 'staircase', name: 'STAIRCASE', icon: '🪜', active: true },
+            { id: 'profile_glass_door', name: 'PROFILE GLASS DOOR', icon: '🪟', active: true },
+            { id: 'courtyard', name: 'COURTYARD', icon: '🏞️', active: true },
+            { id: 'full_teak_wood', name: 'FULL TEAK WOOD', icon: '👑', active: true },
+            { id: 'half_teak_wood', name: 'HALF TEAK WOOD', icon: '🪵', active: true },
+            { id: 'wallpaper', name: 'WALLPAPER', icon: '🖼️', active: true },
+            { id: 'accessories', name: 'ACCESSORIES', icon: '🧺', active: true }
         ];
 
         let rawSelectedRoom = sessionStorage.getItem('pks_selected_room');
         let selectedRoom = (rawSelectedRoom && rawSelectedRoom !== 'null' && rawSelectedRoom !== 'undefined' && ROOMS.some(r => r.id === rawSelectedRoom)) ? rawSelectedRoom : 'kitchen';
         let rawSelectedRoomName = sessionStorage.getItem('pks_selected_room_name');
-        let selectedRoomName = (rawSelectedRoomName && rawSelectedRoomName !== 'null' && rawSelectedRoomName !== 'undefined') ? rawSelectedRoomName : 'Modular Kitchen';
+        let selectedRoomName = (rawSelectedRoomName && rawSelectedRoomName !== 'null' && rawSelectedRoomName !== 'undefined') ? rawSelectedRoomName.toUpperCase() : 'MODULAR KITCHEN';
 
         function logout() {
             sessionStorage.removeItem('pks_admin_auth');
@@ -2890,7 +2890,7 @@
         function onSpecsRoomChange() {
             const roomSelect = document.getElementById('specsSelectRoom');
             const targetRoomId = roomSelect ? roomSelect.value : selectedRoom;
-            const targetRoomObj = ROOMS.find(r => r.id === targetRoomId) || { name: 'Modular Kitchen' };
+            const targetRoomObj = ROOMS.find(r => r.id === targetRoomId) || { name: 'MODULAR KITCHEN' };
 
             const titleEl = document.getElementById('specsRoomNameTitle');
             if (titleEl) titleEl.textContent = targetRoomObj.name;
