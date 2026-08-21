@@ -2393,6 +2393,45 @@
             showToast(`Material "${matLabel}" deleted!`);
         }
 
+        function getStandardItemId(room, name) {
+            const normalized = (name || '').toUpperCase().trim();
+            if (typeof ROOM_ITEMS !== 'undefined') {
+                if (room && ROOM_ITEMS[room]) {
+                    const found = ROOM_ITEMS[room].find(it => it.name.toUpperCase().trim() === normalized);
+                    if (found) return found.id;
+                }
+                for (const r in ROOM_ITEMS) {
+                    const found = ROOM_ITEMS[r].find(it => it.name.toUpperCase().trim() === normalized);
+                    if (found) return found.id;
+                }
+            }
+            if (room === 'kitchen') {
+                if (normalized.includes('BOTTOM') && !normalized.includes('STAIRCASE')) return 1;
+                if (normalized.includes('TOP')) return 2;
+                if (normalized.includes('LOFT')) return 3;
+                if (normalized.includes('ISLAND')) return 4;
+                if (normalized.includes('BREAKFAST TABLE') && !normalized.includes('PANEL') && !normalized.includes('BEAM') && !normalized.includes('BOX')) return 5;
+                if (normalized.includes('WALL PANEL')) return 6;
+                if (normalized.includes('BEAM')) return 7;
+                if (normalized.includes('OPEN BOX')) return 8;
+                if (normalized.includes('SPICE')) return 9;
+                if (normalized.includes('LEDGE')) return 10;
+                if (normalized.includes('SIDE')) return 11;
+                if (normalized.includes('PARTITION')) return 12;
+                if (normalized.includes('STAIRCASE')) return 14;
+                if (normalized.includes('ACCESSORIES')) return 13;
+            }
+            if (room === 'living_room') {
+                if (normalized.includes('TV UNIT') && normalized.includes('PANEL')) return 18;
+                if (normalized.includes('TV UNIT') && normalized.includes('BOTTOM')) return 19;
+                if (normalized.includes('TV UNIT') && normalized.includes('SIDE')) return 20;
+                if (normalized.includes('PARTITION') && normalized.includes('DINING')) return 21;
+                if (normalized.includes('WALL PANEL')) return 22;
+                if (normalized.includes('STAIRCASE')) return 23;
+            }
+            return null;
+        }
+
         function getStandardFormulaInfo(itemId, optName) {
             const name = (optName || '').trim();
             const nameUpper = name.toUpperCase();
