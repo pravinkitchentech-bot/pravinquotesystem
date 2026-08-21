@@ -1870,6 +1870,221 @@
             return [];
         }
 
+        const ADMIN_ROOM_ITEMS = {
+            kitchen: [
+                { id: 1, name: "Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
+                { id: 2, name: "Overhead Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 3, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
+                { id: 4, name: "I-Land Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 5, name: "Breakfast Table", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
+                { id: 6, name: "Breakfast Table Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 7, name: "Breakfast Table Beam Covering", options: ["Lamination"] },
+                { id: 15, name: "Breakfast Table Box Type", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] },
+                { id: 8, name: "Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 11, name: "Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
+                { id: 13, name: "Crockery Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 14, name: "Fridge Top Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+            ],
+            living_room: [
+                { id: 16, name: "Tv Unit – Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 19, name: "Living & Dining Room Partition", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 20, name: "Living Room Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 60, name: "Courtyard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+            ],
+            prayer_unit: [
+                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 76, name: "PRAYER UNIT WALL PANELING", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 77, name: "PRAYER UNIT SHOW WALL CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 78, name: "PRAYER UNIT CUPBOARD", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+            ],
+            bedroom: [
+                { id: 25, name: "Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 26, name: "Walk-in Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 27, name: "Bed back wall paneling with headrest", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 28, name: "Bed", options: ["King Size Bed (Direct Price)", "Queen Size Bed (Direct Price)"] },
+                { id: 29, name: "Bay window", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 30, name: "Dressing unit wall paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ["Marine Ply – Lamination (Box)", "Marine Ply – Acrylic (Box)", "WPC (Box)"] },
+                { id: 32, name: "Tv unit-wall paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 33, name: "Tv unit-bottom cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 65, name: "Bed Side Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 66, name: "CUPBOARD 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 67, name: "CUPBOARD 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 68, name: "LOFT 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 69, name: "LOFT 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 70, name: "Bed Back Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 71, name: "Bed Back Wall Paneling with Hidden Door", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 73, name: "BEDROOM ROOM PROFILE GLASS DOOR", options: ["Profile Glass Door"] }
+            ],
+            dining_room: [
+                { id: 37, name: "Washbasin Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 38, name: "Washbasin Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 39, name: "Crockery Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 40, name: "Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 41, name: "Dining & Kitchen Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+            ],
+            musical_room: [
+                { id: 80, name: "WALL PANEL", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 82, name: "Table Box Type", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] },
+                { id: 83, name: "Cupboard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] },
+                { id: 84, name: "Crockery Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Acrylic (Box Type)", "WPC (Box Type)"] }
+            ],
+            study_room: [
+                { id: 85, name: "BOOK SHELF", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 86, name: "STUDY TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 87, name: "Study Table Upper Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 88, name: "COMPUTER TABLE", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 89, name: "STUDY ROOM CUPBOARD", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 91, name: "Study Room Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] }
+            ],
+            toilet_area: [
+                { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+            ],
+            store_room: [
+                { id: 44, name: "Store room cupboard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 441, name: "Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
+                { id: 442, name: "Overhead Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] }
+            ],
+            sitout: [
+                { id: 46, name: "Shoe Rack Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 47, name: "Foyer Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 48, name: "Foyer Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] }
+            ],
+            passage_ceiling: [
+                { id: 201, name: "Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 203, name: "Kitchen Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 204, name: "Living Room Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 205, name: "Bedroom Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 206, name: "Dining Room Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 207, name: "Prayer Unit Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 208, name: "Study Room Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 209, name: "Foyer Passage Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] }
+            ],
+            false_ceiling: [
+                { id: 202, name: "False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 210, name: "Kitchen False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 211, name: "Living Room False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 212, name: "Bedroom False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 213, name: "Dining Room False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 214, name: "Prayer Unit False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 215, name: "Study Room False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 216, name: "Foyer False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] },
+                { id: 217, name: "Walk-in Wardrobe False Ceiling", options: ["Gypsum Board", "POP", "PVC", "Lamination", "Wood finishing", "Veneer finishing", "PU Paint"] }
+            ],
+            walk_in_wardrobe: [
+                { id: 540, name: "Wardrobe", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 544, name: "Bay window", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 545, name: "Dressing unit wall paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 546, name: "Dressing unit bottom cabinet", options: ["Marine Ply – Lamination (Box)", "Marine Ply – Acrylic (Box)", "WPC (Box)"] },
+                { id: 551, name: "CUPBOARD 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 552, name: "CUPBOARD 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 553, name: "LOFT 1", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 554, name: "LOFT 2", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+            ],
+            staircase: [
+                { id: 560, name: "Staircase Bottom Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 561, name: "Staircase Wall Paneling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 563, name: "Staircase Door Only", options: ["Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Door Only)", "WPC (Door Only)"] },
+                { id: 564, name: "Staircase Shoe Rack Unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+            ],
+            profile_glass_door: [
+                { id: 570, name: "Kitchen Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 571, name: "TV Unit Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 572, name: "Crockery Unit Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 573, name: "Prayer Unit Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 574, name: "Study Room Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 575, name: "Partition Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 576, name: "Wardrobe Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 577, name: "Musical Room Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 578, name: "Living Room Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 579, name: "Dining Room Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 580, name: "Bedroom Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 581, name: "Staircase Bottom Profile Glass Door", options: ["Profile Glass Door"] },
+                { id: 582, name: "Walk-in Bottom Profile Glass Door", options: ["Profile Glass Door"] }
+            ],
+            courtyard: [
+                { id: 585, name: "Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 587, name: "Kitchen Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 588, name: "Living Room Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 589, name: "Bedroom Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 590, name: "Dining Room Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 591, name: "Prayer Unit Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 592, name: "Study Room Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 593, name: "Foyer Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 594, name: "Musical Room Courtyard Wall Paneling", options: ["PVC", "Lamination"] },
+                { id: 595, name: "Passage Courtyard Wall Paneling", options: ["PVC", "Lamination"] }
+            ],
+            accessories: [
+                { id: 601, name: "Basket", options: ["Plain Basket", "Thali Basket", "Cup & Saucer Basket", "Cutlery Basket", "Wicker Basket"] },
+                { id: 602, name: "Tandom Box", options: ["Tandom Box (Soft Close)", "Tandom Box (Slim)"] },
+                { id: 603, name: "Oil Pull Out", options: ["2-Tier Oil Pull Out", "3-Tier Oil Pull Out", "SS 304 Oil Pull Out"] },
+                { id: 604, name: "PVC Cutlery Tray", options: ["PVC Cutlery Tray"] },
+                { id: 605, name: "SS Cutlery Tray", options: ["SS 304 Cutlery Tray", "SS 202 Cutlery Tray"] },
+                { id: 606, name: "Dustbin Unit", options: ["Single Dustbin Unit", "Double Dustbin Unit", "Door Mounted Dustbin"] },
+                { id: 607, name: "Detergent Holder", options: ["SS Detergent Holder", "Door Mounted Detergent Holder"] },
+                { id: 608, name: "GTBT", options: ["GTBT SS 304", "GTBT Standard"] },
+                { id: 609, name: "Rolling Shutter", options: ["Glass Rolling Shutter", "PVC / Aluminium Rolling Shutter", "PVC Rolling Shutter", "Aluminium Rolling Shutter"] },
+                { id: 610, name: "Tall Unit", options: ["Tall Unit (6 Layer)", "Tall Unit (12 Layer)"] },
+                { id: 611, name: "Swing Corner", options: ["Swing Corner Left", "Swing Corner Right", "Universal Swing Corner"] },
+                { id: 612, name: "Magic Corner", options: ["Magic Corner Left", "Magic Corner Right", "Universal Magic Corner"] },
+                { id: 613, name: "Caracel Corner", options: ["Caracel Corner (Soft Close)"] },
+                { id: 614, name: "D-Tray", options: ["D-Tray 180°", "D-Tray 270°", "D-Tray 360°"] },
+                { id: 615, name: "Soft Closing Runner", options: ["Soft Closing Runner (Under Mount)", "Soft Closing Runner (Telescopic)"] },
+                { id: 616, name: "Soft Closing Hinges", options: ["0 Crank Soft Close Hinges", "8 Crank Soft Close Hinges", "16 Crank Soft Close Hinges"] },
+                { id: 617, name: "Profile Handle", options: ["G-Profile Handle", "J-Profile Handle", "Edge Profile Handle"] }
+            ],
+            full_teak_wood: [
+                { id: 301, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 302, name: "Overhead Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 303, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 304, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 305, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 306, name: "Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 307, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
+                { id: 308, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
+                { id: 309, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 310, name: "Spice Rack", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 311, name: "Ledge", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 312, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 313, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 314, name: "Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 315, name: "Wall Paneling", options: ["Box Type"] },
+                { id: 316, name: "Wash Basin", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 317, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 319, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
+            ],
+            half_teak_wood: [
+                { id: 401, name: "Bottom Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 402, name: "Overhead Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 403, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 404, name: "I-Land Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 405, name: "Breakfast Table", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 406, name: "Side Storage Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 407, name: "Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 408, name: "Breakfast Table Wall Paneling", options: ["Box Type"] },
+                { id: 409, name: "Breakfast Table Beam Covering", options: ["Box Type"] },
+                { id: 410, name: "Breakfast Table Open Box", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 411, name: "Spice Rack", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 412, name: "Ledge 1", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 413, name: "Ledge 2", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 414, name: "Dining Partition", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 415, name: "Wash Basin Cabinet", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 416, name: "Wardrobe", options: ["Box Type", "Door Only", "Partition Type"] },
+                { id: 418, name: "Loft", options: ["Box Type", "Door Only", "Partition Type"] }
+            ],
+            wallpaper: [
+                { id: 701, name: "Wallpaper", options: ["Standard Wallpaper", "Vinyl Wallpaper", "3D Wallpaper", "Non-Woven Wallpaper", "Textured Wallpaper", "Custom Wallpaper"] }
+            ]
+        };
+
         // In-memory caching for materials DB and processed items list
         let _materialsDbCache = null;
         let _itemsListCache = {};
@@ -2397,39 +2612,55 @@
                     for (const stdItemId in parsedMats) {
                         const itemId = parseInt(stdItemId);
                         const options = parsedMats[stdItemId];
-                        const matchingItemKeys = new Set();
-                        db.forEach(m => {
-                            if (getStandardItemId(m.roomId, m.itemName) === itemId || String(stdItemId) === `${m.roomId}_${m.itemName.toLowerCase()}`) {
-                                matchingItemKeys.add(`${m.roomId}||${m.itemName}||${m.materialType}`);
+
+                        // Find matching item from ADMIN_ROOM_ITEMS if available
+                        let targetRoom = null;
+                        let targetItemName = null;
+                        if (typeof ADMIN_ROOM_ITEMS !== 'undefined') {
+                            for (const r in ADMIN_ROOM_ITEMS) {
+                                const foundIt = ADMIN_ROOM_ITEMS[r].find(it => it.id === itemId);
+                                if (foundIt) {
+                                    targetRoom = r;
+                                    targetItemName = foundIt.name;
+                                    break;
+                                }
                             }
-                        });
+                        }
 
-                        matchingItemKeys.forEach(keyStr => {
-                            const [room, itemName, matType] = keyStr.split('||');
-                            options.forEach(opt => {
-                                qualities.forEach(qual => {
-                                    const optLabel = opt.label || opt;
-                                    const exists = db.some(m =>
-                                        m.roomId === room &&
-                                        m.itemName === itemName &&
-                                        m.quality === qual &&
-                                        m.constructionType === optLabel
-                                    );
-                                    if (!exists) {
-                                        let formula = opt.formula || "L*H/144";
-                                        let fields = ["L", "H"];
-                                        if (opt.formulaType === "L*H") { fields = ["L", "H"]; formula = "L*H/144"; }
-                                        else if (opt.formulaType === "L*W") { fields = ["L", "W"]; formula = "L*W/144"; }
-                                        else if (opt.formulaType === "SQFT") { fields = ["SQFT"]; formula = "SQFT"; }
-                                        else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
-                                        else { fields = ["L", "W", "H"]; formula = opt.formula || "(L+W)*H/144"; }
+                        db.forEach(m => {
+                            let isMatch = false;
+                            if (targetRoom && targetItemName) {
+                                isMatch = (m.roomId === targetRoom && m.itemName.toUpperCase().trim() === targetItemName.toUpperCase().trim());
+                            } else {
+                                isMatch = (getStandardItemId(m.roomId, m.itemName) === itemId || String(stdItemId) === `${m.roomId}_${m.itemName.toLowerCase()}`);
+                            }
 
-                                        const qualRate = resolveRate(rates, optLabel, matType, room, selectedDivision, qual) || opt.baseAmount || opt.rate || opt.base || 0;
+                            if (isMatch) {
+                                options.forEach(opt => {
+                                    qualities.forEach(qual => {
+                                        const optLabel = opt.label || opt;
+                                        const exists = db.some(e =>
+                                            e.roomId === m.roomId &&
+                                            e.itemName === m.itemName &&
+                                            e.quality === qual &&
+                                            e.constructionType === optLabel
+                                        );
+                                        if (!exists) {
+                                            let formula = opt.formula || "L*H/144";
+                                            let fields = ["L", "H"];
+                                            if (opt.formulaType === "L*H") { fields = ["L", "H"]; formula = "L*H/144"; }
+                                            else if (opt.formulaType === "L*W") { fields = ["L", "W"]; formula = "L*W/144"; }
+                                            else if (opt.formulaType === "SQFT") { fields = ["SQFT"]; formula = "SQFT"; }
+                                            else if (opt.formulaType === "QTY") { fields = ["QTY"]; formula = "QTY"; }
+                                            else { fields = ["L", "W", "H"]; formula = opt.formula || "(L+W)*H/144"; }
 
-                                        addMat(room, matType, qual, itemName, optLabel, opt.specifications || "", formula, qualRate);
-                                    }
+                                            const qualRate = resolveRate(rates, optLabel, m.materialType, m.roomId, selectedDivision, qual) || opt.baseAmount || opt.rate || opt.base || 0;
+
+                                            addMat(m.roomId, m.materialType, qual, m.itemName, optLabel, opt.specifications || "", formula, qualRate);
+                                        }
+                                    });
                                 });
-                            });
+                            }
                         });
                     }
                 } catch (e) { console.error("Error merging custom materials: ", e); }
@@ -3053,6 +3284,16 @@
 
         function getStandardItemId(room, name) {
             const normalized = (name || '').toUpperCase().trim();
+            if (typeof ADMIN_ROOM_ITEMS !== 'undefined') {
+                if (room && ADMIN_ROOM_ITEMS[room]) {
+                    const found = ADMIN_ROOM_ITEMS[room].find(it => it.name.toUpperCase().trim() === normalized);
+                    if (found) return found.id;
+                }
+                for (const r in ADMIN_ROOM_ITEMS) {
+                    const found = ADMIN_ROOM_ITEMS[r].find(it => it.name.toUpperCase().trim() === normalized);
+                    if (found) return found.id;
+                }
+            }
             if (room === 'kitchen') {
                 if (normalized.includes('BOTTOM') && !normalized.includes('STAIRCASE')) return 1;
                 if (normalized.includes('TOP')) return 2;
