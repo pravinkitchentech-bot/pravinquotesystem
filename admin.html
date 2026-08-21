@@ -1134,6 +1134,58 @@
             { id: 'accessories', name: 'ACCESSORIES', icon: '🧺', active: true }
         ];
 
+        const ACCESSORY_IMAGES = {
+            "Plain Basket": "plain basket.png",
+            "Thali Basket": "thali basket.png",
+            "Cup & Saucer Basket": "cup & saucer basket.png",
+            "Cutlery Basket": "cutlery basket.png",
+            "Wicker Basket": "wicker basket.png",
+            "Tandom Box": "tandombox soft close.jpg",
+            "Tandom Box (Soft Close)": "tandombox soft close.jpg",
+            "Tandom Box (Slim)": "tandombox soft close.jpg",
+            "Oil Pull Out": "3-tier oil pull out.jpg",
+            "1-Tier Oil Pull Out": "1-tier oil pull out.jpg",
+            "2-Tier Oil Pull Out": "1-tier oil pull out.jpg",
+            "3-Tier Oil Pull Out": "3-tier oil pull out.jpg",
+            "SS 304 Oil Pull Out": "ss 304 oil pull out.jpg",
+            "0 Crank Soft Close Hinges": "0 crank soft close hinges.jpg",
+            "8 Crank Soft Close Hinges": "8 crank soft close hinges.jpg",
+            "16 Crank Soft Close Hinges": "16 crank soft close hinges.jpg",
+            "Soft Closing Hinges": "0 crank soft close hinges.jpg",
+            "D-Tray": "d-tray 180.jpg",
+            "D-Tray 180°": "d-tray 180.jpg",
+            "D-Tray 270°": "d-tray 270.jpg",
+            "D-Tray 360°": "d-tray 180.jpg",
+            "Dustbin Unit": "dustbin.png",
+            "Single Dustbin Unit": "dustbin.png",
+            "Double Dustbin Unit": "dustbin.png",
+            "Door Mounted Dustbin": "dustbin.png",
+            "Detergent Holder": "detergent.png",
+            "SS Detergent Holder": "detergent.png",
+            "Door Mounted Detergent Holder": "detergent.png",
+            "GTBT": "gtbt.png",
+            "GTBT SS 304": "gtbt.png",
+            "GTBT Standard": "gtbt.png",
+            "Rolling Shutter": "rolling shutter.png",
+            "Glass Rolling Shutter": "rolling shutter.png",
+            "PVC / Aluminium Rolling Shutter": "rolling shutter.png",
+            "PVC Rolling Shutter": "rolling shutter.png",
+            "Aluminium Rolling Shutter": "rolling shutter.png",
+            "Magic Corner": "magic corner.png",
+            "Magic Corner Left": "magic corner.png",
+            "Magic Corner Right": "magic corner.png",
+            "Universal Magic Corner": "magic corner.png",
+            "Caracel Corner": "carousel.png",
+            "Caracel Corner (Soft Close)": "carousel.png",
+            "Profile Handle": "g-profile handle.jpg",
+            "G-Profile Handle": "g-profile handle.jpg",
+            "J-Profile Handle": "j-profile handle.jpg",
+            "Edge Profile Handle": "edge profile handle.jpg",
+            "SS Cutlery Tray": "ss 304 cutlery tray.jpg",
+            "SS 304 Cutlery Tray": "ss 304 cutlery tray.jpg",
+            "SS 202 Cutlery Tray": "ss 202 cutlery tray.jpg"
+        };
+
         let rawSelectedRoom = sessionStorage.getItem('pks_selected_room');
         let selectedRoom = (rawSelectedRoom && rawSelectedRoom !== 'null' && rawSelectedRoom !== 'undefined' && ROOMS.some(r => r.id === rawSelectedRoom)) ? rawSelectedRoom : 'kitchen';
         let rawSelectedRoomName = sessionStorage.getItem('pks_selected_room_name');
@@ -1204,6 +1256,7 @@
             "Cup & Saucer Basket": 1300,
             "Cutlery Basket": 1500,
             "SS 304 Wire Basket": 1800,
+            "Wicker Basket": 2200,
             "Soft Close Wire Basket": 2200,
             "SS 304 Grade": 1800,
             "SS 202 Grade": 1200,
@@ -1438,7 +1491,7 @@
                 { id: 595, name: "Passage Courtyard Wall Paneling", options: ["PVC", "Lamination"] }
             ],
             accessories: [
-                { id: 601, name: "Basket", options: ["Plain Basket", "Thali Basket", "Cup & Saucer Basket", "Cutlery Basket", "SS 304 Wire Basket", "Soft Close Wire Basket"] },
+                { id: 601, name: "Basket", options: ["Plain Basket", "Thali Basket", "Cup & Saucer Basket", "Cutlery Basket", "Wicker Basket"] },
                 { id: 602, name: "Tandom Box", options: ["Tandom Box (Soft Close)", "Tandom Box (Slim)"] },
                 { id: 603, name: "Oil Pull Out", options: ["2-Tier Oil Pull Out", "3-Tier Oil Pull Out", "SS 304 Oil Pull Out"] },
                 { id: 604, name: "PVC Cutlery Tray", options: ["PVC Cutlery Tray"] },
@@ -1817,8 +1870,10 @@
                 const midVal = resolveMatRate(mat, 'medium');
                 const ecoVal = resolveMatRate(mat, 'economy');
                 const safeMat = mat.replace(/'/g, "\\'");
+                const imgPath = ACCESSORY_IMAGES[mat];
+                const imgHtml = imgPath ? `<img src="${imgPath}" alt="${mat}" style="width: 44px; height: 24.75px; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 4px; vertical-align: middle; margin-right: 8px; border: 1px solid var(--border); background: #fff;" onerror="this.style.display='none'">` : '';
                 tr.innerHTML = `
-                    <td style="font-weight: 500;">${mat}</td>
+                    <td style="font-weight: 500; display: flex; align-items: center;">${imgHtml}<span>${mat}</span></td>
                     <td><input type="number" data-material="${mat}" data-qual="premium" value="${premVal !== undefined ? premVal : ''}" placeholder="Premium ₹"></td>
                     <td><input type="number" data-material="${mat}" data-qual="medium" value="${midVal !== undefined ? midVal : ''}" placeholder="Middle ₹"></td>
                     <td><input type="number" data-material="${mat}" data-qual="economy" value="${ecoVal !== undefined ? ecoVal : ''}" placeholder="Economy ₹"></td>
