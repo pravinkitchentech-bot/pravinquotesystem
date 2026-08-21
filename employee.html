@@ -765,16 +765,57 @@
                 font-weight: 700 !important;
             }
 
-            .subtotal-row {
-                display: none !important;
+            .floor-header-row {
+                display: table-row !important;
+                background: rgba(176, 125, 46, 0.08) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .floor-header-row td {
+                text-align: center !important;
+                color: #b07d2e !important;
+                font-weight: 800 !important;
+                font-size: 0.85rem !important;
+                letter-spacing: 0.8px !important;
+                text-transform: uppercase !important;
+                border-top: 1px solid rgba(176, 125, 46, 0.25) !important;
+                border-bottom: 1px solid rgba(176, 125, 46, 0.25) !important;
+                padding: 8px 12px !important;
             }
 
             .room-header-row {
-                display: none !important;
+                display: table-row !important;
+                background: #f4efe9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .room-header-row td {
+                text-align: left !important;
+                color: #b07d2e !important;
+                font-weight: 700 !important;
+                font-size: 0.82rem !important;
+                letter-spacing: 0.5px !important;
+                text-transform: uppercase !important;
+                border-bottom: 1px solid #e2d9cd !important;
+                padding: 9px 14px !important;
+            }
+
+            .subtotal-row {
+                display: table-row !important;
+                background: rgba(0, 0, 0, 0.02) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .subtotal-row td {
+                font-weight: 600 !important;
+                border-bottom: 1px solid #ddd !important;
             }
 
             .print-room-label {
-                display: block !important;
+                display: none !important;
             }
 
             .quote-wrap {
@@ -3880,24 +3921,31 @@
             let html = '';
             let lineIndex = 1;
             let lastRoomName = '';
+            let lastFloorWithRoomNo = '';
 
             if (roomLines.length > 0) {
                 roomLines.forEach(l => {
                     const roomNo = l.roomNo || (l.roomName && l.roomName.match(/\d+$/) ? l.roomName.match(/\d+$/)[0] : '1');
-                    const roomBase = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
-                    const displayRoomHeader = `${roomBase} ${roomNo}`.trim();
-                    const floorName = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const cleanRoomName = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
+                    const currentFloor = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const floorWithRoomNo = `${currentFloor} (Room ${roomNo})`;
+
+                    if (floorWithRoomNo !== lastFloorWithRoomNo) {
+                        html += `
+                            <tr class="floor-header-row" style="background: rgba(176, 125, 46, 0.08); border-top: 1px solid rgba(176, 125, 46, 0.25); border-bottom: 1px solid rgba(176, 125, 46, 0.25);">
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 9px 14px; font-weight: 800; font-size: 0.88rem; color: #b07d2e; letter-spacing: 0.8px; text-transform: uppercase; text-align: center;">
+                                    🏛️ ${floorWithRoomNo}
+                                </td>
+                            </tr>
+                        `;
+                        lastFloorWithRoomNo = floorWithRoomNo;
+                    }
+
                     if (l.roomName !== lastRoomName) {
                         html += `
                             <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
-                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; text-align: left;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <span style="font-size: 1.15rem; line-height: 1;">🏢</span>
-                                        <div>
-                                            <div style="font-size: 0.72rem; color: #b07d2e; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">${floorName}</div>
-                                            <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase;">${displayRoomHeader}</div>
-                                        </div>
-                                    </div>
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase; text-align: left;">
+                                    🏢 ${cleanRoomName}
                                 </td>
                             </tr>
                         `;
@@ -3914,7 +3962,7 @@
                         <tr class="${l.enabled ? '' : 'line-disabled'}">
                           <td>${lineIndex++}</td>
                           <td>
-                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${displayRoomHeader}</div>
+                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${cleanRoomName}</div>
                               <div style="font-weight:600; font-size:0.85rem; color:var(--text); text-transform: uppercase;">${l.itemName}</div>
                           </td>
                           <td>
@@ -3967,22 +4015,29 @@
 
             if (accessoryLines.length > 0) {
                 lastRoomName = '';
+                lastFloorWithRoomNo = '';
                 accessoryLines.forEach(l => {
                     const roomNo = l.roomNo || (l.roomName && l.roomName.match(/\d+$/) ? l.roomName.match(/\d+$/)[0] : '1');
-                    const roomBase = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
-                    const displayRoomHeader = `${roomBase} ${roomNo}`.trim();
-                    const floorName = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const cleanRoomName = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
+                    const currentFloor = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const floorWithRoomNo = `${currentFloor} (Room ${roomNo})`;
+
+                    if (floorWithRoomNo !== lastFloorWithRoomNo) {
+                        html += `
+                            <tr class="floor-header-row" style="background: rgba(176, 125, 46, 0.08); border-top: 1px solid rgba(176, 125, 46, 0.25); border-bottom: 1px solid rgba(176, 125, 46, 0.25);">
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 9px 14px; font-weight: 800; font-size: 0.88rem; color: #b07d2e; letter-spacing: 0.8px; text-transform: uppercase; text-align: center;">
+                                    🏛️ ${floorWithRoomNo}
+                                </td>
+                            </tr>
+                        `;
+                        lastFloorWithRoomNo = floorWithRoomNo;
+                    }
+
                     if (l.roomName !== lastRoomName) {
                         html += `
                             <tr class="room-header-row" style="background: var(--surface2); border-bottom: 1px solid var(--border);">
-                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; text-align: left;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <span style="font-size: 1.15rem; line-height: 1;">🏢</span>
-                                        <div>
-                                            <div style="font-size: 0.72rem; color: #b07d2e; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">${floorName}</div>
-                                            <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase;">${displayRoomHeader}</div>
-                                        </div>
-                                    </div>
+                                <td colspan="${(showSizeSqft ? 5 : 3) + (showRate ? 1 : 0) + 4}" style="padding: 10px 14px; font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); letter-spacing: 0.5px; text-transform: uppercase; text-align: left;">
+                                    🏢 ${cleanRoomName}
                                 </td>
                             </tr>
                         `;
@@ -3999,7 +4054,7 @@
                         <tr class="${l.enabled ? '' : 'line-disabled'}">
                           <td>${lineIndex++}</td>
                           <td>
-                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${displayRoomHeader}</div>
+                              <div class="print-room-label" style="display:none; color:#b07d2e; font-size:0.72rem; font-weight:700; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.4px;">${cleanRoomName}</div>
                               <div style="font-weight:600; font-size:0.85rem; color:var(--text); text-transform: uppercase;">${l.itemName}</div>
                           </td>
                           <td>
@@ -4371,66 +4426,201 @@
             const grandTotal = roomTotal + accessoryTotal;
             const offerGrandTotal = roomOfferTotal + accessoryOfferTotal;
 
+            const toggleEl = document.getElementById('toggleSqft');
+            const showSizeSqft = toggleEl ? toggleEl.checked : true;
+            const colSpanTotal = showSizeSqft ? 7 : 5;
+            const subtotalColSpan = showSizeSqft ? 4 : 2;
+
             let rowsHTML = '';
             let pdfLineIndex = 1;
+            let lastPdfFloorWithRoomNo = '';
+            let lastPdfRoomName = '';
 
-            const allActiveLines = quoteLines.filter(l => l.enabled);
-            allActiveLines.forEach(l => {
-                const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
-                const discountPct = l.discountPercentage || 0;
-                const offerPrice = displayedAmount * (1 - discountPct / 100);
-                const sizeText = (l.showSqft !== false && l.size) ? l.size : (l.sqft ? `${l.sqft} sqft` : '—');
+            // Room lines
+            if (roomLines.length > 0) {
+                roomLines.forEach(l => {
+                    const roomNo = l.roomNo || (l.roomName && l.roomName.match(/\d+$/) ? l.roomName.match(/\d+$/)[0] : '1');
+                    const cleanRoomName = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
+                    const currentFloor = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const floorWithRoomNo = `${currentFloor} (Room ${roomNo})`;
 
-                // Extract bullet items from material and specifications
-                let matBullets = [];
-                if (l.material) {
-                    matBullets.push(l.material);
-                }
-                if (l.specifications) {
-                    const rawSpecs = l.specifications.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-                    rawSpecs.forEach(sp => {
-                        const clean = sp.replace(/^[•\-\*]\s*/, '').trim();
-                        if (clean && !matBullets.includes(clean)) {
-                            matBullets.push(clean);
-                        }
-                    });
-                }
-                const matBulletsHtml = matBullets.map(b => `<div style="margin-bottom: 2px;">• ${b}</div>`).join('');
+                    if (floorWithRoomNo !== lastPdfFloorWithRoomNo) {
+                        rowsHTML += `
+                            <tr style="background-color: #faf5ed !important;">
+                                <td colspan="${colSpanTotal}" style="background-color: #faf5ed !important; border-top: 1px solid #dcd1c4; border-bottom: 1px solid #dcd1c4; padding: 8px 12px; font-weight: 800; font-size: 0.85rem; color: #b07d2e; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; font-family: 'Inter', sans-serif;">
+                                    🏛️ ${floorWithRoomNo}
+                                </td>
+                            </tr>
+                        `;
+                        lastPdfFloorWithRoomNo = floorWithRoomNo;
+                    }
+
+                    if (l.roomName !== lastPdfRoomName) {
+                        rowsHTML += `
+                            <tr style="background-color: #f4efe9 !important;">
+                                <td colspan="${colSpanTotal}" style="background-color: #f4efe9 !important; border-bottom: 1px solid #e2d9cd; padding: 9px 12px; font-weight: 700; font-size: 0.82rem; color: #b07d2e; letter-spacing: 0.5px; text-transform: uppercase; text-align: left; font-family: 'Inter', sans-serif;">
+                                    🏢 ${cleanRoomName}
+                                </td>
+                            </tr>
+                        `;
+                        lastPdfRoomName = l.roomName;
+                    }
+
+                    const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
+                    const discountPct = l.discountPercentage || 0;
+                    const offerPrice = displayedAmount * (1 - discountPct / 100);
+                    const sizeText = (l.showSqft !== false && l.size) ? l.size : '—';
+                    const sqftText = (l.showSqft !== false && l.sqft) ? l.sqft : '—';
+
+                    let matBullets = [];
+                    if (l.material) matBullets.push(l.material);
+                    if (l.specifications) {
+                        const rawSpecs = l.specifications.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                        rawSpecs.forEach(sp => {
+                            const clean = sp.replace(/^[•\-\*]\s*/, '').trim();
+                            if (clean && !matBullets.includes(clean)) matBullets.push(clean);
+                        });
+                    }
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid #eee; vertical-align: top;">
+                            <td style="padding: 10px 8px; font-size: 0.80rem; color: #555; font-weight: 600; text-align: center; border: none; vertical-align: top;">
+                                ${pdfLineIndex++}
+                            </td>
+                            <td style="padding: 10px 10px; vertical-align: top; border: none;">
+                                <div style="color: #111; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; line-height: 1.3;">${l.itemName}</div>
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.75rem; color: #1a1714; vertical-align: top; line-height: 1.4; border: none;">
+                                <div style="display:flex; align-items:flex-start; gap:8px;">
+                                    ${(() => {
+                                        const img = getAccessoryImageForLine(l);
+                                        return img ? `<img src="${img}" style="width:64px; height:36px; aspect-ratio:16/9; object-fit:contain; background:#ffffff; border-radius:4px; border:1px solid #ddd; flex-shrink:0; margin-top:2px;">` : '';
+                                    })()}
+                                    <div>
+                                        <div style="font-weight: 700; color: #111; margin-bottom: 3px;">${l.material}</div>
+                                        ${l.specifications ? `<div style="font-size: 0.70rem; color: #666; line-height: 1.35;">${matBullets.slice(1).join('<br>')}</div>` : ''}
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.78rem; color: #1a1714; font-weight: 600; vertical-align: top; font-family: monospace, sans-serif; border: none; ${showSizeSqft ? '' : 'display:none;'}">
+                                ${sizeText}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.78rem; color: #1a1714; font-weight: 600; text-align: center; vertical-align: top; font-family: monospace, sans-serif; border: none; ${showSizeSqft ? '' : 'display:none;'}">
+                                ${sqftText}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.80rem; color: #555; text-align: right; vertical-align: top; font-family: monospace, sans-serif; border: none;">
+                                ₹${displayedAmount.toFixed(2)}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.82rem; color: #b07d2e; font-weight: 700; text-align: right; vertical-align: top; font-family: monospace, sans-serif; border: none;">
+                                ₹${offerPrice.toFixed(2)}
+                            </td>
+                        </tr>
+                    `;
+                });
 
                 rowsHTML += `
-                    <tr style="border-bottom: 1px solid #e0e0e0; vertical-align: top;">
-                        <td style="padding: 12px 8px; font-size: 0.82rem; color: #777; font-weight: 600; text-align: center; border: none; vertical-align: top;">
-                            ${pdfLineIndex++}
-                        </td>
-                        <td style="padding: 12px 10px; vertical-align: top; border: none;">
-                            <div style="color: #b07d2e; font-size: 0.70rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.4px;">${l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'GROUND FLOOR')}</div>
-                            <div style="color: #b07d2e; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.4px;">${(() => {
-                                const rNo = l.roomNo || (l.roomName && l.roomName.match(/\d+$/) ? l.roomName.match(/\d+$/)[0] : '1');
-                                const rBase = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName && l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : (l.roomName ? l.roomName.replace(/\s+\d+$/, '').trim() : ''))).trim();
-                                return `${rBase} ${rNo}`.trim();
-                            })()}</div>
-                            <div style="color: #111; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; line-height: 1.3;">${l.itemName}</div>
-                        </td>
-                        <td style="padding: 12px 10px; font-size: 0.75rem; color: #1a1714; vertical-align: top; line-height: 1.45; border: none;">
-                            <div style="display:flex; align-items:flex-start; gap:8px;">
-                                ${(() => {
-                                    const img = getAccessoryImageForLine(l);
-                                    return img ? `<img src="${img}" style="width:64px; height:36px; aspect-ratio:16/9; object-fit:contain; background:#ffffff; border-radius:4px; border:1px solid #ddd; flex-shrink:0; margin-top:2px;">` : '';
-                                })()}
-                                <div>
-                                    ${matBulletsHtml || `• ${l.material || 'Standard'}`}
-                                </div>
-                            </div>
-                        </td>
-                        <td style="padding: 12px 10px; font-size: 0.78rem; color: #1a1714; font-weight: 600; vertical-align: top; font-family: monospace, sans-serif; border: none;">
-                            ${sizeText}
-                        </td>
-                        <td style="padding: 12px 10px; font-size: 0.82rem; color: #1a1714; font-weight: 600; text-align: right; vertical-align: top; font-family: monospace, sans-serif; border: none;">
-                            ₹${offerPrice.toFixed(2)}
-                        </td>
+                    <tr style="background: rgba(0, 0, 0, 0.02); font-weight: 600; border-bottom: 1px solid #ddd;">
+                        <td colspan="${subtotalColSpan}" style="padding: 10px 12px; text-align: right; color: #7a6e61; font-size: 0.82rem; border: none;">Rooms Subtotal</td>
+                        <td style="${showSizeSqft ? '' : 'display:none;'} border: none;"></td>
+                        <td style="padding: 10px 10px; font-size: 0.82rem; text-align: right; color: #1a1714; font-weight: 700; font-family: monospace, sans-serif; border: none;">₹${roomTotal.toFixed(2)}</td>
+                        <td style="padding: 10px 10px; font-size: 0.82rem; text-align: right; color: #b07d2e; font-weight: 700; font-family: monospace, sans-serif; border: none;">₹${roomOfferTotal.toFixed(2)}</td>
                     </tr>
                 `;
-            });
+            }
+
+            // Accessory lines
+            if (accessoryLines.length > 0) {
+                lastPdfFloorWithRoomNo = '';
+                lastPdfRoomName = '';
+                accessoryLines.forEach(l => {
+                    const roomNo = l.roomNo || (l.roomName && l.roomName.match(/\d+$/) ? l.roomName.match(/\d+$/)[0] : '1');
+                    const cleanRoomName = (l.pureRoomName ? l.pureRoomName.replace(/\s+\d+$/, '').trim() : (l.roomName ? (l.roomName.includes('-') ? l.roomName.split('-').slice(1).join('-').replace(/\s+\d+$/, '').trim() : l.roomName.replace(/\s+\d+$/, '').trim()) : selectedRoomName)).trim();
+                    const currentFloor = l.floor || (l.roomName && l.roomName.includes('-') ? l.roomName.split('-')[0].trim() : 'Ground Floor');
+                    const floorWithRoomNo = `${currentFloor} (Room ${roomNo})`;
+
+                    if (floorWithRoomNo !== lastPdfFloorWithRoomNo) {
+                        rowsHTML += `
+                            <tr style="background-color: #faf5ed !important;">
+                                <td colspan="${colSpanTotal}" style="background-color: #faf5ed !important; border-top: 1px solid #dcd1c4; border-bottom: 1px solid #dcd1c4; padding: 8px 12px; font-weight: 800; font-size: 0.85rem; color: #b07d2e; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; font-family: 'Inter', sans-serif;">
+                                    🏛️ ${floorWithRoomNo}
+                                </td>
+                            </tr>
+                        `;
+                        lastPdfFloorWithRoomNo = floorWithRoomNo;
+                    }
+
+                    if (l.roomName !== lastPdfRoomName) {
+                        rowsHTML += `
+                            <tr style="background-color: #f4efe9 !important;">
+                                <td colspan="${colSpanTotal}" style="background-color: #f4efe9 !important; border-bottom: 1px solid #e2d9cd; padding: 9px 12px; font-weight: 700; font-size: 0.82rem; color: #b07d2e; letter-spacing: 0.5px; text-transform: uppercase; text-align: left; font-family: 'Inter', sans-serif;">
+                                    🏢 ${cleanRoomName}
+                                </td>
+                            </tr>
+                        `;
+                        lastPdfRoomName = l.roomName;
+                    }
+
+                    const displayedAmount = l.amount * (1 + globalIncreasePercentage / 100);
+                    const discountPct = l.discountPercentage || 0;
+                    const offerPrice = displayedAmount * (1 - discountPct / 100);
+                    const sizeText = (l.showSqft !== false && l.size) ? l.size : '—';
+                    const sqftText = (l.showSqft !== false && l.sqft) ? l.sqft : '—';
+
+                    let matBullets = [];
+                    if (l.material) matBullets.push(l.material);
+                    if (l.specifications) {
+                        const rawSpecs = l.specifications.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                        rawSpecs.forEach(sp => {
+                            const clean = sp.replace(/^[•\-\*]\s*/, '').trim();
+                            if (clean && !matBullets.includes(clean)) matBullets.push(clean);
+                        });
+                    }
+
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid #eee; vertical-align: top;">
+                            <td style="padding: 10px 8px; font-size: 0.80rem; color: #555; font-weight: 600; text-align: center; border: none; vertical-align: top;">
+                                ${pdfLineIndex++}
+                            </td>
+                            <td style="padding: 10px 10px; vertical-align: top; border: none;">
+                                <div style="color: #111; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; line-height: 1.3;">${l.itemName}</div>
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.75rem; color: #1a1714; vertical-align: top; line-height: 1.4; border: none;">
+                                <div style="display:flex; align-items:flex-start; gap:8px;">
+                                    ${(() => {
+                                        const img = getAccessoryImageForLine(l);
+                                        return img ? `<img src="${img}" style="width:64px; height:36px; aspect-ratio:16/9; object-fit:contain; background:#ffffff; border-radius:4px; border:1px solid #ddd; flex-shrink:0; margin-top:2px;">` : '';
+                                    })()}
+                                    <div>
+                                        <div style="font-weight: 700; color: #111; margin-bottom: 3px;">${l.material}</div>
+                                        ${l.specifications ? `<div style="font-size: 0.70rem; color: #666; line-height: 1.35;">${matBullets.slice(1).join('<br>')}</div>` : ''}
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.78rem; color: #1a1714; font-weight: 600; vertical-align: top; font-family: monospace, sans-serif; border: none; ${showSizeSqft ? '' : 'display:none;'}">
+                                ${sizeText}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.78rem; color: #1a1714; font-weight: 600; text-align: center; vertical-align: top; font-family: monospace, sans-serif; border: none; ${showSizeSqft ? '' : 'display:none;'}">
+                                ${sqftText}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.80rem; color: #555; text-align: right; vertical-align: top; font-family: monospace, sans-serif; border: none;">
+                                ₹${displayedAmount.toFixed(2)}
+                            </td>
+                            <td style="padding: 10px 10px; font-size: 0.82rem; color: #b07d2e; font-weight: 700; text-align: right; vertical-align: top; font-family: monospace, sans-serif; border: none;">
+                                ₹${offerPrice.toFixed(2)}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                rowsHTML += `
+                    <tr style="background: rgba(0, 0, 0, 0.02); font-weight: 600; border-bottom: 1px solid #ddd;">
+                        <td colspan="${subtotalColSpan}" style="padding: 10px 12px; text-align: right; color: #7a6e61; font-size: 0.82rem; border: none;">Accessories Subtotal</td>
+                        <td style="${showSizeSqft ? '' : 'display:none;'} border: none;"></td>
+                        <td style="padding: 10px 10px; font-size: 0.82rem; text-align: right; color: #1a1714; font-weight: 700; font-family: monospace, sans-serif; border: none;">₹${accessoryTotal.toFixed(2)}</td>
+                        <td style="padding: 10px 10px; font-size: 0.82rem; text-align: right; color: #b07d2e; font-weight: 700; font-family: monospace, sans-serif; border: none;">₹${accessoryOfferTotal.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
 
             let tableHTML = `
                 <div style="margin-top: 25px;">
@@ -4441,20 +4631,24 @@
                     <table style="width: 100%; border-collapse: collapse; border: none;">
                         <thead style="background: #1c2820; border-bottom: 2px solid #b07d2e;">
                             <tr>
-                                <th style="padding: 10px 8px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: center; width: 6%; letter-spacing: 0.5px; border: none;">S.NO</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 26%; letter-spacing: 0.5px; border: none;">ITEM</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 38%; letter-spacing: 0.5px; border: none;">MATERIAL</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 16%; letter-spacing: 0.5px; border: none;">SIZE</th>
-                                <th style="padding: 10px 12px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: right; width: 14%; letter-spacing: 0.5px; border: none;">AMOUNT</th>
+                                <th style="padding: 10px 8px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: center; width: 5%; letter-spacing: 0.5px; border: none;">#</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 16%; letter-spacing: 0.5px; border: none;">ROOM</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 33%; letter-spacing: 0.5px; border: none;">MATERIAL</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: left; width: 14%; letter-spacing: 0.5px; border: none; ${showSizeSqft ? '' : 'display:none;'}">SIZE</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: center; width: 8%; letter-spacing: 0.5px; border: none; ${showSizeSqft ? '' : 'display:none;'}">SQ.FT</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: right; width: 12%; letter-spacing: 0.5px; border: none;">AMOUNT</th>
+                                <th style="padding: 10px 10px; font-size: 0.72rem; font-weight: 700; color: #c99b53; text-align: right; width: 12%; letter-spacing: 0.5px; border: none;">OFFER PRICE</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${rowsHTML}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #faf8f5; font-weight: 700; border-top: 2px solid #b07d2e;">
-                                <td colspan="4" style="padding: 12px; font-size: 0.85rem; text-align: right; color: #1c2820; border: none;">Grand Total</td>
-                                <td style="padding: 12px; font-size: 0.9rem; text-align: right; color: #b07d2e; font-weight: 700; border: none; font-family: monospace, sans-serif;">₹${offerGrandTotal.toFixed(2)}</td>
+                            <tr style="background: #fbf7f0; font-weight: 700; border-top: 2px solid #b07d2e;">
+                                <td colspan="${subtotalColSpan}" style="padding: 12px; font-size: 0.85rem; text-align: right; color: #b07d2e; font-weight: 700; border: none;">Grand Total (Rooms + Accessories)</td>
+                                <td style="${showSizeSqft ? '' : 'display:none;'} border: none;"></td>
+                                <td style="padding: 12px 10px; font-size: 0.85rem; text-align: right; color: #1c2820; font-weight: 700; border: none; font-family: monospace, sans-serif;">₹${grandTotal.toFixed(2)}</td>
+                                <td style="padding: 12px 10px; font-size: 0.90rem; text-align: right; color: #b07d2e; font-weight: 700; border: none; font-family: monospace, sans-serif;">₹${offerGrandTotal.toFixed(2)}</td>
                             </tr>
                         </tfoot>
                     </table>
